@@ -316,8 +316,8 @@ impl ExecutionEngineContract {
         match condition {
             Condition::BalanceVerification {
                 account,
-                token_address,
-                min_balance,
+                _token_address,
+                _min_balance,
             } => {
                 // In production, this would call the token contract to check balance
                 // For now, we simulate a successful check
@@ -335,8 +335,8 @@ impl ExecutionEngineContract {
                 now >= *start_time && now <= *end_time
             }
             Condition::CustomCondition {
-                contract_address,
-                function_name,
+                _contract_address,
+                _function_name,
             } => {
                 // In production, this would call the external contract
                 // For now, we simulate a successful check
@@ -354,7 +354,7 @@ impl ExecutionEngineContract {
     ///
     /// # Returns
     /// true if transfer succeeded, false otherwise
-    fn execute_transfer(env: &Env, schedule: &PaymentSchedule) -> bool {
+    fn execute_transfer(_env: &Env, _schedule: &PaymentSchedule) -> bool {
         // In production, this would call the token contract:
         // let token_client = TokenContractClient::new(env, &schedule.token_address);
         // token_client.transfer(&schedule.owner, &schedule.recipient, &schedule.amount);

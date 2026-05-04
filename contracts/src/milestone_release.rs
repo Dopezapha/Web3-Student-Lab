@@ -14,7 +14,7 @@ pub fn vote_on_milestone(env: &Env, voter: Address, campaign_id: u64, approve: b
         panic!("Only backers can vote");
     }
 
-    let mut campaign: Campaign = env
+    let campaign: Campaign = env
         .storage()
         .instance()
         .get(&CrowdfundingDataKey::Campaign(campaign_id))
@@ -47,7 +47,7 @@ pub fn vote_on_milestone(env: &Env, voter: Address, campaign_id: u64, approve: b
 }
 
 pub fn release_milestone_funds(env: &Env, campaign_id: u64) {
-    let mut campaign: Campaign = env
+    let campaign: Campaign = env
         .storage()
         .instance()
         .get(&CrowdfundingDataKey::Campaign(campaign_id))
@@ -91,7 +91,7 @@ pub fn release_milestone_funds(env: &Env, campaign_id: u64) {
 pub fn process_refund(env: &Env, contributor: Address, campaign_id: u64) {
     contributor.require_auth();
 
-    let mut campaign: Campaign = env
+    let campaign: Campaign = env
         .storage()
         .instance()
         .get(&CrowdfundingDataKey::Campaign(campaign_id))
