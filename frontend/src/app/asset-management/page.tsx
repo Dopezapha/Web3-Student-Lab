@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Shield, Users, Settings, Activity, Eye, EyeOff } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Switch } from "@/components/ui/Switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { useWallet } from "@/contexts/WalletContext";
+import { Activity, AlertTriangle, Settings, Shield, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface AssetInfo {
   code: string;
@@ -103,14 +103,14 @@ export default function AssetManagementDashboard() {
       // 1. Build a setOptions operation with the new flags
       // 2. Sign and submit the transaction
       console.log("Updating flags for asset:", assetCode, flags);
-      
+
       // Update local state for demo
-      setAssets(prev => prev.map(asset => 
-        asset.code === assetCode 
+      setAssets(prev => prev.map(asset =>
+        asset.code === assetCode
           ? { ...asset, ...flags }
           : asset
       ));
-      
+
       if (selectedAsset?.code === assetCode) {
         setSelectedAsset(prev => prev ? { ...prev, ...flags } : null);
       }
@@ -140,7 +140,7 @@ export default function AssetManagementDashboard() {
       // Reset form and close dialog
       setClawbackForm({ targetAccount: "", amount: "", reason: "" });
       setShowClawbackDialog(false);
-      
+
       // Reload assets to update trustlines
       await loadAssets();
     } catch (error) {
@@ -317,7 +317,7 @@ export default function AssetManagementDashboard() {
                       <TabsTrigger value="authorized">Authorized</TabsTrigger>
                       <TabsTrigger value="unauthorized">Unauthorized</TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="all" className="space-y-3">
                       {selectedAsset.trustlines.map((trustline, index) => (
                         <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
@@ -353,7 +353,7 @@ export default function AssetManagementDashboard() {
                         </div>
                       ))}
                     </TabsContent>
-                    
+
                     <TabsContent value="authorized" className="space-y-3">
                       {selectedAsset.trustlines
                         .filter(t => t.authorized)
@@ -389,7 +389,7 @@ export default function AssetManagementDashboard() {
                           </div>
                         ))}
                     </TabsContent>
-                    
+
                     <TabsContent value="unauthorized" className="space-y-3">
                       {selectedAsset.trustlines
                         .filter(t => !t.authorized)
@@ -432,12 +432,12 @@ export default function AssetManagementDashboard() {
               <AlertTriangle className="h-5 w-5" />
               Execute Clawback
             </DialogTitle>
-            <DialogDescription>
+            <p className="text-sm text-muted-foreground mt-2">
               This action will permanently reclaim tokens from the specified account.
               This action cannot be undone.
-            </DialogDescription>
+            </p>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="target-account">Target Account</Label>
@@ -449,7 +449,7 @@ export default function AssetManagementDashboard() {
                 className="font-mono"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="amount">Amount to Clawback</Label>
               <Input
@@ -459,7 +459,7 @@ export default function AssetManagementDashboard() {
                 placeholder="0.0000000"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="reason">Reason (Optional)</Label>
               <Input
@@ -469,7 +469,7 @@ export default function AssetManagementDashboard() {
                 placeholder="Reason for clawback..."
               />
             </div>
-            
+
             {selectedAsset && (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
@@ -480,8 +480,8 @@ export default function AssetManagementDashboard() {
               </Alert>
             )}
           </div>
-          
-          <DialogFooter>
+
+          <div className="flex justify-end gap-2 pt-4">
             <Button
               variant="outline"
               onClick={() => setShowClawbackDialog(false)}
@@ -496,7 +496,7 @@ export default function AssetManagementDashboard() {
             >
               {loading ? "Executing..." : "Execute Clawback"}
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

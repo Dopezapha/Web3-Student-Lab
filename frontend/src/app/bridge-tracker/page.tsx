@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Badge } from "@/components/ui/Badge";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Progress } from "@/components/ui/Progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
 import { 
   ArrowRightLeft, 
   Clock, 
@@ -319,18 +319,12 @@ export default function BridgeTransactionTracker() {
             {autoRefresh ? "Auto-refreshing" : "Auto-refresh"}
           </Button>
           <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <HelpCircle className="mr-2 h-4 w-4" />
-                Need Help?
-              </Button>
-            </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Bridge Transaction Help</DialogTitle>
-                <DialogDescription>
+                <p className="text-sm text-muted-foreground mt-2">
                   Learn how to track your cross-chain bridge transactions
-                </DialogDescription>
+                </p>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -564,20 +558,19 @@ export default function BridgeTransactionTracker() {
                               {selectedTransaction.sourceTxHash}
                             </div>
                           </div>
-                          <Button variant="outline" size="sm" asChild>
-                            <a
-                              href={getExplorerUrl(selectedTransaction.sourceChain, selectedTransaction.sourceTxHash)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
+                          {selectedTransaction.sourceTxHash && selectedTransaction.sourceChain && (
+                            <Button variant="outline" size="sm" onClick={() => {
+                              const url = getExplorerUrl(selectedTransaction.sourceChain, selectedTransaction.sourceTxHash ?? '');
+                              if (url) window.open(url, '_blank');
+                            }}>
                               <ExternalLink className="h-4 w-4 mr-2" />
                               View
-                            </a>
-                          </Button>
+                            </Button>
+                          )}
                         </div>
                       )}
                       
-                      {selectedTransaction.targetTxHash && (
+                      {selectedTransaction.targetTxHash && selectedTransaction.targetChain && (
                         <div className="flex items-center justify-between p-3 border rounded-lg">
                           <div>
                             <div className="font-semibold">Target Transaction</div>
@@ -588,20 +581,19 @@ export default function BridgeTransactionTracker() {
                               {selectedTransaction.targetTxHash}
                             </div>
                           </div>
-                          <Button variant="outline" size="sm" asChild>
-                            <a
-                              href={getExplorerUrl(selectedTransaction.targetChain, selectedTransaction.targetTxHash)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
+                          {selectedTransaction.targetTxHash && selectedTransaction.targetChain && (
+                            <Button variant="outline" size="sm" onClick={() => {
+                              const url = getExplorerUrl(selectedTransaction.targetChain, selectedTransaction.targetTxHash ?? '');
+                              if (url) window.open(url, '_blank');
+                            }}>
                               <ExternalLink className="h-4 w-4 mr-2" />
                               View
-                            </a>
-                          </Button>
+                            </Button>
+                          )}
                         </div>
                       )}
                       
-                      {selectedTransaction.refundTxHash && (
+                      {selectedTransaction.refundTxHash && selectedTransaction.sourceChain && (
                         <div className="flex items-center justify-between p-3 border rounded-lg">
                           <div>
                             <div className="font-semibold">Refund Transaction</div>
@@ -612,16 +604,15 @@ export default function BridgeTransactionTracker() {
                               {selectedTransaction.refundTxHash}
                             </div>
                           </div>
-                          <Button variant="outline" size="sm" asChild>
-                            <a
-                              href={getExplorerUrl(selectedTransaction.sourceChain, selectedTransaction.refundTxHash)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
+                          {selectedTransaction.refundTxHash && selectedTransaction.sourceChain && (
+                            <Button variant="outline" size="sm" onClick={() => {
+                              const url = getExplorerUrl(selectedTransaction.sourceChain, selectedTransaction.refundTxHash ?? '');
+                              if (url) window.open(url, '_blank');
+                            }}>
                               <ExternalLink className="h-4 w-4 mr-2" />
                               View
-                            </a>
-                          </Button>
+                            </Button>
+                          )}
                         </div>
                       )}
                     </div>
