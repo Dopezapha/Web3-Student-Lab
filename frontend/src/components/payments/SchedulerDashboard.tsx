@@ -2,17 +2,17 @@
 
 import { useWallet } from '@/contexts/WalletContext';
 import {
-    AlertCircle,
-    Calendar,
-    CheckCircle,
-    Clock,
-    Loader2,
-    Pause,
-    Play,
-    Plus,
-    Trash2,
-    TrendingUp,
-    X
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Loader2,
+  Pause,
+  Play,
+  Plus,
+  Trash2,
+  TrendingUp,
+  X,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -205,9 +205,7 @@ export const SchedulerDashboard: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setSchedules(
-        schedules.map((s) =>
-          s.id === scheduleId ? { ...s, status: 'paused' as const } : s
-        )
+        schedules.map((s) => (s.id === scheduleId ? { ...s, status: 'paused' as const } : s))
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to pause schedule');
@@ -225,9 +223,7 @@ export const SchedulerDashboard: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setSchedules(
-        schedules.map((s) =>
-          s.id === scheduleId ? { ...s, status: 'active' as const } : s
-        )
+        schedules.map((s) => (s.id === scheduleId ? { ...s, status: 'active' as const } : s))
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to resume schedule');
@@ -249,9 +245,7 @@ export const SchedulerDashboard: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setSchedules(
-        schedules.map((s) =>
-          s.id === scheduleId ? { ...s, status: 'cancelled' as const } : s
-        )
+        schedules.map((s) => (s.id === scheduleId ? { ...s, status: 'cancelled' as const } : s))
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to cancel schedule');
@@ -308,10 +302,10 @@ export const SchedulerDashboard: React.FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h2 className="text-lg font-medium text-gray-900 mb-2">Wallet Not Connected</h2>
+          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+          <h2 className="mb-2 text-lg font-medium text-gray-900">Wallet Not Connected</h2>
           <p className="text-gray-600">Please connect your wallet to manage payment schedules.</p>
         </div>
       </div>
@@ -321,11 +315,11 @@ export const SchedulerDashboard: React.FC = () => {
   const analytics = calculateAnalytics();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Scheduler</h1>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">Payment Scheduler</h1>
           <p className="text-gray-600">
             Manage recurring token transfers with conditional execution
           </p>
@@ -333,11 +327,11 @@ export const SchedulerDashboard: React.FC = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
             <div className="flex-1">
               <h3 className="font-medium text-red-900">Error</h3>
-              <p className="text-sm text-red-700 mt-1">{error}</p>
+              <p className="mt-1 text-sm text-red-700">{error}</p>
             </div>
             <button
               onClick={() => setError(null)}
@@ -350,32 +344,32 @@ export const SchedulerDashboard: React.FC = () => {
         )}
 
         {/* Analytics Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="rounded-lg bg-white p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Schedules</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{analytics.totalSchedules}</p>
+                <p className="text-sm font-medium text-gray-600">Total Schedules</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{analytics.totalSchedules}</p>
               </div>
               <Calendar className="h-8 w-8 text-blue-500 opacity-20" />
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-lg bg-white p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Active Schedules</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{analytics.activeSchedules}</p>
+                <p className="text-sm font-medium text-gray-600">Active Schedules</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{analytics.activeSchedules}</p>
               </div>
               <Play className="h-8 w-8 text-green-500 opacity-20" />
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-lg bg-white p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Transferred</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-gray-600">Total Transferred</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">
                   {analytics.totalTransferred.toLocaleString()}
                 </p>
               </div>
@@ -383,11 +377,11 @@ export const SchedulerDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-lg bg-white p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Success Rate</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
+                <p className="text-sm font-medium text-gray-600">Success Rate</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">
                   {analytics.successRate.toFixed(1)}%
                 </p>
               </div>
@@ -400,7 +394,7 @@ export const SchedulerDashboard: React.FC = () => {
         <div className="mb-8">
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
             aria-label="Create new payment schedule"
           >
             <Plus className="h-5 w-5" />
@@ -410,14 +404,17 @@ export const SchedulerDashboard: React.FC = () => {
 
         {/* Create Schedule Form */}
         {showCreateForm && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Create New Schedule</h2>
+          <div className="mb-8 rounded-lg bg-white p-6 shadow">
+            <h2 className="mb-6 text-lg font-bold text-gray-900">Create New Schedule</h2>
 
             <form onSubmit={handleCreateSchedule} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Recipient */}
                 <div>
-                  <label htmlFor="recipient" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="recipient"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Recipient Address *
                   </label>
                   <input
@@ -426,21 +423,21 @@ export const SchedulerDashboard: React.FC = () => {
                     placeholder="GDEF...456"
                     value={formData.recipient}
                     onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     required
                   />
                 </div>
 
                 {/* Token */}
                 <div>
-                  <label htmlFor="token" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="token" className="mb-2 block text-sm font-medium text-gray-700">
                     Token *
                   </label>
                   <select
                     id="token"
                     value={formData.token}
                     onChange={(e) => setFormData({ ...formData, token: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
                     {SUPPORTED_TOKENS.map((token) => (
                       <option key={token.symbol} value={token.symbol}>
@@ -452,7 +449,7 @@ export const SchedulerDashboard: React.FC = () => {
 
                 {/* Amount */}
                 <div>
-                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="amount" className="mb-2 block text-sm font-medium text-gray-700">
                     Amount *
                   </label>
                   <input
@@ -461,7 +458,7 @@ export const SchedulerDashboard: React.FC = () => {
                     placeholder="100"
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     required
                     min="0"
                     step="0.01"
@@ -470,14 +467,17 @@ export const SchedulerDashboard: React.FC = () => {
 
                 {/* Interval */}
                 <div>
-                  <label htmlFor="interval" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="interval"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Interval *
                   </label>
                   <select
                     id="interval"
                     value={formData.interval}
                     onChange={(e) => setFormData({ ...formData, interval: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
                     {INTERVAL_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -492,7 +492,7 @@ export const SchedulerDashboard: React.FC = () => {
                   <div>
                     <label
                       htmlFor="customInterval"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="mb-2 block text-sm font-medium text-gray-700"
                     >
                       Interval (seconds) *
                     </label>
@@ -504,7 +504,7 @@ export const SchedulerDashboard: React.FC = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, customIntervalSeconds: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       required
                       min="1"
                     />
@@ -515,7 +515,7 @@ export const SchedulerDashboard: React.FC = () => {
                 <div>
                   <label
                     htmlFor="maxExecutions"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className="mb-2 block text-sm font-medium text-gray-700"
                   >
                     Max Executions (optional)
                   </label>
@@ -525,7 +525,7 @@ export const SchedulerDashboard: React.FC = () => {
                     placeholder="30"
                     value={formData.maxExecutions}
                     onChange={(e) => setFormData({ ...formData, maxExecutions: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     min="1"
                   />
                 </div>
@@ -536,7 +536,7 @@ export const SchedulerDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 transition-colors font-medium"
+                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:bg-blue-400"
                 >
                   {isLoading ? (
                     <>
@@ -553,7 +553,7 @@ export const SchedulerDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  className="rounded-lg bg-gray-200 px-4 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-300"
                 >
                   Cancel
                 </button>
@@ -563,63 +563,63 @@ export const SchedulerDashboard: React.FC = () => {
         )}
 
         {/* Schedules List */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="overflow-hidden rounded-lg bg-white shadow">
+          <div className="border-b border-gray-200 px-6 py-4">
             <h2 className="text-lg font-bold text-gray-900">Your Schedules</h2>
           </div>
 
           {isLoading && !schedules.length ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 text-gray-400 animate-spin" />
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
             </div>
           ) : schedules.length === 0 ? (
             <div className="px-6 py-12 text-center">
-              <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <Calendar className="mx-auto mb-4 h-12 w-12 text-gray-400" />
               <p className="text-gray-600">No schedules yet. Create one to get started.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-200 bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Recipient
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Interval
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Next Execution
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Executions
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {schedules.map((schedule) => (
-                    <tr key={schedule.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                    <tr key={schedule.id} className="transition-colors hover:bg-gray-50">
+                      <td className="px-6 py-4 font-mono text-sm whitespace-nowrap text-gray-900">
                         {schedule.recipient}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                         {schedule.amount} {schedule.token}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                         {schedule.interval}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-3 py-1 text-xs font-medium rounded-full ${
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${
                             schedule.status === 'active'
                               ? 'bg-green-100 text-green-800'
                               : schedule.status === 'paused'
@@ -632,18 +632,18 @@ export const SchedulerDashboard: React.FC = () => {
                           {schedule.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                         {schedule.nextExecution.toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                         {schedule.executionCount}
                         {schedule.maxExecutions && `/${schedule.maxExecutions}`}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                      <td className="space-x-2 px-6 py-4 text-sm whitespace-nowrap">
                         {schedule.status === 'active' && (
                           <button
                             onClick={() => handlePauseSchedule(schedule.id)}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition-colors"
+                            className="inline-flex items-center gap-1 rounded bg-yellow-100 px-2 py-1 text-xs text-yellow-700 transition-colors hover:bg-yellow-200"
                             aria-label={`Pause schedule ${schedule.id}`}
                           >
                             <Pause className="h-3 w-3" />
@@ -653,7 +653,7 @@ export const SchedulerDashboard: React.FC = () => {
                         {schedule.status === 'paused' && (
                           <button
                             onClick={() => handleResumeSchedule(schedule.id)}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            className="inline-flex items-center gap-1 rounded bg-green-100 px-2 py-1 text-xs text-green-700 transition-colors hover:bg-green-200"
                             aria-label={`Resume schedule ${schedule.id}`}
                           >
                             <Play className="h-3 w-3" />
@@ -662,7 +662,7 @@ export const SchedulerDashboard: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleViewHistory(schedule)}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                          className="inline-flex items-center gap-1 rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200"
                           aria-label={`View history for schedule ${schedule.id}`}
                         >
                           <Clock className="h-3 w-3" />
@@ -670,7 +670,7 @@ export const SchedulerDashboard: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleCancelSchedule(schedule.id)}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                          className="inline-flex items-center gap-1 rounded bg-red-100 px-2 py-1 text-xs text-red-700 transition-colors hover:bg-red-200"
                           aria-label={`Cancel schedule ${schedule.id}`}
                         >
                           <Trash2 className="h-3 w-3" />
@@ -687,9 +687,9 @@ export const SchedulerDashboard: React.FC = () => {
 
         {/* Execution History Modal */}
         {selectedSchedule && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-96 overflow-y-auto">
-              <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+            <div className="max-h-96 w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
+              <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <h3 className="text-lg font-bold text-gray-900">
                   Execution History - {selectedSchedule.recipient}
                 </h3>
@@ -707,15 +707,15 @@ export const SchedulerDashboard: React.FC = () => {
 
               <div className="px-6 py-4">
                 {executionHistory.length === 0 ? (
-                  <p className="text-gray-600 text-center py-8">No execution history yet.</p>
+                  <p className="py-8 text-center text-gray-600">No execution history yet.</p>
                 ) : (
                   <div className="space-y-4">
                     {executionHistory.map((record, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200"
+                        className="flex items-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-4"
                       >
-                        <div className="flex-shrink-0 mt-1">
+                        <div className="mt-1 flex-shrink-0">
                           {record.status === 'success' ? (
                             <CheckCircle className="h-5 w-5 text-green-600" />
                           ) : (
@@ -723,7 +723,7 @@ export const SchedulerDashboard: React.FC = () => {
                           )}
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="mb-2 flex items-center justify-between">
                             <span className="font-medium text-gray-900">
                               {record.status === 'success' ? 'Successful' : 'Failed'}
                             </span>

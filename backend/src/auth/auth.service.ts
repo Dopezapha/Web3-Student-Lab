@@ -82,11 +82,7 @@ export const formatUserResponse = (student: {
   };
 };
 
-import { 
-  generateAccessToken, 
-  generateRefreshToken,
-  TokenPayload 
-} from './token.service.js';
+import { generateAccessToken, generateRefreshToken, TokenPayload } from './token.service.js';
 
 /**
  * Register a new student

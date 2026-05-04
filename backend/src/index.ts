@@ -100,11 +100,7 @@ if (process.env.NODE_ENV !== 'test') {
     logger.info('Shutting down gracefully...');
     await redisClient.disconnect();
     await prisma.$disconnect();
-    await Promise.all([
-      redisConnection.quit(),
-      pubClient.quit(),
-      subClient.quit(),
-    ]);
+    await Promise.all([redisConnection.quit(), pubClient.quit(), subClient.quit()]);
     server?.close(() => {
       logger.info('Server closed');
       process.exit(0);
@@ -115,11 +111,7 @@ if (process.env.NODE_ENV !== 'test') {
     logger.info('Shutting down gracefully...');
     await redisClient.disconnect();
     await prisma.$disconnect();
-    await Promise.all([
-      redisConnection.quit(),
-      pubClient.quit(),
-      subClient.quit(),
-    ]);
+    await Promise.all([redisConnection.quit(), pubClient.quit(), subClient.quit()]);
     server?.close(() => {
       logger.info('Server closed');
       process.exit(0);

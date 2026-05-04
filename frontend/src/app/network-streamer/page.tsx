@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Label } from "@/components/ui/Label";
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Label } from '@/components/ui/Label';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Slider } from "@/components/ui/Slider";
-import { Switch } from "@/components/ui/Switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { Slider } from '@/components/ui/Slider';
+import { Switch } from '@/components/ui/Switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import {
-    Activity,
-    ArrowRightLeft,
-    Clock,
-    Eye,
-    EyeOff,
-    Filter,
-    Pause,
-    Play,
-    RefreshCw,
-    Users,
-    Zap
-} from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+  Activity,
+  ArrowRightLeft,
+  Clock,
+  Eye,
+  EyeOff,
+  Filter,
+  Pause,
+  Play,
+  RefreshCw,
+  Users,
+  Zap,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // D3 imports will be handled dynamically to avoid SSR issues
 interface Node {
@@ -108,14 +108,14 @@ export default function NetworkLedgerStreamer() {
   const [streamData, setStreamData] = useState<StreamData>({
     ledgers: [],
     transactions: [],
-    accounts: []
+    accounts: [],
   });
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [stats, setStats] = useState({
     ledgersPerSecond: 0,
     transactionsPerSecond: 0,
     totalAccounts: 0,
-    totalValue: 0
+    totalValue: 0,
   });
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -135,81 +135,89 @@ export default function NetworkLedgerStreamer() {
     const height = svgRef.current.clientHeight;
 
     // Clear existing content
-    svg.selectAll("*").remove();
+    svg.selectAll('*').remove();
 
     // Create simulation
     const simulation = forceSimulation<Node>()
-      .force("link", forceLink<Node, Link>().id(d => d.id).distance(50))
-      .force("charge", forceManyBody().strength(-300))
-      .force("center", forceCenter(width / 2, height / 2))
-      .force("collision", forceCollide().radius(d => d.radius + 5));
+      .force(
+        'link',
+        forceLink<Node, Link>()
+          .id((d) => d.id)
+          .distance(50)
+      )
+      .force('charge', forceManyBody().strength(-300))
+      .force('center', forceCenter(width / 2, height / 2))
+      .force(
+        'collision',
+        forceCollide().radius((d) => d.radius + 5)
+      );
 
     simulationRef.current = simulation;
 
     // Create container groups
-    const container = svg.append("g");
+    const container = svg.append('g');
 
     // Add zoom behavior
-    const zoom = d3.zoom()
+    const zoom = d3
+      .zoom()
       .scaleExtent([0.1, 4])
-      .on("zoom", (event) => {
-        container.attr("transform", event.transform);
+      .on('zoom', (event) => {
+        container.attr('transform', event.transform);
       });
 
     svg.call(zoom);
 
     // Create link elements
-    const link = container.append("g")
-      .selectAll("line")
+    const link = container
+      .append('g')
+      .selectAll('line')
       .data(links)
-      .enter().append("line")
-      .attr("stroke", d => d.color)
-      .attr("stroke-width", d => Math.sqrt(d.value))
-      .attr("opacity", 0.6);
+      .enter()
+      .append('line')
+      .attr('stroke', (d) => d.color)
+      .attr('stroke-width', (d) => Math.sqrt(d.value))
+      .attr('opacity', 0.6);
 
     // Create node elements
-    const node = container.append("g")
-      .selectAll("circle")
+    const node = container
+      .append('g')
+      .selectAll('circle')
       .data(nodes)
-      .enter().append("circle")
-      .attr("r", d => d.radius)
-      .attr("fill", d => d.color)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 2)
-      .style("cursor", "pointer")
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended) as any)
-      .on("click", (event, d) => {
+      .enter()
+      .append('circle')
+      .attr('r', (d) => d.radius)
+      .attr('fill', (d) => d.color)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2)
+      .style('cursor', 'pointer')
+      .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended) as any)
+      .on('click', (event, d) => {
         setSelectedNode(d);
       });
 
     // Add labels for important nodes
-    const label = container.append("g")
-      .selectAll("text")
-      .data(nodes.filter(d => d.type === 'ledger' || d.type === 'account'))
-      .enter().append("text")
-      .text(d => d.name)
-      .attr("font-size", "10px")
-      .attr("dx", 15)
-      .attr("dy", 4);
+    const label = container
+      .append('g')
+      .selectAll('text')
+      .data(nodes.filter((d) => d.type === 'ledger' || d.type === 'account'))
+      .enter()
+      .append('text')
+      .text((d) => d.name)
+      .attr('font-size', '10px')
+      .attr('dx', 15)
+      .attr('dy', 4);
 
     // Update positions on simulation tick
-    simulation.on("tick", () => {
+    simulation.on('tick', () => {
       link
-        .attr("x1", (d: any) => d.source.x)
-        .attr("y1", (d: any) => d.source.y)
-        .attr("x2", (d: any) => d.target.x)
-        .attr("y2", (d: any) => d.target.y);
+        .attr('x1', (d: any) => d.source.x)
+        .attr('y1', (d: any) => d.source.y)
+        .attr('x2', (d: any) => d.target.x)
+        .attr('y2', (d: any) => d.target.y);
 
-      node
-        .attr("cx", (d: any) => d.x)
-        .attr("cy", (d: any) => d.y);
+      node.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
 
-      label
-        .attr("x", (d: any) => d.x)
-        .attr("y", (d: any) => d.y);
+      label.attr('x', (d: any) => d.x).attr('y', (d: any) => d.y);
     });
 
     function dragstarted(event: any, d: Node) {
@@ -252,7 +260,7 @@ export default function NetworkLedgerStreamer() {
           transactionCount: Math.floor(Math.random() * 100),
           operationCount: Math.floor(Math.random() * 500),
           baseFee: 100,
-          baseReserve: 5000000
+          baseReserve: 5000000,
         };
 
         const newTransaction: TransactionData = {
@@ -260,25 +268,27 @@ export default function NetworkLedgerStreamer() {
           ledger: newLedger.sequence,
           timestamp: new Date(),
           sourceAccount: `G${Math.random().toString(16).substring(2, 58)}`,
-          operations: [{
-            type: 'payment',
-            amount: (Math.random() * 1000).toFixed(7),
-            asset: 'XLM',
-            destination: `G${Math.random().toString(16).substring(2, 58)}`
-          }]
+          operations: [
+            {
+              type: 'payment',
+              amount: (Math.random() * 1000).toFixed(7),
+              asset: 'XLM',
+              destination: `G${Math.random().toString(16).substring(2, 58)}`,
+            },
+          ],
         };
 
         const newAccount: AccountData = {
           id: `G${Math.random().toString(16).substring(2, 58)}`,
           balance: (Math.random() * 10000).toFixed(7),
           sequence: Math.floor(Math.random() * 1000),
-          lastActivity: new Date()
+          lastActivity: new Date(),
         };
 
-        setStreamData(prev => ({
+        setStreamData((prev) => ({
           ledgers: [...prev.ledgers.slice(-50), newLedger],
           transactions: [...prev.transactions.slice(-100), newTransaction],
-          accounts: [...prev.accounts.slice(-200), newAccount]
+          accounts: [...prev.accounts.slice(-200), newAccount],
         }));
 
         // Update graph data
@@ -317,14 +327,14 @@ export default function NetworkLedgerStreamer() {
         data: {
           hash: transaction.hash,
           amount: transaction.operations[0]?.amount,
-          timestamp: transaction.timestamp
-        }
+          timestamp: transaction.timestamp,
+        },
       });
     }
 
     // Add account nodes
     if (showAccounts) {
-      [transaction.sourceAccount, transaction.operations[0]?.destination].forEach(accountId => {
+      [transaction.sourceAccount, transaction.operations[0]?.destination].forEach((accountId) => {
         if (accountId) {
           newNodes.push({
             id: accountId,
@@ -334,8 +344,8 @@ export default function NetworkLedgerStreamer() {
             color: '#10b981',
             data: {
               balance: account.balance,
-              sequence: account.sequence
-            }
+              sequence: account.sequence,
+            },
           });
         }
       });
@@ -351,8 +361,8 @@ export default function NetworkLedgerStreamer() {
         color: '#f59e0b',
         data: {
           sequence: transaction.ledger,
-          hash: transaction.hash
-        }
+          hash: transaction.hash,
+        },
       });
     }
 
@@ -363,7 +373,7 @@ export default function NetworkLedgerStreamer() {
         target: transaction.hash,
         value: 2,
         type: 'payment',
-        color: '#3b82f6'
+        color: '#3b82f6',
       });
 
       if (transaction.operations[0]?.destination) {
@@ -372,22 +382,22 @@ export default function NetworkLedgerStreamer() {
           target: transaction.operations[0].destination,
           value: 2,
           type: 'payment',
-          color: '#3b82f6'
+          color: '#3b82f6',
         });
       }
     }
 
-    setNodes(prev => {
-      const filtered = prev.filter(n =>
-        n.data?.timestamp &&
-        (Date.now() - n.data.timestamp.getTime()) < timeWindow[0] * 60 * 1000
+    setNodes((prev) => {
+      const filtered = prev.filter(
+        (n) =>
+          n.data?.timestamp && Date.now() - n.data.timestamp.getTime() < timeWindow[0] * 60 * 1000
       );
       return [...filtered.slice(-100), ...newNodes];
     });
 
-    setLinks(prev => {
-      const filtered = prev.filter(l =>
-        (Date.now() - (new Date().getTime())) < timeWindow[0] * 60 * 1000
+    setLinks((prev) => {
+      const filtered = prev.filter(
+        (l) => Date.now() - new Date().getTime() < timeWindow[0] * 60 * 1000
       );
       return [...filtered.slice(-200), ...newLinks];
     });
@@ -399,9 +409,10 @@ export default function NetworkLedgerStreamer() {
       ledgersPerSecond: (Math.random() * 0.2).toFixed(3) as any,
       transactionsPerSecond: (Math.random() * 5).toFixed(3) as any,
       totalAccounts: streamData.accounts.length,
-      totalValue: streamData.transactions.reduce((sum, tx) =>
-        sum + parseFloat(tx.operations[0]?.amount || '0'), 0
-      )
+      totalValue: streamData.transactions.reduce(
+        (sum, tx) => sum + parseFloat(tx.operations[0]?.amount || '0'),
+        0
+      ),
     });
   };
 
@@ -422,7 +433,7 @@ export default function NetworkLedgerStreamer() {
   }, []);
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="container mx-auto space-y-6 py-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Stellar Network Ledger Streamer</h1>
@@ -431,25 +442,25 @@ export default function NetworkLedgerStreamer() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            onClick={() => setIsPaused(!isPaused)}
-            disabled={!isStreaming}
-            variant="outline"
-          >
-            {isPaused ? <Play className="h-4 w-4 mr-2" /> : <Pause className="h-4 w-4 mr-2" />}
-            {isPaused ? "Resume" : "Pause"}
+          <Button onClick={() => setIsPaused(!isPaused)} disabled={!isStreaming} variant="outline">
+            {isPaused ? <Play className="mr-2 h-4 w-4" /> : <Pause className="mr-2 h-4 w-4" />}
+            {isPaused ? 'Resume' : 'Pause'}
           </Button>
           <Button
             onClick={isStreaming ? stopStreaming : startStreaming}
-            variant={isStreaming ? "destructive" : "default"}
+            variant={isStreaming ? 'destructive' : 'default'}
           >
-            {isStreaming ? <RefreshCw className="h-4 w-4 mr-2" /> : <Activity className="h-4 w-4 mr-2" />}
-            {isStreaming ? "Stop Streaming" : "Start Streaming"}
+            {isStreaming ? (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            ) : (
+              <Activity className="mr-2 h-4 w-4" />
+            )}
+            {isStreaming ? 'Stop Streaming' : 'Start Streaming'}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         {/* Controls Panel */}
         <Card>
           <CardHeader>
@@ -457,9 +468,7 @@ export default function NetworkLedgerStreamer() {
               <Filter className="h-5 w-5" />
               Controls
             </CardTitle>
-            <CardDescription>
-              Configure the visualization
-            </CardDescription>
+            <CardDescription>Configure the visualization</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
@@ -493,11 +502,7 @@ export default function NetworkLedgerStreamer() {
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="show-ledgers">Show Ledgers</Label>
-                <Switch
-                  id="show-ledgers"
-                  checked={showLedgers}
-                  onCheckedChange={setShowLedgers}
-                />
+                <Switch id="show-ledgers" checked={showLedgers} onCheckedChange={setShowLedgers} />
               </div>
             </div>
 
@@ -527,15 +532,15 @@ export default function NetworkLedgerStreamer() {
               <h4 className="font-semibold">Legend</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <div className="h-3 w-3 rounded-full bg-amber-500"></div>
                   <span>Ledgers</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <div className="h-3 w-3 rounded-full bg-blue-500"></div>
                   <span>Transactions</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="h-3 w-3 rounded-full bg-green-500"></div>
                   <span>Accounts</span>
                 </div>
               </div>
@@ -551,22 +556,15 @@ export default function NetworkLedgerStreamer() {
                 <Zap className="h-5 w-5" />
                 Network Graph
               </CardTitle>
-              <CardDescription>
-                Real-time network activity visualization
-              </CardDescription>
+              <CardDescription>Real-time network activity visualization</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="relative w-full h-96 border rounded-lg overflow-hidden">
-                <svg
-                  ref={svgRef}
-                  width="100%"
-                  height="100%"
-                  className="bg-muted/20"
-                />
+              <div className="relative h-96 w-full overflow-hidden rounded-lg border">
+                <svg ref={svgRef} width="100%" height="100%" className="bg-muted/20" />
                 {!isStreaming && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+                  <div className="bg-background/80 absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <Activity className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
                       <p className="text-muted-foreground">
                         Click "Start Streaming" to begin real-time visualization
                       </p>
@@ -585,16 +583,14 @@ export default function NetworkLedgerStreamer() {
               <Eye className="h-5 w-5" />
               Details
             </CardTitle>
-            <CardDescription>
-              Click on nodes for details
-            </CardDescription>
+            <CardDescription>Click on nodes for details</CardDescription>
           </CardHeader>
           <CardContent>
             {selectedNode ? (
               <div className="space-y-4">
                 <div>
                   <Badge variant="secondary">{selectedNode.type}</Badge>
-                  <h3 className="font-semibold mt-2">{selectedNode.name}</h3>
+                  <h3 className="mt-2 font-semibold">{selectedNode.name}</h3>
                 </div>
 
                 {selectedNode.data && (
@@ -620,7 +616,9 @@ export default function NetworkLedgerStreamer() {
                     {selectedNode.data.timestamp && (
                       <div>
                         <span className="font-medium">Time:</span>
-                        <span className="ml-2">{selectedNode.data.timestamp.toLocaleTimeString()}</span>
+                        <span className="ml-2">
+                          {selectedNode.data.timestamp.toLocaleTimeString()}
+                        </span>
                       </div>
                     )}
                     {selectedNode.data.hash && (
@@ -635,11 +633,9 @@ export default function NetworkLedgerStreamer() {
                 )}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <EyeOff className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">
-                  Select a node to view details
-                </p>
+              <div className="py-8 text-center">
+                <EyeOff className="text-muted-foreground mx-auto mb-2 h-8 w-8" />
+                <p className="text-muted-foreground text-sm">Select a node to view details</p>
               </div>
             )}
           </CardContent>
@@ -653,9 +649,7 @@ export default function NetworkLedgerStreamer() {
             <Clock className="h-5 w-5" />
             Recent Activity
           </CardTitle>
-          <CardDescription>
-            Latest network events
-          </CardDescription>
+          <CardDescription>Latest network events</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="transactions" className="w-full">
@@ -668,22 +662,28 @@ export default function NetworkLedgerStreamer() {
             <TabsContent value="transactions">
               <ScrollArea className="h-48">
                 <div className="space-y-2">
-                  {streamData.transactions.slice(-10).reverse().map((tx, index) => (
-                    <div key={tx.hash} className="flex items-center justify-between p-2 border rounded">
-                      <div className="flex items-center gap-2">
-                        <ArrowRightLeft className="h-4 w-4 text-blue-500" />
-                        <div>
-                          <div className="font-mono text-sm">{tx.hash.substring(0, 12)}...</div>
-                          <div className="text-xs text-muted-foreground">
-                            {tx.operations[0]?.amount} XLM
+                  {streamData.transactions
+                    .slice(-10)
+                    .reverse()
+                    .map((tx, index) => (
+                      <div
+                        key={tx.hash}
+                        className="flex items-center justify-between rounded border p-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <ArrowRightLeft className="h-4 w-4 text-blue-500" />
+                          <div>
+                            <div className="font-mono text-sm">{tx.hash.substring(0, 12)}...</div>
+                            <div className="text-muted-foreground text-xs">
+                              {tx.operations[0]?.amount} XLM
+                            </div>
                           </div>
                         </div>
+                        <div className="text-muted-foreground text-xs">
+                          {tx.timestamp.toLocaleTimeString()}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {tx.timestamp.toLocaleTimeString()}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </ScrollArea>
             </TabsContent>
@@ -691,22 +691,28 @@ export default function NetworkLedgerStreamer() {
             <TabsContent value="ledgers">
               <ScrollArea className="h-48">
                 <div className="space-y-2">
-                  {streamData.ledgers.slice(-10).reverse().map((ledger, index) => (
-                    <div key={ledger.hash} className="flex items-center justify-between p-2 border rounded">
-                      <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-amber-500" />
-                        <div>
-                          <div className="font-semibold">Ledger {ledger.sequence}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {ledger.transactionCount} txs, {ledger.operationCount} ops
+                  {streamData.ledgers
+                    .slice(-10)
+                    .reverse()
+                    .map((ledger, index) => (
+                      <div
+                        key={ledger.hash}
+                        className="flex items-center justify-between rounded border p-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Activity className="h-4 w-4 text-amber-500" />
+                          <div>
+                            <div className="font-semibold">Ledger {ledger.sequence}</div>
+                            <div className="text-muted-foreground text-xs">
+                              {ledger.transactionCount} txs, {ledger.operationCount} ops
+                            </div>
                           </div>
                         </div>
+                        <div className="text-muted-foreground text-xs">
+                          {ledger.timestamp.toLocaleTimeString()}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {ledger.timestamp.toLocaleTimeString()}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </ScrollArea>
             </TabsContent>
@@ -714,22 +720,30 @@ export default function NetworkLedgerStreamer() {
             <TabsContent value="accounts">
               <ScrollArea className="h-48">
                 <div className="space-y-2">
-                  {streamData.accounts.slice(-10).reverse().map((account, index) => (
-                    <div key={account.id} className="flex items-center justify-between p-2 border rounded">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-green-500" />
-                        <div>
-                          <div className="font-mono text-sm">{account.id.substring(0, 12)}...</div>
-                          <div className="text-xs text-muted-foreground">
-                            {account.balance} XLM
+                  {streamData.accounts
+                    .slice(-10)
+                    .reverse()
+                    .map((account, index) => (
+                      <div
+                        key={account.id}
+                        className="flex items-center justify-between rounded border p-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-green-500" />
+                          <div>
+                            <div className="font-mono text-sm">
+                              {account.id.substring(0, 12)}...
+                            </div>
+                            <div className="text-muted-foreground text-xs">
+                              {account.balance} XLM
+                            </div>
                           </div>
                         </div>
+                        <div className="text-muted-foreground text-xs">
+                          {account.lastActivity.toLocaleTimeString()}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {account.lastActivity.toLocaleTimeString()}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </ScrollArea>
             </TabsContent>

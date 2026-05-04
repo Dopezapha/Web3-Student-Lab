@@ -78,7 +78,7 @@ describe('InlineComment', () => {
 
   it('hides edit button for other users comment', () => {
     const otherUser = { ...mockCurrentUser, id: 'user-2' };
-    
+
     render(
       <InlineComment
         comment={mockComment}

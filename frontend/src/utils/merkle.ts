@@ -1,4 +1,4 @@
-import { Address, nativeToScVal } from "@stellar/stellar-sdk";
+import { Address, nativeToScVal } from '@stellar/stellar-sdk';
 
 export interface Recipient {
   address: string;
@@ -30,13 +30,13 @@ export class MerkleTree {
     // env.crypto().sha256(&buffer)
 
     const addrScVal = Address.fromString(address).toScVal();
-    const amountScVal = nativeToScVal(BigInt(amount), { type: "i128" });
+    const amountScVal = nativeToScVal(BigInt(amount), { type: 'i128' });
 
     const addrXdr = addrScVal.toXDR();
     const amountXdr = amountScVal.toXDR();
 
     const combined = Buffer.concat([addrXdr, amountXdr]);
-    return Buffer.from(await crypto.subtle.digest("SHA-256", combined));
+    return Buffer.from(await crypto.subtle.digest('SHA-256', combined));
   }
 
   private async buildTree() {
@@ -64,12 +64,12 @@ export class MerkleTree {
     // buffer.append(&computed_hash.into());
     // buffer.append(&proof_element.into());
     const combined = Buffer.concat([left, right]);
-    return Buffer.from(await crypto.subtle.digest("SHA-256", combined));
+    return Buffer.from(await crypto.subtle.digest('SHA-256', combined));
   }
 
   public getRoot(): string {
-    if (this.tree.length === 0) return "";
-    return this.tree[this.tree.length - 1][0].toString("hex");
+    if (this.tree.length === 0) return '';
+    return this.tree[this.tree.length - 1][0].toString('hex');
   }
 
   public getProof(address: string, amount: string): string[] {
@@ -78,7 +78,7 @@ export class MerkleTree {
     // For simplicity, let's assume we can compute the leaf again.
     // However, computeLeaf is async.
     // Let's change the design or just wait for the leaf.
-    throw new Error("Use getProofAsync");
+    throw new Error('Use getProofAsync');
   }
 
   public async getProofAsync(address: string, amount: string): Promise<string[]> {
@@ -93,7 +93,7 @@ export class MerkleTree {
       const siblingIndex = isRightNode ? index - 1 : index + 1;
 
       if (siblingIndex < layer.length) {
-        proof.push(layer[siblingIndex].toString("hex"));
+        proof.push(layer[siblingIndex].toString('hex'));
       }
       index = Math.floor(index / 2);
     }

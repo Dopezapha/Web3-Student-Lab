@@ -44,16 +44,15 @@ describe('Workspace Isolation Security Tests', () => {
     });
 
     it('should fail if x-workspace-id header is missing', async () => {
-      const response = await request(app)
-        .get('/api/v1/students');
+      const response = await request(app).get('/api/v1/students');
 
       expect(response.status).toBe(400);
       expect(response.body.error).toMatch(/x-workspace-id/i);
     });
 
     it('should strictly isolate updates across workspaces', async () => {
-       // 1. Create student in Workspace A
-       const createResponse = await request(app)
+      // 1. Create student in Workspace A
+      const createResponse = await request(app)
         .post('/api/v1/students')
         .set('x-workspace-id', workspaceA)
         .send({
@@ -61,26 +60,26 @@ describe('Workspace Isolation Security Tests', () => {
           firstName: 'Original',
           lastName: 'Student',
         });
-       
-       const studentId = createResponse.body.id;
 
-       // 2. Try to update it from Workspace B
-       const updateResponse = await request(app)
+      const studentId = createResponse.body.id;
+
+      // 2. Try to update it from Workspace B
+      const updateResponse = await request(app)
         .put(`/api/v1/students/${studentId}`)
         .set('x-workspace-id', workspaceB)
         .send({
           firstName: 'Hacked',
         });
 
-       // Our Prisma extension makes it so that .update({ where: { id, workspaceId: 'B' } }) 
-       // fails to find the record, which usually throws a P2025 error in Prisma.
-       // The route catches this and returns a 500 (based on students.ts implementation).
-       expect(updateResponse.status).toBe(500);
+      // Our Prisma extension makes it so that .update({ where: { id, workspaceId: 'B' } })
+      // fails to find the record, which usually throws a P2025 error in Prisma.
+      // The route catches this and returns a 500 (based on students.ts implementation).
+      expect(updateResponse.status).toBe(500);
     });
 
     it('should strictly isolate deletions across workspaces', async () => {
-       // 1. Create student in Workspace A
-       const createResponse = await request(app)
+      // 1. Create student in Workspace A
+      const createResponse = await request(app)
         .post('/api/v1/students')
         .set('x-workspace-id', workspaceA)
         .send({
@@ -88,23 +87,23 @@ describe('Workspace Isolation Security Tests', () => {
           firstName: 'To Be Deleted',
           lastName: 'Student',
         });
-       
-       const studentId = createResponse.body.id;
 
-       // 2. Try to delete it from Workspace B
-       const deleteResponse = await request(app)
+      const studentId = createResponse.body.id;
+
+      // 2. Try to delete it from Workspace B
+      const deleteResponse = await request(app)
         .delete(`/api/v1/students/${studentId}`)
         .set('x-workspace-id', workspaceB);
 
-       // Should fail because the record is not found in Workspace B
-       expect(deleteResponse.status).toBe(500);
+      // Should fail because the record is not found in Workspace B
+      expect(deleteResponse.status).toBe(500);
 
-       // 3. Verify it still exists in Workspace A
-       const verifyResponse = await request(app)
+      // 3. Verify it still exists in Workspace A
+      const verifyResponse = await request(app)
         .get(`/api/v1/students/${studentId}`)
         .set('x-workspace-id', workspaceA);
-       
-       expect(verifyResponse.status).toBe(200);
+
+      expect(verifyResponse.status).toBe(200);
     });
   });
 });

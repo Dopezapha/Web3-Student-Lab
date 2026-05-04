@@ -9,9 +9,7 @@ export const subscriptionController = {
   getPlans: asyncHandler(async (req: Request, res: Response) => {
     const plans = await subscriptionService.getAllPlans();
 
-    return res.status(200).json(
-      ApiResponse.success('Plans retrieved successfully', plans)
-    );
+    return res.status(200).json(ApiResponse.success('Plans retrieved successfully', plans));
   }),
 
   // Get specific plan by tier
@@ -20,9 +18,7 @@ export const subscriptionController = {
 
     const plan = await subscriptionService.getPlanByTier(tier);
 
-    return res.status(200).json(
-      ApiResponse.success('Plan retrieved successfully', plan)
-    );
+    return res.status(200).json(ApiResponse.success('Plan retrieved successfully', plan));
   }),
 
   // Get user's subscriptions
@@ -30,16 +26,14 @@ export const subscriptionController = {
     const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(401).json(
-        ApiResponse.error('User not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('User not authenticated'));
     }
 
     const subscriptions = await subscriptionService.getUserSubscriptions(userId);
 
-    return res.status(200).json(
-      ApiResponse.success('User subscriptions retrieved successfully', subscriptions)
-    );
+    return res
+      .status(200)
+      .json(ApiResponse.success('User subscriptions retrieved successfully', subscriptions));
   }),
 
   // Create new subscription
@@ -48,9 +42,7 @@ export const subscriptionController = {
     const { tier, billingPeriod, paymentMethod, autoRenew } = req.body;
 
     if (!userId) {
-      return res.status(401).json(
-        ApiResponse.error('User not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('User not authenticated'));
     }
 
     const subscription = await subscriptionService.createSubscription({
@@ -58,7 +50,7 @@ export const subscriptionController = {
       tier,
       billingPeriod,
       paymentMethod,
-      autoRenew: autoRenew || false
+      autoRenew: autoRenew || false,
     });
 
     // Invalidate cache for user subscriptions
@@ -67,14 +59,14 @@ export const subscriptionController = {
     // Notify via WebSocket
     WebSocketServer.getInstance().broadcastToUser(userId, {
       type: 'subscription_created',
-      data: subscription
+      data: subscription,
     });
 
     logger.info(`Subscription created for user ${userId}: ${subscription.id}`);
 
-    return res.status(201).json(
-      ApiResponse.success('Subscription created successfully', subscription)
-    );
+    return res
+      .status(201)
+      .json(ApiResponse.success('Subscription created successfully', subscription));
   }),
 
   // Cancel subscription
@@ -83,15 +75,10 @@ export const subscriptionController = {
     const { subscriptionId } = req.params;
 
     if (!userId) {
-      return res.status(401).json(
-        ApiResponse.error('User not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('User not authenticated'));
     }
 
-    const result = await subscriptionService.cancelSubscription(
-      parseInt(subscriptionId),
-      userId
-    );
+    const result = await subscriptionService.cancelSubscription(parseInt(subscriptionId), userId);
 
     // Invalidate cache
     await redisConnection.del(`user_subscriptions:${userId}`);
@@ -100,14 +87,12 @@ export const subscriptionController = {
     // Notify via WebSocket
     WebSocketServer.getInstance().broadcastToUser(userId, {
       type: 'subscription_cancelled',
-      data: { subscriptionId: parseInt(subscriptionId), refundAmount: result.refundAmount }
+      data: { subscriptionId: parseInt(subscriptionId), refundAmount: result.refundAmount },
     });
 
     logger.info(`Subscription ${subscriptionId} cancelled by user ${userId}`);
 
-    return res.status(200).json(
-      ApiResponse.success('Subscription cancelled successfully', result)
-    );
+    return res.status(200).json(ApiResponse.success('Subscription cancelled successfully', result));
   }),
 
   // Renew subscription
@@ -116,9 +101,7 @@ export const subscriptionController = {
     const { subscriptionId } = req.params;
 
     if (!userId) {
-      return res.status(401).json(
-        ApiResponse.error('User not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('User not authenticated'));
     }
 
     const subscription = await subscriptionService.renewSubscription(
@@ -133,14 +116,14 @@ export const subscriptionController = {
     // Notify via WebSocket
     WebSocketServer.getInstance().broadcastToUser(userId, {
       type: 'subscription_renewed',
-      data: subscription
+      data: subscription,
     });
 
     logger.info(`Subscription ${subscriptionId} renewed by user ${userId}`);
 
-    return res.status(200).json(
-      ApiResponse.success('Subscription renewed successfully', subscription)
-    );
+    return res
+      .status(200)
+      .json(ApiResponse.success('Subscription renewed successfully', subscription));
   }),
 
   // Get specific subscription
@@ -149,9 +132,7 @@ export const subscriptionController = {
     const { subscriptionId } = req.params;
 
     if (!userId) {
-      return res.status(401).json(
-        ApiResponse.error('User not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('User not authenticated'));
     }
 
     const subscription = await subscriptionService.getSubscription(
@@ -159,9 +140,9 @@ export const subscriptionController = {
       userId
     );
 
-    return res.status(200).json(
-      ApiResponse.success('Subscription retrieved successfully', subscription)
-    );
+    return res
+      .status(200)
+      .json(ApiResponse.success('Subscription retrieved successfully', subscription));
   }),
 
   // Get subscription payment history
@@ -170,9 +151,7 @@ export const subscriptionController = {
     const { subscriptionId } = req.params;
 
     if (!userId) {
-      return res.status(401).json(
-        ApiResponse.error('User not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('User not authenticated'));
     }
 
     const payments = await subscriptionService.getSubscriptionPayments(
@@ -180,9 +159,9 @@ export const subscriptionController = {
       userId
     );
 
-    return res.status(200).json(
-      ApiResponse.success('Payment history retrieved successfully', payments)
-    );
+    return res
+      .status(200)
+      .json(ApiResponse.success('Payment history retrieved successfully', payments));
   }),
 
   // Admin: Get all subscriptions
@@ -193,12 +172,12 @@ export const subscriptionController = {
       page: parseInt(page as string),
       limit: parseInt(limit as string),
       status: status as string,
-      tier: tier as string
+      tier: tier as string,
     });
 
-    return res.status(200).json(
-      ApiResponse.success('All subscriptions retrieved successfully', subscriptions)
-    );
+    return res
+      .status(200)
+      .json(ApiResponse.success('All subscriptions retrieved successfully', subscriptions));
   }),
 
   // Admin: Get subscription analytics
@@ -207,9 +186,9 @@ export const subscriptionController = {
 
     const analytics = await subscriptionService.getSubscriptionAnalytics(period as string);
 
-    return res.status(200).json(
-      ApiResponse.success('Subscription analytics retrieved successfully', analytics)
-    );
+    return res
+      .status(200)
+      .json(ApiResponse.success('Subscription analytics retrieved successfully', analytics));
   }),
 
   // Admin: Update subscription plan
@@ -218,9 +197,7 @@ export const subscriptionController = {
     const { tier, name, description, price, currency, features, maxUsers, isActive } = req.body;
 
     if (!adminId) {
-      return res.status(401).json(
-        ApiResponse.error('Admin not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('Admin not authenticated'));
     }
 
     const plan = await subscriptionService.updatePlan({
@@ -231,7 +208,7 @@ export const subscriptionController = {
       currency,
       features,
       maxUsers,
-      isActive
+      isActive,
     });
 
     // Invalidate plans cache
@@ -240,14 +217,12 @@ export const subscriptionController = {
     // Broadcast plan update
     WebSocketServer.getInstance().broadcast({
       type: 'plan_updated',
-      data: plan
+      data: plan,
     });
 
     logger.info(`Plan ${tier} updated by admin ${adminId}`);
 
-    return res.status(200).json(
-      ApiResponse.success('Plan updated successfully', plan)
-    );
+    return res.status(200).json(ApiResponse.success('Plan updated successfully', plan));
   }),
 
   // Admin: Pause contract
@@ -256,9 +231,7 @@ export const subscriptionController = {
     const { reason } = req.body;
 
     if (!adminId) {
-      return res.status(401).json(
-        ApiResponse.error('Admin not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('Admin not authenticated'));
     }
 
     await subscriptionService.pauseContract(reason);
@@ -266,14 +239,12 @@ export const subscriptionController = {
     // Broadcast contract pause
     WebSocketServer.getInstance().broadcast({
       type: 'contract_paused',
-      data: { reason, pausedBy: adminId }
+      data: { reason, pausedBy: adminId },
     });
 
     logger.warn(`Contract paused by admin ${adminId}: ${reason}`);
 
-    return res.status(200).json(
-      ApiResponse.success('Contract paused successfully')
-    );
+    return res.status(200).json(ApiResponse.success('Contract paused successfully'));
   }),
 
   // Admin: Unpause contract
@@ -281,9 +252,7 @@ export const subscriptionController = {
     const adminId = req.user?.id;
 
     if (!adminId) {
-      return res.status(401).json(
-        ApiResponse.error('Admin not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('Admin not authenticated'));
     }
 
     await subscriptionService.unpauseContract();
@@ -291,14 +260,12 @@ export const subscriptionController = {
     // Broadcast contract unpause
     WebSocketServer.getInstance().broadcast({
       type: 'contract_unpaused',
-      data: { unpausedBy: adminId }
+      data: { unpausedBy: adminId },
     });
 
     logger.info(`Contract unpaused by admin ${adminId}`);
 
-    return res.status(200).json(
-      ApiResponse.success('Contract unpaused successfully')
-    );
+    return res.status(200).json(ApiResponse.success('Contract unpaused successfully'));
   }),
 
   // Admin: Emergency pause contract
@@ -307,9 +274,7 @@ export const subscriptionController = {
     const { reason } = req.body;
 
     if (!adminId) {
-      return res.status(401).json(
-        ApiResponse.error('Admin not authenticated')
-      );
+      return res.status(401).json(ApiResponse.error('Admin not authenticated'));
     }
 
     await subscriptionService.emergencyPauseContract(reason);
@@ -317,14 +282,12 @@ export const subscriptionController = {
     // Broadcast emergency pause
     WebSocketServer.getInstance().broadcast({
       type: 'emergency_pause',
-      data: { reason, pausedBy: adminId }
+      data: { reason, pausedBy: adminId },
     });
 
     logger.error(`Emergency pause activated by admin ${adminId}: ${reason}`);
 
-    return res.status(200).json(
-      ApiResponse.success('Emergency pause activated successfully')
-    );
+    return res.status(200).json(ApiResponse.success('Emergency pause activated successfully'));
   }),
 
   // Middleware to require admin role
@@ -332,11 +295,9 @@ export const subscriptionController = {
     const user = req.user;
 
     if (!user || user.role !== 'admin') {
-      return res.status(403).json(
-        ApiResponse.error('Admin access required')
-      );
+      return res.status(403).json(ApiResponse.error('Admin access required'));
     }
 
     next();
-  })
+  }),
 };

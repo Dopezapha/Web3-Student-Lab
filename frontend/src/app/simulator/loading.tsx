@@ -1,22 +1,22 @@
-import React from "react";
-import { CardSkeleton, ChartSkeleton } from "@/components/common/Skeleton";
+import React from 'react';
+import { CardSkeleton, ChartSkeleton } from '@/components/common/Skeleton';
 
 export default function SimulatorLoading() {
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-black text-white p-6 md:p-12 font-mono">
-      <div className="max-w-7xl mx-auto flex flex-col h-full">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+    <div className="min-h-[calc(100vh-80px)] bg-black p-6 font-mono text-white md:p-12">
+      <div className="mx-auto flex h-full max-w-7xl flex-col">
+        <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div className="border-l-4 border-zinc-800 pl-6">
-            <div className="h-10 w-64 bg-white/5 animate-pulse rounded mb-2" />
-            <div className="h-4 w-48 bg-white/5 animate-pulse rounded" />
+            <div className="mb-2 h-10 w-64 animate-pulse rounded bg-white/5" />
+            <div className="h-4 w-48 animate-pulse rounded bg-white/5" />
           </div>
           <div className="flex items-center gap-4">
-            <div className="h-10 w-32 bg-white/5 animate-pulse rounded" />
-            <div className="h-10 w-32 bg-white/5 animate-pulse rounded" />
+            <div className="h-10 w-32 animate-pulse rounded bg-white/5" />
+            <div className="h-10 w-32 animate-pulse rounded bg-white/5" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 flex-grow">
+        <div className="grid flex-grow grid-cols-1 gap-8 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <CardSkeleton />
           </div>

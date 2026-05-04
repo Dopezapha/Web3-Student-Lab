@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   LineChart,
   Line,
@@ -15,7 +15,7 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
+} from 'recharts';
 
 interface BuybackRecord {
   timestamp: number;
@@ -68,9 +68,7 @@ export default function BuybackDashboard() {
   });
   const [supplyData, setSupplyData] = useState<BuybackSupplyData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "history" | "supply">(
-    "overview"
-  );
+  const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'supply'>('overview');
 
   useEffect(() => {
     const fetchBuybackData = async () => {
@@ -86,21 +84,21 @@ export default function BuybackDashboard() {
             purchaseAmount: 50000,
             tokensPurchased: 1000,
             pricePerToken: 50,
-            transactionId: "0x1a2b3c4d5e6f7g8h9i0j",
+            transactionId: '0x1a2b3c4d5e6f7g8h9i0j',
           },
           {
             timestamp: Date.now() - 172800000,
             purchaseAmount: 45000,
             tokensPurchased: 1050,
             pricePerToken: 42.86,
-            transactionId: "0x2b3c4d5e6f7g8h9i0j1k",
+            transactionId: '0x2b3c4d5e6f7g8h9i0j1k',
           },
           {
             timestamp: Date.now() - 259200000,
             purchaseAmount: 55000,
             tokensPurchased: 950,
             pricePerToken: 57.89,
-            transactionId: "0x3c4d5e6f7g8h9i0j1k2l",
+            transactionId: '0x3c4d5e6f7g8h9i0j1k2l',
           },
         ];
 
@@ -155,7 +153,7 @@ export default function BuybackDashboard() {
 
         setSupplyData(mockSupplyData);
       } catch (error) {
-        console.error("Failed to fetch buyback data:", error);
+        console.error('Failed to fetch buyback data:', error);
       } finally {
         setLoading(false);
       }
@@ -166,18 +164,18 @@ export default function BuybackDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="text-white text-lg">Loading Buyback Dashboard...</div>
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-lg text-white">Loading Buyback Dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-black p-8 text-white">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Token Buyback Program</h1>
+          <h1 className="mb-2 text-4xl font-bold">Token Buyback Program</h1>
           <p className="text-gray-400">
             Automated token buyback and burn mechanism for deflationary tokenomics
           </p>
@@ -186,31 +184,31 @@ export default function BuybackDashboard() {
         {/* Status Badge */}
         <div className="mb-6">
           <div
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 ${
               buybackConfig.enabled
-                ? "bg-green-900/30 text-green-400 border border-green-500/30"
-                : "bg-red-900/30 text-red-400 border border-red-500/30"
+                ? 'border border-green-500/30 bg-green-900/30 text-green-400'
+                : 'border border-red-500/30 bg-red-900/30 text-red-400'
             }`}
           >
             <div
-              className={`w-2 h-2 rounded-full ${
-                buybackConfig.enabled ? "bg-green-500" : "bg-red-500"
+              className={`h-2 w-2 rounded-full ${
+                buybackConfig.enabled ? 'bg-green-500' : 'bg-red-500'
               }`}
             />
-            <span>{buybackConfig.enabled ? "Active" : "Inactive"}</span>
+            <span>{buybackConfig.enabled ? 'Active' : 'Inactive'}</span>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-4 mb-8 border-b border-gray-700">
-          {["overview", "history", "supply"].map((tab) => (
+        <div className="mb-8 flex gap-4 border-b border-gray-700">
+          {['overview', 'history', 'supply'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`pb-4 px-2 font-semibold transition-colors ${
+              className={`px-2 pb-4 font-semibold transition-colors ${
                 activeTab === tab
-                  ? "border-b-2 border-blue-500 text-blue-400"
-                  : "text-gray-400 hover:text-gray-300"
+                  ? 'border-b-2 border-blue-500 text-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -219,10 +217,10 @@ export default function BuybackDashboard() {
         </div>
 
         {/* Overview Tab */}
-        {activeTab === "overview" && (
+        {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <MetricCard
                 label="Total Spent"
                 value={`$${buybackStats.totalSpent.toLocaleString()}`}
@@ -246,10 +244,10 @@ export default function BuybackDashboard() {
             </div>
 
             {/* Configuration & Statistics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Configuration */}
-              <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-6">Configuration</h2>
+              <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+                <h2 className="mb-6 text-xl font-bold">Configuration</h2>
                 <div className="space-y-4">
                   <ConfigRow
                     label="Revenue Allocation"
@@ -267,16 +265,13 @@ export default function BuybackDashboard() {
                     label="Max Buyback Amount"
                     value={`$${buybackConfig.maxBuybackAmount.toLocaleString()}`}
                   />
-                  <ConfigRow
-                    label="Total Buybacks"
-                    value={buybackStats.buybackCount.toString()}
-                  />
+                  <ConfigRow label="Total Buybacks" value={buybackStats.buybackCount.toString()} />
                 </div>
               </div>
 
               {/* Statistics */}
-              <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-6">Statistics</h2>
+              <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+                <h2 className="mb-6 text-xl font-bold">Statistics</h2>
                 <div className="space-y-4">
                   <StatRow
                     label="Total Amount Spent"
@@ -288,11 +283,7 @@ export default function BuybackDashboard() {
                     value={buybackStats.totalTokensBought.toLocaleString()}
                     trend={-3.2}
                   />
-                  <StatRow
-                    label="Program Uptime"
-                    value="97.8%"
-                    trend={+0.5}
-                  />
+                  <StatRow label="Program Uptime" value="97.8%" trend={+0.5} />
                   <StatRow
                     label="Last Buyback"
                     value={formatRelativeTime(buybackStats.lastBuybackTime)}
@@ -303,8 +294,8 @@ export default function BuybackDashboard() {
             </div>
 
             {/* Price Trend Chart */}
-            <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-6">Price Trend</h2>
+            <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+              <h2 className="mb-6 text-xl font-bold">Price Trend</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={buybackRecords}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
@@ -316,9 +307,9 @@ export default function BuybackDashboard() {
                   <YAxis stroke="#888" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1a1a1a",
-                      border: "1px solid #444",
-                      borderRadius: "8px",
+                      backgroundColor: '#1a1a1a',
+                      border: '1px solid #444',
+                      borderRadius: '8px',
                     }}
                   />
                   <Legend />
@@ -326,7 +317,7 @@ export default function BuybackDashboard() {
                     type="monotone"
                     dataKey="pricePerToken"
                     stroke="#3b82f6"
-                    dot={{ fill: "#3b82f6" }}
+                    dot={{ fill: '#3b82f6' }}
                     name="Price per Token"
                   />
                 </LineChart>
@@ -336,9 +327,9 @@ export default function BuybackDashboard() {
         )}
 
         {/* History Tab */}
-        {activeTab === "history" && (
+        {activeTab === 'history' && (
           <div className="space-y-6">
-            <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg overflow-hidden">
+            <div className="overflow-hidden rounded-lg border border-gray-700/50 bg-gray-900/50">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -362,10 +353,7 @@ export default function BuybackDashboard() {
                   </thead>
                   <tbody className="divide-y divide-gray-700/50">
                     {buybackRecords.map((record, index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-gray-800/30 transition-colors"
-                      >
+                      <tr key={index} className="transition-colors hover:bg-gray-800/30">
                         <td className="px-6 py-4 text-sm">
                           {new Date(record.timestamp).toLocaleDateString()}
                         </td>
@@ -375,10 +363,8 @@ export default function BuybackDashboard() {
                         <td className="px-6 py-4 text-sm">
                           {record.tokensPurchased.toLocaleString()}
                         </td>
-                        <td className="px-6 py-4 text-sm">
-                          ${record.pricePerToken.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-blue-400 font-mono">
+                        <td className="px-6 py-4 text-sm">${record.pricePerToken.toFixed(2)}</td>
+                        <td className="px-6 py-4 font-mono text-sm text-blue-400">
                           <a
                             href={`https://stellar.expert/explorer/transactions/${record.transactionId}`}
                             target="_blank"
@@ -396,8 +382,8 @@ export default function BuybackDashboard() {
             </div>
 
             {/* Purchase Distribution Chart */}
-            <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-6">Purchase Distribution</h2>
+            <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+              <h2 className="mb-6 text-xl font-bold">Purchase Distribution</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={buybackRecords}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
@@ -409,9 +395,9 @@ export default function BuybackDashboard() {
                   <YAxis stroke="#888" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1a1a1a",
-                      border: "1px solid #444",
-                      borderRadius: "8px",
+                      backgroundColor: '#1a1a1a',
+                      border: '1px solid #444',
+                      borderRadius: '8px',
                     }}
                   />
                   <Legend />
@@ -424,32 +410,32 @@ export default function BuybackDashboard() {
         )}
 
         {/* Supply Tab */}
-        {activeTab === "supply" && (
+        {activeTab === 'supply' && (
           <div className="space-y-6">
             {/* Supply Reduction Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <MetricCard
                 label="Tokens Burned"
-                value={supplyData[supplyData.length - 1]?.burned.toLocaleString() || "0"}
+                value={supplyData[supplyData.length - 1]?.burned.toLocaleString() || '0'}
                 subtext="Total burn"
               />
               <MetricCard
                 label="Current Supply"
-                value={supplyData[supplyData.length - 1]?.supply.toLocaleString() || "0"}
+                value={supplyData[supplyData.length - 1]?.supply.toLocaleString() || '0'}
                 subtext="Remaining tokens"
               />
               <MetricCard
                 label="Reduction Rate"
-                value={`${(
-                  supplyData[supplyData.length - 1]?.reductionPercentage || 0
-                ).toFixed(3)}%`}
+                value={`${(supplyData[supplyData.length - 1]?.reductionPercentage || 0).toFixed(
+                  3
+                )}%`}
                 subtext="Total burned"
               />
             </div>
 
             {/* Supply Trend Chart */}
-            <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-6">Supply Reduction Over Time</h2>
+            <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+              <h2 className="mb-6 text-xl font-bold">Supply Reduction Over Time</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={supplyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
@@ -461,9 +447,9 @@ export default function BuybackDashboard() {
                   <YAxis stroke="#888" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1a1a1a",
-                      border: "1px solid #444",
-                      borderRadius: "8px",
+                      backgroundColor: '#1a1a1a',
+                      border: '1px solid #444',
+                      borderRadius: '8px',
                     }}
                   />
                   <Legend />
@@ -486,19 +472,19 @@ export default function BuybackDashboard() {
             </div>
 
             {/* Burn Pie Chart */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-6">Supply Distribution</h2>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+                <h2 className="mb-6 text-xl font-bold">Supply Distribution</h2>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
                       data={[
                         {
-                          name: "Current Supply",
+                          name: 'Current Supply',
                           value: supplyData[supplyData.length - 1]?.supply || 0,
                         },
                         {
-                          name: "Burned",
+                          name: 'Burned',
                           value: supplyData[supplyData.length - 1]?.burned || 0,
                         },
                       ]}
@@ -515,9 +501,9 @@ export default function BuybackDashboard() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#1a1a1a",
-                        border: "1px solid #444",
-                        borderRadius: "8px",
+                        backgroundColor: '#1a1a1a',
+                        border: '1px solid #444',
+                        borderRadius: '8px',
                       }}
                     />
                   </PieChart>
@@ -525,31 +511,25 @@ export default function BuybackDashboard() {
               </div>
 
               {/* Burn Details */}
-              <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-6">Burn Details</h2>
+              <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6">
+                <h2 className="mb-6 text-xl font-bold">Burn Details</h2>
                 <div className="space-y-4">
-                  <DetailRow
-                    label="Initial Supply"
-                    value="10,000,000"
-                  />
+                  <DetailRow label="Initial Supply" value="10,000,000" />
                   <DetailRow
                     label="Total Burned"
-                    value={supplyData[supplyData.length - 1]?.burned.toLocaleString() || "0"}
+                    value={supplyData[supplyData.length - 1]?.burned.toLocaleString() || '0'}
                   />
                   <DetailRow
                     label="Current Supply"
-                    value={supplyData[supplyData.length - 1]?.supply.toLocaleString() || "0"}
+                    value={supplyData[supplyData.length - 1]?.supply.toLocaleString() || '0'}
                   />
                   <DetailRow
                     label="Burn Percentage"
-                    value={`${(
-                      supplyData[supplyData.length - 1]?.reductionPercentage || 0
-                    ).toFixed(3)}%`}
+                    value={`${(supplyData[supplyData.length - 1]?.reductionPercentage || 0).toFixed(
+                      3
+                    )}%`}
                   />
-                  <DetailRow
-                    label="Burn Mechanism"
-                    value="Automated Buyback"
-                  />
+                  <DetailRow label="Burn Mechanism" value="Automated Buyback" />
                 </div>
               </div>
             </div>
@@ -568,10 +548,10 @@ interface MetricCardProps {
 
 function MetricCard({ label, value, subtext }: MetricCardProps) {
   return (
-    <div className="bg-gray-900/50 border border-gray-700/50 rounded-lg p-6 hover:border-gray-600/50 transition-colors">
-      <div className="text-gray-400 text-sm mb-2">{label}</div>
-      <div className="text-2xl font-bold text-white mb-1">{value}</div>
-      {subtext && <div className="text-gray-500 text-xs">{subtext}</div>}
+    <div className="rounded-lg border border-gray-700/50 bg-gray-900/50 p-6 transition-colors hover:border-gray-600/50">
+      <div className="mb-2 text-sm text-gray-400">{label}</div>
+      <div className="mb-1 text-2xl font-bold text-white">{value}</div>
+      {subtext && <div className="text-xs text-gray-500">{subtext}</div>}
     </div>
   );
 }
@@ -583,9 +563,9 @@ interface ConfigRowProps {
 
 function ConfigRow({ label, value }: ConfigRowProps) {
   return (
-    <div className="flex justify-between items-center py-3 border-b border-gray-700/30 last:border-b-0">
-      <span className="text-gray-400 text-sm">{label}</span>
-      <span className="text-white font-semibold">{value}</span>
+    <div className="flex items-center justify-between border-b border-gray-700/30 py-3 last:border-b-0">
+      <span className="text-sm text-gray-400">{label}</span>
+      <span className="font-semibold text-white">{value}</span>
     </div>
   );
 }
@@ -598,13 +578,14 @@ interface StatRowProps {
 
 function StatRow({ label, value, trend }: StatRowProps) {
   return (
-    <div className="flex justify-between items-center py-3 border-b border-gray-700/30 last:border-b-0">
-      <span className="text-gray-400 text-sm">{label}</span>
+    <div className="flex items-center justify-between border-b border-gray-700/30 py-3 last:border-b-0">
+      <span className="text-sm text-gray-400">{label}</span>
       <div className="flex items-center gap-2">
-        <span className="text-white font-semibold">{value}</span>
+        <span className="font-semibold text-white">{value}</span>
         {trend !== undefined && (
-          <span className={trend >= 0 ? "text-green-400 text-sm" : "text-red-400 text-sm"}>
-            {trend >= 0 ? "+" : ""}{trend.toFixed(1)}%
+          <span className={trend >= 0 ? 'text-sm text-green-400' : 'text-sm text-red-400'}>
+            {trend >= 0 ? '+' : ''}
+            {trend.toFixed(1)}%
           </span>
         )}
       </div>
@@ -619,9 +600,9 @@ interface DetailRowProps {
 
 function DetailRow({ label, value }: DetailRowProps) {
   return (
-    <div className="flex justify-between items-center py-3 border-b border-gray-700/30 last:border-b-0">
-      <span className="text-gray-400 text-sm">{label}</span>
-      <span className="text-white font-semibold">{value}</span>
+    <div className="flex items-center justify-between border-b border-gray-700/30 py-3 last:border-b-0">
+      <span className="text-sm text-gray-400">{label}</span>
+      <span className="font-semibold text-white">{value}</span>
     </div>
   );
 }

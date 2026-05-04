@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 // ─── Wallet Interface ─────────────────────────────────────────────────────────
 
@@ -36,30 +36,34 @@ declare global {
 }
 
 const freighterAdapter: WalletProvider = {
-  name: "Freighter",
-  icon: "🚀",
-  isInstalled: () => typeof window !== "undefined" && !!window.freighter,
+  name: 'Freighter',
+  icon: '🚀',
+  isInstalled: () => typeof window !== 'undefined' && !!window.freighter,
   connect: async () => {
-    if (!window.freighter) throw new Error("Freighter not installed");
+    if (!window.freighter) throw new Error('Freighter not installed');
     return window.freighter.getPublicKey();
   },
   disconnect: async () => {},
   getPublicKey: async () => {
     if (!window.freighter) return null;
-    try { return await window.freighter.getPublicKey(); } catch { return null; }
+    try {
+      return await window.freighter.getPublicKey();
+    } catch {
+      return null;
+    }
   },
   signTransaction: async (xdr: string) => {
-    if (!window.freighter) throw new Error("Freighter not installed");
-    return window.freighter.signTransaction(xdr, { network: "TESTNET" });
+    if (!window.freighter) throw new Error('Freighter not installed');
+    return window.freighter.signTransaction(xdr, { network: 'TESTNET' });
   },
 };
 
 const albedoAdapter: WalletProvider = {
-  name: "Albedo",
-  icon: "🌐",
+  name: 'Albedo',
+  icon: '🌐',
   isInstalled: () => true, // Albedo is web-based, always available
   connect: async () => {
-    if (!window.albedo) throw new Error("Albedo not available");
+    if (!window.albedo) throw new Error('Albedo not available');
     const res = await window.albedo.publicKey({});
     return res.pubkey;
   },
@@ -69,21 +73,23 @@ const albedoAdapter: WalletProvider = {
     try {
       const res = await window.albedo.publicKey({});
       return res.pubkey;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   },
   signTransaction: async (xdr: string) => {
-    if (!window.albedo) throw new Error("Albedo not available");
-    const res = await window.albedo.tx({ xdr, network: "testnet" });
+    if (!window.albedo) throw new Error('Albedo not available');
+    const res = await window.albedo.tx({ xdr, network: 'testnet' });
     return res.signed_envelope_xdr;
   },
 };
 
 const rabetAdapter: WalletProvider = {
-  name: "Rabet",
-  icon: "🔷",
-  isInstalled: () => typeof window !== "undefined" && !!window.rabet,
+  name: 'Rabet',
+  icon: '🔷',
+  isInstalled: () => typeof window !== 'undefined' && !!window.rabet,
   connect: async () => {
-    if (!window.rabet) throw new Error("Rabet not installed");
+    if (!window.rabet) throw new Error('Rabet not installed');
     const res = await window.rabet.connect();
     return res.publicKey;
   },
@@ -93,20 +99,18 @@ const rabetAdapter: WalletProvider = {
     try {
       const res = await window.rabet.connect();
       return res.publicKey;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   },
   signTransaction: async (xdr: string) => {
-    if (!window.rabet) throw new Error("Rabet not installed");
-    const res = await window.rabet.sign(xdr, "TESTNET");
+    if (!window.rabet) throw new Error('Rabet not installed');
+    const res = await window.rabet.sign(xdr, 'TESTNET');
     return res.xdr;
   },
 };
 
-export const WALLET_PROVIDERS: WalletProvider[] = [
-  freighterAdapter,
-  albedoAdapter,
-  rabetAdapter,
-];
+export const WALLET_PROVIDERS: WalletProvider[] = [freighterAdapter, albedoAdapter, rabetAdapter];
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -131,7 +135,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   // Restore session
   useEffect(() => {
-    const saved = localStorage.getItem("stellar_wallet");
+    const saved = localStorage.getItem('stellar_wallet');
     if (saved) {
       const { wallet, pk } = JSON.parse(saved);
       setActiveWallet(wallet);
@@ -148,9 +152,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const pk = await provider.connect();
       setPublicKey(pk);
       setActiveWallet(providerName);
-      localStorage.setItem("stellar_wallet", JSON.stringify({ wallet: providerName, pk }));
+      localStorage.setItem('stellar_wallet', JSON.stringify({ wallet: providerName, pk }));
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Connection failed";
+      const msg = e instanceof Error ? e.message : 'Connection failed';
       setError(msg);
       throw e;
     } finally {
@@ -163,14 +167,17 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     await provider?.disconnect();
     setPublicKey(null);
     setActiveWallet(null);
-    localStorage.removeItem("stellar_wallet");
+    localStorage.removeItem('stellar_wallet');
   }, [activeWallet]);
 
-  const signTransaction = useCallback(async (xdr: string) => {
-    const provider = WALLET_PROVIDERS.find((p) => p.name === activeWallet);
-    if (!provider) throw new Error("No wallet connected");
-    return provider.signTransaction(xdr);
-  }, [activeWallet]);
+  const signTransaction = useCallback(
+    async (xdr: string) => {
+      const provider = WALLET_PROVIDERS.find((p) => p.name === activeWallet);
+      if (!provider) throw new Error('No wallet connected');
+      return provider.signTransaction(xdr);
+    },
+    [activeWallet]
+  );
 
   return (
     <WalletContext.Provider
@@ -192,6 +199,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
 export function useWallet() {
   const ctx = useContext(WalletContext);
-  if (!ctx) throw new Error("useWallet must be used within WalletProvider");
+  if (!ctx) throw new Error('useWallet must be used within WalletProvider');
   return ctx;
 }

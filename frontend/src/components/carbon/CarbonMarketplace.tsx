@@ -5,22 +5,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { 
-  TreePine, 
-  TrendingUp, 
-  Award, 
-  Search, 
-  Filter, 
-  Plus, 
-  ShoppingCart, 
+import {
+  TreePine,
+  TrendingUp,
+  Award,
+  Search,
+  Filter,
+  Plus,
+  ShoppingCart,
   CheckCircle,
   AlertCircle,
   Info,
@@ -31,7 +44,7 @@ import {
   Clock,
   DollarSign,
   FileText,
-  Download
+  Download,
 } from 'lucide-react';
 
 // Types for carbon credit system
@@ -96,7 +109,7 @@ const mockCredits: CarbonCredit[] = [
     owner: '0x123...',
     verification_status: 'Verified',
     retired: false,
-    metadata_uri: 'https://api.carbon-credits.io/credits/1'
+    metadata_uri: 'https://api.carbon-credits.io/credits/1',
   },
   {
     token_id: '2',
@@ -107,8 +120,8 @@ const mockCredits: CarbonCredit[] = [
     owner: '0x456...',
     verification_status: 'Verified',
     retired: false,
-    metadata_uri: 'https://api.carbon-credits.io/credits/2'
-  }
+    metadata_uri: 'https://api.carbon-credits.io/credits/2',
+  },
 ];
 
 const mockProjects: CarbonProject[] = [
@@ -122,7 +135,7 @@ const mockProjects: CarbonProject[] = [
     credits_issued: 1500,
     status: 'Active',
     methodology: 'AMS001.II',
-    metadata_uri: 'https://api.carbon-credits.io/projects/1'
+    metadata_uri: 'https://api.carbon-credits.io/projects/1',
   },
   {
     project_id: 'PROJ_2',
@@ -134,8 +147,8 @@ const mockProjects: CarbonProject[] = [
     credits_issued: 800,
     status: 'Active',
     methodology: 'ACM0002',
-    metadata_uri: 'https://api.carbon-credits.io/projects/2'
-  }
+    metadata_uri: 'https://api.carbon-credits.io/projects/2',
+  },
 ];
 
 const mockOrders: MarketplaceOrder[] = [
@@ -149,8 +162,8 @@ const mockOrders: MarketplaceOrder[] = [
     filled: 0,
     created_at: Date.now() - 86400000,
     expires_at: Date.now() + 604800000,
-    active: true
-  }
+    active: true,
+  },
 ];
 
 const mockCertificates: RetirementCertificate[] = [
@@ -161,8 +174,8 @@ const mockCertificates: RetirementCertificate[] = [
     reason: 'Corporate sustainability commitment',
     total_tonnes: 2,
     timestamp: Date.now() - 172800000,
-    certificate_uri: 'https://api.carbon-credits.io/certificates/1'
-  }
+    certificate_uri: 'https://api.carbon-credits.io/certificates/1',
+  },
 ];
 
 export default function CarbonMarketplace() {
@@ -192,22 +205,24 @@ export default function CarbonMarketplace() {
     setUserCertificates(certificates);
   }, []);
 
-  const filteredCredits = credits.filter(credit => {
-    const matchesSearch = credit.project_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         credit.standard.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredCredits = credits.filter((credit) => {
+    const matchesSearch =
+      credit.project_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      credit.standard.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStandard = filterStandard === 'all' || credit.standard === filterStandard;
     const matchesStatus = filterStatus === 'all' || credit.verification_status === filterStatus;
     return matchesSearch && matchesStandard && matchesStatus && !credit.retired;
   });
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.project_type.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.project_type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleCreateOrder = () => {
     if (!selectedCredit || !orderPrice || !orderDuration) return;
-    
+
     const newOrder: MarketplaceOrder = {
       order_id: String(orders.length + 1),
       token_id: selectedCredit.token_id,
@@ -217,10 +232,10 @@ export default function CarbonMarketplace() {
       amount: 1,
       filled: 0,
       created_at: Date.now(),
-      expires_at: Date.now() + (parseInt(orderDuration) * 24 * 60 * 60 * 1000),
-      active: true
+      expires_at: Date.now() + parseInt(orderDuration) * 24 * 60 * 60 * 1000,
+      active: true,
     };
-    
+
     setOrders([...orders, newOrder]);
     setUserOrders([...userOrders, newOrder]);
     setShowCreateOrder(false);
@@ -230,28 +245,28 @@ export default function CarbonMarketplace() {
   };
 
   const handleExecuteTrade = (orderId: string) => {
-    const order = orders.find(o => o.order_id === orderId);
+    const order = orders.find((o) => o.order_id === orderId);
     if (!order) return;
-    
+
     // Update order status
-    const updatedOrders = orders.map(o => 
+    const updatedOrders = orders.map((o) =>
       o.order_id === orderId ? { ...o, filled: o.amount, active: false } : o
     );
     setOrders(updatedOrders);
-    
+
     // Update credit ownership
-    const updatedCredits = credits.map(c => 
+    const updatedCredits = credits.map((c) =>
       c.token_id === order.token_id ? { ...c, owner: '0x789...' } : c
     );
     setCredits(updatedCredits);
-    
+
     // Remove from user's credits
-    setUserCredits(userCredits.filter(c => c.token_id !== order.token_id));
+    setUserCredits(userCredits.filter((c) => c.token_id !== order.token_id));
   };
 
   const handleRetireCredits = () => {
     if (selectedCreditsToRetire.length === 0 || !retirementReason) return;
-    
+
     const newCertificate: RetirementCertificate = {
       certificate_id: String(certificates.length + 1),
       token_ids: selectedCreditsToRetire,
@@ -259,21 +274,21 @@ export default function CarbonMarketplace() {
       reason: retirementReason,
       total_tonnes: selectedCreditsToRetire.length,
       timestamp: Date.now(),
-      certificate_uri: `https://api.carbon-credits.io/certificates/${certificates.length + 1}`
+      certificate_uri: `https://api.carbon-credits.io/certificates/${certificates.length + 1}`,
     };
-    
+
     setCertificates([...certificates, newCertificate]);
     setUserCertificates([...userCertificates, newCertificate]);
-    
+
     // Update credits status
-    const updatedCredits = credits.map(c => 
-      selectedCreditsToRetire.includes(c.token_id) 
+    const updatedCredits = credits.map((c) =>
+      selectedCreditsToRetire.includes(c.token_id)
         ? { ...c, retired: true, retirement_timestamp: Date.now(), retirement_reason }
         : c
     );
     setCredits(updatedCredits);
-    setUserCredits(userCredits.filter(c => !selectedCreditsToRetire.includes(c.token_id)));
-    
+    setUserCredits(userCredits.filter((c) => !selectedCreditsToRetire.includes(c.token_id)));
+
     setShowRetireCredits(false);
     setRetirementReason('');
     setSelectedCreditsToRetire([]);
@@ -281,12 +296,18 @@ export default function CarbonMarketplace() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Verified': return 'bg-green-100 text-green-800';
-      case 'Pending': return 'bg-yellow-100 text-yellow-800';
-      case 'Rejected': return 'bg-red-100 text-red-800';
-      case 'Active': return 'bg-green-100 text-green-800';
-      case 'InVerification': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Verified':
+        return 'bg-green-100 text-green-800';
+      case 'Pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Rejected':
+        return 'bg-red-100 text-red-800';
+      case 'Active':
+        return 'bg-green-100 text-green-800';
+      case 'InVerification':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -295,14 +316,14 @@ export default function CarbonMarketplace() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-3xl font-bold text-gray-900">
             <TreePine className="h-8 w-8 text-green-600" />
             Carbon Credit Marketplace
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="mt-2 text-gray-600">
             Trade, verify, and retire high-quality carbon credits
           </p>
         </div>
@@ -311,7 +332,11 @@ export default function CarbonMarketplace() {
             <Plus className="h-4 w-4" />
             Create Order
           </Button>
-          <Button onClick={() => setShowRetireCredits(true)} variant="outline" className="flex items-center gap-2">
+          <Button
+            onClick={() => setShowRetireCredits(true)}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
             <Award className="h-4 w-4" />
             Retire Credits
           </Button>
@@ -328,9 +353,9 @@ export default function CarbonMarketplace() {
         </TabsList>
 
         <TabsContent value="marketplace" className="space-y-6">
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               <Input
                 placeholder="Search credits..."
                 value={searchTerm}
@@ -360,11 +385,11 @@ export default function CarbonMarketplace() {
             </Select>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredCredits.map((credit) => (
-              <Card key={credit.token_id} className="hover:shadow-lg transition-shadow">
+              <Card key={credit.token_id} className="transition-shadow hover:shadow-lg">
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-lg">Credit #{credit.token_id}</CardTitle>
                       <CardDescription>{credit.project_id}</CardDescription>
@@ -393,18 +418,22 @@ export default function CarbonMarketplace() {
                       <span>{credit.owner}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       className="flex-1"
-                      onClick={() => handleExecuteTrade(orders.find(o => o.token_id === credit.token_id)?.order_id || '')}
+                      onClick={() =>
+                        handleExecuteTrade(
+                          orders.find((o) => o.token_id === credit.token_id)?.order_id || ''
+                        )
+                      }
                     >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      <ShoppingCart className="mr-2 h-4 w-4" />
                       Buy Credit
                     </Button>
                     <Button size="sm" variant="outline">
-                      <Info className="h-4 w-4 mr-2" />
+                      <Info className="mr-2 h-4 w-4" />
                       Details
                     </Button>
                   </div>
@@ -415,18 +444,18 @@ export default function CarbonMarketplace() {
         </TabsContent>
 
         <TabsContent value="projects" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {filteredProjects.map((project) => (
               <Card key={project.project_id}>
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl">{project.name}</CardTitle>
-                      <CardDescription>{project.project_type} in {project.location}</CardDescription>
+                      <CardDescription>
+                        {project.project_type} in {project.location}
+                      </CardDescription>
                     </div>
-                    <Badge className={getStatusColor(project.status)}>
-                      {project.status}
-                    </Badge>
+                    <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -441,20 +470,24 @@ export default function CarbonMarketplace() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Credits Issued:</span>
-                      <span>{project.credits_issued} / {project.total_capacity}</span>
+                      <span>
+                        {project.credits_issued} / {project.total_capacity}
+                      </span>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Progress:</span>
-                      <span>{Math.round((project.credits_issued / project.total_capacity) * 100)}%</span>
+                      <span>
+                        {Math.round((project.credits_issued / project.total_capacity) * 100)}%
+                      </span>
                     </div>
                     <Progress value={(project.credits_issued / project.total_capacity) * 100} />
                   </div>
-                  
+
                   <Button variant="outline" className="w-full">
-                    <FileText className="h-4 w-4 mr-2" />
+                    <FileText className="mr-2 h-4 w-4" />
                     View Project Details
                   </Button>
                 </CardContent>
@@ -464,7 +497,7 @@ export default function CarbonMarketplace() {
         </TabsContent>
 
         <TabsContent value="portfolio" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>My Carbon Credits</CardTitle>
@@ -472,18 +505,23 @@ export default function CarbonMarketplace() {
               </CardHeader>
               <CardContent>
                 {userCredits.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No credits owned</p>
+                  <p className="py-8 text-center text-gray-500">No credits owned</p>
                 ) : (
                   <div className="space-y-4">
                     {userCredits.map((credit) => (
-                      <div key={credit.token_id} className="flex justify-between items-center p-3 border rounded">
+                      <div
+                        key={credit.token_id}
+                        className="flex items-center justify-between rounded border p-3"
+                      >
                         <div>
                           <p className="font-medium">Credit #{credit.token_id}</p>
-                          <p className="text-sm text-gray-500">{credit.project_id} - {credit.standard}</p>
+                          <p className="text-sm text-gray-500">
+                            {credit.project_id} - {credit.standard}
+                          </p>
                         </div>
                         <div className="flex gap-2">
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
                             onClick={() => {
                               setSelectedCredit(credit);
@@ -492,8 +530,8 @@ export default function CarbonMarketplace() {
                           >
                             Sell
                           </Button>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
                             onClick={() => setSelectedCreditsToRetire([credit.token_id])}
                           >
@@ -514,18 +552,27 @@ export default function CarbonMarketplace() {
               </CardHeader>
               <CardContent>
                 {userOrders.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No active orders</p>
+                  <p className="py-8 text-center text-gray-500">No active orders</p>
                 ) : (
                   <div className="space-y-4">
                     {userOrders.map((order) => (
-                      <div key={order.order_id} className="flex justify-between items-center p-3 border rounded">
+                      <div
+                        key={order.order_id}
+                        className="flex items-center justify-between rounded border p-3"
+                      >
                         <div>
                           <p className="font-medium">Order #{order.order_id}</p>
                           <p className="text-sm text-gray-500">
                             {order.order_type} - {order.price} USDC
                           </p>
                         </div>
-                        <Badge className={order.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                        <Badge
+                          className={
+                            order.active
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }
+                        >
                           {order.active ? 'Active' : 'Filled'}
                         </Badge>
                       </div>
@@ -545,21 +592,23 @@ export default function CarbonMarketplace() {
             </CardHeader>
             <CardContent>
               {userCertificates.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No retirement certificates</p>
+                <p className="py-8 text-center text-gray-500">No retirement certificates</p>
               ) : (
                 <div className="space-y-6">
                   {userCertificates.map((certificate) => (
                     <Card key={certificate.certificate_id} className="border-l-4 border-green-500">
                       <CardHeader>
-                        <div className="flex justify-between items-start">
+                        <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="text-lg">Certificate #{certificate.certificate_id}</CardTitle>
+                            <CardTitle className="text-lg">
+                              Certificate #{certificate.certificate_id}
+                            </CardTitle>
                             <CardDescription>
                               {certificate.total_tonnes} tonnes retired
                             </CardDescription>
                           </div>
                           <Badge className="bg-green-100 text-green-800">
-                            <CheckCircle className="h-3 w-3 mr-1" />
+                            <CheckCircle className="mr-1 h-3 w-3" />
                             Retired
                           </Badge>
                         </div>
@@ -572,17 +621,19 @@ export default function CarbonMarketplace() {
                           </div>
                           <div>
                             <p className="font-medium">Date</p>
-                            <p className="text-gray-600">{formatTimestamp(certificate.timestamp)}</p>
+                            <p className="text-gray-600">
+                              {formatTimestamp(certificate.timestamp)}
+                            </p>
                           </div>
                         </div>
-                        
+
                         <div>
-                          <p className="font-medium text-sm mb-2">Reason</p>
+                          <p className="mb-2 text-sm font-medium">Reason</p>
                           <p className="text-gray-600">{certificate.reason}</p>
                         </div>
-                        
+
                         <div>
-                          <p className="font-medium text-sm mb-2">Credits Retired</p>
+                          <p className="mb-2 text-sm font-medium">Credits Retired</p>
                           <div className="flex flex-wrap gap-2">
                             {certificate.token_ids.map((tokenId) => (
                               <Badge key={tokenId} variant="outline">
@@ -591,9 +642,9 @@ export default function CarbonMarketplace() {
                             ))}
                           </div>
                         </div>
-                        
+
                         <Button variant="outline" className="w-full">
-                          <Download className="h-4 w-4 mr-2" />
+                          <Download className="mr-2 h-4 w-4" />
                           Download Certificate
                         </Button>
                       </CardContent>
@@ -606,7 +657,7 @@ export default function CarbonMarketplace() {
         </TabsContent>
 
         <TabsContent value="impact" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -633,9 +684,7 @@ export default function CarbonMarketplace() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <p className="text-3xl font-bold text-blue-600">
-                    ${userCredits.length * 15.50}
-                  </p>
+                  <p className="text-3xl font-bold text-blue-600">${userCredits.length * 15.5}</p>
                   <p className="text-sm text-gray-600">Current market value</p>
                 </div>
               </CardContent>
@@ -650,9 +699,7 @@ export default function CarbonMarketplace() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <p className="text-3xl font-bold text-purple-600">
-                    {projects.length}
-                  </p>
+                  <p className="text-3xl font-bold text-purple-600">{projects.length}</p>
                   <p className="text-sm text-gray-600">Projects supported</p>
                 </div>
               </CardContent>
@@ -670,26 +717,34 @@ export default function CarbonMarketplace() {
                   <Info className="h-4 w-4" />
                   <AlertTitle>Impact Equivalent</AlertTitle>
                   <AlertDescription>
-                    Your retirement of {userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0)} tonnes CO2e is equivalent to:
+                    Your retirement of{' '}
+                    {userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0)} tonnes CO2e
+                    is equivalent to:
                   </AlertDescription>
                 </Alert>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 border rounded">
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="rounded border p-4 text-center">
                     <p className="text-2xl font-bold text-green-600">
-                      {(userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0) * 2.5).toFixed(1)}
+                      {(
+                        userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0) * 2.5
+                      ).toFixed(1)}
                     </p>
                     <p className="text-sm text-gray-600">Tree seedlings grown for 10 years</p>
                   </div>
-                  <div className="text-center p-4 border rounded">
+                  <div className="rounded border p-4 text-center">
                     <p className="text-2xl font-bold text-blue-600">
-                      {(userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0) * 5.5).toFixed(1)}
+                      {(
+                        userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0) * 5.5
+                      ).toFixed(1)}
                     </p>
                     <p className="text-sm text-gray-600">Miles not driven by average car</p>
                   </div>
-                  <div className="text-center p-4 border rounded">
+                  <div className="rounded border p-4 text-center">
                     <p className="text-2xl font-bold text-purple-600">
-                      {(userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0) * 0.8).toFixed(1)}
+                      {(
+                        userCertificates.reduce((sum, cert) => sum + cert.total_tonnes, 0) * 0.8
+                      ).toFixed(1)}
                     </p>
                     <p className="text-sm text-gray-600">Households powered for a month</p>
                   </div>
@@ -712,10 +767,13 @@ export default function CarbonMarketplace() {
           <div className="space-y-4">
             <div>
               <Label htmlFor="credit">Select Credit</Label>
-              <Select value={selectedCredit?.token_id || ''} onValueChange={(value) => {
-                const credit = userCredits.find(c => c.token_id === value);
-                setSelectedCredit(credit || null);
-              }}>
+              <Select
+                value={selectedCredit?.token_id || ''}
+                onValueChange={(value) => {
+                  const credit = userCredits.find((c) => c.token_id === value);
+                  setSelectedCredit(credit || null);
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a credit to sell" />
                 </SelectTrigger>
@@ -728,7 +786,7 @@ export default function CarbonMarketplace() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Label htmlFor="price">Price (USDC)</Label>
               <Input
@@ -739,7 +797,7 @@ export default function CarbonMarketplace() {
                 onChange={(e) => setOrderPrice(e.target.value)}
               />
             </div>
-            
+
             <div>
               <Label htmlFor="duration">Order Duration (days)</Label>
               <Select value={orderDuration} onValueChange={setOrderDuration}>
@@ -753,7 +811,7 @@ export default function CarbonMarketplace() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="flex gap-2">
               <Button onClick={handleCreateOrder} className="flex-1">
                 Create Order
@@ -778,7 +836,7 @@ export default function CarbonMarketplace() {
           <div className="space-y-4">
             <div>
               <Label>Select Credits to Retire</Label>
-              <div className="space-y-2 mt-2">
+              <div className="mt-2 space-y-2">
                 {userCredits.map((credit) => (
                   <div key={credit.token_id} className="flex items-center space-x-2">
                     <input
@@ -789,7 +847,9 @@ export default function CarbonMarketplace() {
                         if (e.target.checked) {
                           setSelectedCreditsToRetire([...selectedCreditsToRetire, credit.token_id]);
                         } else {
-                          setSelectedCreditsToRetire(selectedCreditsToRetire.filter(id => id !== credit.token_id));
+                          setSelectedCreditsToRetire(
+                            selectedCreditsToRetire.filter((id) => id !== credit.token_id)
+                          );
                         }
                       }}
                     />
@@ -800,7 +860,7 @@ export default function CarbonMarketplace() {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <Label htmlFor="reason">Retirement Reason</Label>
               <Textarea
@@ -810,7 +870,7 @@ export default function CarbonMarketplace() {
                 onChange={(e) => setRetirementReason(e.target.value)}
               />
             </div>
-            
+
             <div className="flex gap-2">
               <Button onClick={handleRetireCredits} className="flex-1">
                 Retire Credits

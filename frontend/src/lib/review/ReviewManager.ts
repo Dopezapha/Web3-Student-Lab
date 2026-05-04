@@ -1,4 +1,3 @@
-
 export interface ReviewRequest {
   id: string;
   title: string;
@@ -17,12 +16,12 @@ export interface ReviewRequest {
   }[];
   code: string;
   language: string;
-  status: "pending" | "in_review" | "approved" | "rejected" | "changes_requested";
+  status: 'pending' | 'in_review' | 'approved' | 'rejected' | 'changes_requested';
   createdAt: Date;
   updatedAt: Date;
   dueDate?: Date;
   tags: string[];
-  priority: "low" | "medium" | "high" | "urgent";
+  priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
 export interface ReviewSummary {
@@ -32,7 +31,7 @@ export interface ReviewSummary {
     id: string;
     name: string;
   };
-  status: "pending" | "completed" | "approved" | "rejected" | "changes_requested";
+  status: 'pending' | 'completed' | 'approved' | 'rejected' | 'changes_requested';
   overallScore: number;
   scores: {
     security: number;
@@ -77,11 +76,11 @@ export class ReviewManager {
   }
 
   private notify() {
-    this.listeners.forEach(listener => listener());
+    this.listeners.forEach((listener) => listener());
   }
 
   // Review management
-  createReview(review: Omit<ReviewRequest, "id" | "createdAt" | "updatedAt">): ReviewRequest {
+  createReview(review: Omit<ReviewRequest, 'id' | 'createdAt' | 'updatedAt'>): ReviewRequest {
     const newReview: ReviewRequest = {
       ...review,
       id: this.generateId(),
@@ -119,17 +118,17 @@ export class ReviewManager {
   }
 
   getReviewsByAuthor(authorId: string): ReviewRequest[] {
-    return Array.from(this.reviews.values()).filter(review => review.author.id === authorId);
+    return Array.from(this.reviews.values()).filter((review) => review.author.id === authorId);
   }
 
   getReviewsByReviewer(reviewerId: string): ReviewRequest[] {
-    return Array.from(this.reviews.values()).filter(review =>
-      review.reviewers.some(reviewer => reviewer.id === reviewerId)
+    return Array.from(this.reviews.values()).filter((review) =>
+      review.reviewers.some((reviewer) => reviewer.id === reviewerId)
     );
   }
 
-  getReviewsByStatus(status: ReviewRequest["status"]): ReviewRequest[] {
-    return Array.from(this.reviews.values()).filter(review => review.status === status);
+  getReviewsByStatus(status: ReviewRequest['status']): ReviewRequest[] {
+    return Array.from(this.reviews.values()).filter((review) => review.status === status);
   }
 
   deleteReview(id: string): boolean {
@@ -140,7 +139,10 @@ export class ReviewManager {
   }
 
   // Review summary management
-  createSummary(reviewId: string, summary: Omit<ReviewSummary, "id" | "submittedAt">): ReviewSummary {
+  createSummary(
+    reviewId: string,
+    summary: Omit<ReviewSummary, 'id' | 'submittedAt'>
+  ): ReviewSummary {
     const newSummary: ReviewSummary = {
       ...summary,
       id: this.generateId(),
@@ -163,12 +165,16 @@ export class ReviewManager {
 
   getSummary(reviewId: string, summaryId: string): ReviewSummary | null {
     const summaries = this.summaries.get(reviewId) || [];
-    return summaries.find(summary => summary.id === summaryId) || null;
+    return summaries.find((summary) => summary.id === summaryId) || null;
   }
 
-  updateSummary(reviewId: string, summaryId: string, updates: Partial<ReviewSummary>): ReviewSummary | null {
+  updateSummary(
+    reviewId: string,
+    summaryId: string,
+    updates: Partial<ReviewSummary>
+  ): ReviewSummary | null {
     const summaries = this.summaries.get(reviewId) || [];
-    const index = summaries.findIndex(summary => summary.id === summaryId);
+    const index = summaries.findIndex((summary) => summary.id === summaryId);
 
     if (index === -1) return null;
 
@@ -183,7 +189,7 @@ export class ReviewManager {
 
   deleteSummary(reviewId: string, summaryId: string): boolean {
     const summaries = this.summaries.get(reviewId) || [];
-    const index = summaries.findIndex(summary => summary.id === summaryId);
+    const index = summaries.findIndex((summary) => summary.id === summaryId);
 
     if (index === -1) return false;
 
@@ -196,7 +202,7 @@ export class ReviewManager {
   }
 
   // Template management
-  createTemplate(template: Omit<ReviewTemplate, "id">): ReviewTemplate {
+  createTemplate(template: Omit<ReviewTemplate, 'id'>): ReviewTemplate {
     const newTemplate: ReviewTemplate = {
       ...template,
       id: this.generateId(),
@@ -238,21 +244,21 @@ export class ReviewManager {
 
     if (!review) return;
 
-    const completedSummaries = summaries.filter(s => s.status === "completed");
-    const approvedSummaries = summaries.filter(s => s.status === "approved");
-    const rejectedSummaries = summaries.filter(s => s.status === "rejected");
+    const completedSummaries = summaries.filter((s) => s.status === 'completed');
+    const approvedSummaries = summaries.filter((s) => s.status === 'approved');
+    const rejectedSummaries = summaries.filter((s) => s.status === 'rejected');
 
     // If all reviewers have submitted
     if (completedSummaries.length === review.reviewers.length) {
       if (rejectedSummaries.length > 0) {
-        review.status = "rejected";
+        review.status = 'rejected';
       } else if (approvedSummaries.length === review.reviewers.length) {
-        review.status = "approved";
+        review.status = 'approved';
       } else {
-        review.status = "changes_requested";
+        review.status = 'changes_requested';
       }
     } else if (completedSummaries.length > 0) {
-      review.status = "in_review";
+      review.status = 'in_review';
     }
 
     review.updatedAt = new Date();
@@ -265,79 +271,79 @@ export class ReviewManager {
 
   private initializeDefaultTemplates() {
     const securityTemplate: ReviewTemplate = {
-      id: "security-template",
-      name: "Security Review",
-      description: "Focus on security vulnerabilities and best practices",
+      id: 'security-template',
+      name: 'Security Review',
+      description: 'Focus on security vulnerabilities and best practices',
       criteria: [
         {
-          name: "Input Validation",
-          description: "Proper validation of user inputs",
+          name: 'Input Validation',
+          description: 'Proper validation of user inputs',
           weight: 0.3,
           maxScore: 10,
         },
         {
-          name: "Access Control",
-          description: "Proper authorization and authentication",
+          name: 'Access Control',
+          description: 'Proper authorization and authentication',
           weight: 0.3,
           maxScore: 10,
         },
         {
-          name: "Data Protection",
-          description: "Encryption and secure data handling",
+          name: 'Data Protection',
+          description: 'Encryption and secure data handling',
           weight: 0.2,
           maxScore: 10,
         },
         {
-          name: "Error Handling",
-          description: "Secure error handling without information leakage",
+          name: 'Error Handling',
+          description: 'Secure error handling without information leakage',
           weight: 0.2,
           maxScore: 10,
         },
       ],
       defaultComments: [
-        "Consider adding input validation here",
-        "This could be a security vulnerability",
-        "Ensure proper access control is implemented",
+        'Consider adding input validation here',
+        'This could be a security vulnerability',
+        'Ensure proper access control is implemented',
       ],
-      tags: ["security", "audit", "vulnerability"],
+      tags: ['security', 'audit', 'vulnerability'],
     };
 
     const codeQualityTemplate: ReviewTemplate = {
-      id: "code-quality-template",
-      name: "Code Quality Review",
-      description: "General code quality and best practices",
+      id: 'code-quality-template',
+      name: 'Code Quality Review',
+      description: 'General code quality and best practices',
       criteria: [
         {
-          name: "Readability",
-          description: "Code clarity and documentation",
+          name: 'Readability',
+          description: 'Code clarity and documentation',
           weight: 0.25,
           maxScore: 10,
         },
         {
-          name: "Efficiency",
-          description: "Performance and optimization",
+          name: 'Efficiency',
+          description: 'Performance and optimization',
           weight: 0.25,
           maxScore: 10,
         },
         {
-          name: "Maintainability",
-          description: "Code structure and modularity",
+          name: 'Maintainability',
+          description: 'Code structure and modularity',
           weight: 0.25,
           maxScore: 10,
         },
         {
-          name: "Testing",
-          description: "Test coverage and quality",
+          name: 'Testing',
+          description: 'Test coverage and quality',
           weight: 0.25,
           maxScore: 10,
         },
       ],
       defaultComments: [
-        "Consider refactoring this for better readability",
-        "This could be optimized for better performance",
-        "Adding tests would improve code quality",
+        'Consider refactoring this for better readability',
+        'This could be optimized for better performance',
+        'Adding tests would improve code quality',
       ],
-      tags: ["quality", "best-practices", "refactoring"],
+      tags: ['quality', 'best-practices', 'refactoring'],
     };
 
     this.templates.set(securityTemplate.id, securityTemplate);
@@ -351,10 +357,10 @@ export class ReviewManager {
 
     return {
       totalReviews: reviews.length,
-      pendingReviews: reviews.filter(r => r.status === "pending").length,
-      inProgressReviews: reviews.filter(r => r.status === "in_review").length,
-      completedReviews: reviews.filter(r =>
-        ["approved", "rejected", "changes_requested"].includes(r.status)
+      pendingReviews: reviews.filter((r) => r.status === 'pending').length,
+      inProgressReviews: reviews.filter((r) => r.status === 'in_review').length,
+      completedReviews: reviews.filter((r) =>
+        ['approved', 'rejected', 'changes_requested'].includes(r.status)
       ).length,
       averageReviewTime: this.calculateAverageReviewTime(reviews),
       averageScore: this.calculateAverageScore(summaries),
@@ -363,8 +369,8 @@ export class ReviewManager {
   }
 
   private calculateAverageReviewTime(reviews: ReviewRequest[]): number {
-    const completedReviews = reviews.filter(r =>
-      ["approved", "rejected", "changes_requested"].includes(r.status)
+    const completedReviews = reviews.filter((r) =>
+      ['approved', 'rejected', 'changes_requested'].includes(r.status)
     );
 
     if (completedReviews.length === 0) return 0;
@@ -391,7 +397,7 @@ export class ReviewManager {
   private getTopReviewers(summaries: ReviewSummary[]): Array<{ name: string; count: number }> {
     const reviewerCounts = new Map<string, number>();
 
-    summaries.forEach(summary => {
+    summaries.forEach((summary) => {
       const count = reviewerCounts.get(summary.reviewer.name) || 0;
       reviewerCounts.set(summary.reviewer.name, count + 1);
     });

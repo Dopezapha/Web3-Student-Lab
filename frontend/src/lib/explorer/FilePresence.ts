@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type * as Y from "yjs";
+import type * as Y from 'yjs';
 
 export interface PresenceUser {
   clientId: number;
@@ -16,7 +16,7 @@ export interface PresenceState {
   };
 }
 
-const FOLDER_STATE_STORAGE_KEY = "playground-folder-state-v1";
+const FOLDER_STATE_STORAGE_KEY = 'playground-folder-state-v1';
 
 export class FilePresenceManager {
   private awareness: any;
@@ -34,7 +34,7 @@ export class FilePresenceManager {
   }
 
   setActiveFile(activeFilePath: string) {
-    this.awareness.setLocalStateField("activeFilePath", activeFilePath);
+    this.awareness.setLocalStateField('activeFilePath', activeFilePath);
   }
 
   getUsersForFile(filePath: string): PresenceUser[] {
@@ -60,14 +60,14 @@ export class FilePresenceManager {
 
   isFolderExpanded(folderPath: string): boolean {
     const value = this.folderStateMap.get(folderPath);
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       return value;
     }
     return true;
   }
 
   hydrateFolderStateFromStorage() {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     const raw = window.localStorage.getItem(FOLDER_STATE_STORAGE_KEY);
     if (!raw) return;
     try {
@@ -81,7 +81,7 @@ export class FilePresenceManager {
   }
 
   private persistFolderState() {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     const state: Record<string, boolean> = {};
     this.folderStateMap.forEach((value, key) => {
       state[key] = !!value;

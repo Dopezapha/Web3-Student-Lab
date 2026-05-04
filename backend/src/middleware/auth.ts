@@ -17,13 +17,11 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
     if (!token) {
-      return res.status(401).json(
-        ApiResponse.error('Access token required')
-      );
+      return res.status(401).json(ApiResponse.error('Access token required'));
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    
+
     // Get user from database to ensure they still exist and are active
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -31,34 +29,28 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
         id: true,
         email: true,
         role: true,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     if (!user || !user.isActive) {
-      return res.status(401).json(
-        ApiResponse.error('Invalid or inactive user')
-      );
+      return res.status(401).json(ApiResponse.error('Invalid or inactive user'));
     }
 
     req.user = {
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
 
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json(
-        ApiResponse.error('Invalid token')
-      );
+      return res.status(401).json(ApiResponse.error('Invalid token'));
     }
-    
+
     console.error('Auth middleware error:', error);
-    return res.status(500).json(
-      ApiResponse.error('Internal server error')
-    );
+    return res.status(500).json(ApiResponse.error('Internal server error'));
   }
 };
 

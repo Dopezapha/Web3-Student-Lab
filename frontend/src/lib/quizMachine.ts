@@ -1,5 +1,5 @@
-import { assign, createMachine } from "xstate";
-import { quizQuestions } from "./quizQuestions";
+import { assign, createMachine } from 'xstate';
+import { quizQuestions } from './quizQuestions';
 
 export interface QuizContext {
   currentIndex: number;
@@ -16,16 +16,16 @@ export interface QuizContext {
 }
 
 export type QuizEvent =
-  | { type: "START" }
-  | { type: "SELECT_OPTION"; choice: string }
-  | { type: "UPDATE_ORDER"; order: string[] }
-  | { type: "UPDATE_SNIPPET"; choice: string }
-  | { type: "USE_HINT" }
-  | { type: "USE_FIFTY_FIFTY" }
-  | { type: "SUBMIT" }
-  | { type: "TIMEOUT" }
-  | { type: "NEXT" }
-  | { type: "RESTART" };
+  | { type: 'START' }
+  | { type: 'SELECT_OPTION'; choice: string }
+  | { type: 'UPDATE_ORDER'; order: string[] }
+  | { type: 'UPDATE_SNIPPET'; choice: string }
+  | { type: 'USE_HINT' }
+  | { type: 'USE_FIFTY_FIFTY' }
+  | { type: 'SUBMIT' }
+  | { type: 'TIMEOUT' }
+  | { type: 'NEXT' }
+  | { type: 'RESTART' };
 
 const initialContext: QuizContext = {
   currentIndex: 0,
@@ -36,7 +36,7 @@ const initialContext: QuizContext = {
   visibleChoices: [],
   hintUsed: false,
   fiftyUsed: false,
-  feedback: "",
+  feedback: '',
   timedOut: false,
   correctAnswer: null,
 };
@@ -46,25 +46,25 @@ const randomize = (input: string[]) => [...input].sort(() => Math.random() - 0.5
 const buildQuestionContext = (index: number) => {
   const question = quizQuestions[index];
   const choicePool =
-    question.type === "multiple-choice"
+    question.type === 'multiple-choice'
       ? question.options
-      : question.type === "code-fill"
-      ? question.choices
-      : [];
+      : question.type === 'code-fill'
+        ? question.choices
+        : [];
 
   return {
     selectedOption: null,
-    dragOrder: question.type === "drag-order" ? question.segments : [],
+    dragOrder: question.type === 'drag-order' ? question.segments : [],
     snippetSelection: null,
     visibleChoices: randomize(choicePool),
-    feedback: "",
+    feedback: '',
     timedOut: false,
     correctAnswer:
-      question.type === "multiple-choice"
+      question.type === 'multiple-choice'
         ? question.answer
-        : question.type === "code-fill"
-        ? question.answer
-        : null,
+        : question.type === 'code-fill'
+          ? question.answer
+          : null,
   };
 };
 
@@ -72,18 +72,18 @@ const getQuestion = (context: QuizContext) => quizQuestions[context.currentIndex
 const isCorrect = (context: QuizContext) => {
   const question = getQuestion(context);
 
-  if (question.type === "multiple-choice") {
+  if (question.type === 'multiple-choice') {
     return context.selectedOption === question.answer;
   }
 
-  if (question.type === "drag-order") {
+  if (question.type === 'drag-order') {
     return (
       question.correctOrder.length === context.dragOrder.length &&
       question.correctOrder.every((item, index) => item === context.dragOrder[index])
     );
   }
 
-  if (question.type === "code-fill") {
+  if (question.type === 'code-fill') {
     return context.snippetSelection === question.answer;
   }
 
@@ -92,60 +92,60 @@ const isCorrect = (context: QuizContext) => {
 
 export const quizMachine = createMachine<QuizContext, QuizEvent>(
   {
-    id: "quiz",
-    initial: "idle",
+    id: 'quiz',
+    initial: 'idle',
     context: initialContext,
     states: {
       idle: {
         on: {
           START: {
-            target: "question",
-            actions: "prepareQuestion",
+            target: 'question',
+            actions: 'prepareQuestion',
           },
         },
       },
       question: {
-        entry: "prepareQuestion",
+        entry: 'prepareQuestion',
         on: {
           SELECT_OPTION: {
-            actions: "setSelectedOption",
+            actions: 'setSelectedOption',
           },
           UPDATE_ORDER: {
-            actions: "setDragOrder",
+            actions: 'setDragOrder',
           },
           UPDATE_SNIPPET: {
-            actions: "setSnippetSelection",
+            actions: 'setSnippetSelection',
           },
           USE_HINT: {
-            actions: "applyHint",
+            actions: 'applyHint',
           },
           USE_FIFTY_FIFTY: {
-            cond: "canUseFiftyFifty",
-            actions: "applyFiftyFifty",
+            cond: 'canUseFiftyFifty',
+            actions: 'applyFiftyFifty',
           },
           SUBMIT: [
             {
-              cond: "canSubmit",
-              target: "answer",
+              cond: 'canSubmit',
+              target: 'answer',
             },
           ],
           TIMEOUT: {
-            actions: "markTimedOut",
-            target: "answer",
+            actions: 'markTimedOut',
+            target: 'answer',
           },
         },
       },
       answer: {
-        entry: ["scoreQuestion", "setCorrectAnswer"],
+        entry: ['scoreQuestion', 'setCorrectAnswer'],
         on: {
           NEXT: [
             {
-              cond: "hasMoreQuestions",
-              target: "question",
-              actions: "advanceQuestion",
+              cond: 'hasMoreQuestions',
+              target: 'question',
+              actions: 'advanceQuestion',
             },
             {
-              target: "complete",
+              target: 'complete',
             },
           ],
         },
@@ -153,8 +153,8 @@ export const quizMachine = createMachine<QuizContext, QuizEvent>(
       complete: {
         on: {
           RESTART: {
-            target: "question",
-            actions: ["resetQuiz", "prepareQuestion"],
+            target: 'question',
+            actions: ['resetQuiz', 'prepareQuestion'],
           },
         },
       },
@@ -167,21 +167,21 @@ export const quizMachine = createMachine<QuizContext, QuizEvent>(
         ...buildQuestionContext(context.currentIndex),
       })),
       setSelectedOption: assign((context, event) => {
-        if (event.type !== "SELECT_OPTION") return context;
+        if (event.type !== 'SELECT_OPTION') return context;
         return {
           ...context,
           selectedOption: event.choice,
         };
       }),
       setDragOrder: assign((context, event) => {
-        if (event.type !== "UPDATE_ORDER") return context;
+        if (event.type !== 'UPDATE_ORDER') return context;
         return {
           ...context,
           dragOrder: event.order,
         };
       }),
       setSnippetSelection: assign((context, event) => {
-        if (event.type !== "UPDATE_SNIPPET") return context;
+        if (event.type !== 'UPDATE_SNIPPET') return context;
         return {
           ...context,
           snippetSelection: event.choice,
@@ -193,7 +193,7 @@ export const quizMachine = createMachine<QuizContext, QuizEvent>(
       })),
       applyFiftyFifty: assign((context) => {
         const question = getQuestion(context);
-        if (question.type === "multiple-choice" || question.type === "code-fill") {
+        if (question.type === 'multiple-choice' || question.type === 'code-fill') {
           const answer = question.answer;
           const incorrectOptions = question.choices
             ? question.choices.filter((choice) => choice !== answer)
@@ -219,17 +219,19 @@ export const quizMachine = createMachine<QuizContext, QuizEvent>(
         return {
           ...context,
           score: correct ? context.score + 1 : context.score,
-          feedback: correct ? "Correct! You nailed that one." : "Not quite — review the hint and try to remember the next pattern.",
+          feedback: correct
+            ? 'Correct! You nailed that one.'
+            : 'Not quite — review the hint and try to remember the next pattern.',
         };
       }),
       setCorrectAnswer: assign((context) => {
         const question = getQuestion(context);
         const answer =
-          question.type === "drag-order"
-            ? "Complete order matches the correct lifecycle."
-            : question.type === "code-fill"
-            ? question.answer
-            : question.answer;
+          question.type === 'drag-order'
+            ? 'Complete order matches the correct lifecycle.'
+            : question.type === 'code-fill'
+              ? question.answer
+              : question.answer;
         return {
           ...context,
           correctAnswer: answer,
@@ -247,13 +249,13 @@ export const quizMachine = createMachine<QuizContext, QuizEvent>(
       canUseFiftyFifty: (context) => !context.fiftyUsed,
       canSubmit: (context) => {
         const question = getQuestion(context);
-        if (question.type === "multiple-choice") {
+        if (question.type === 'multiple-choice') {
           return Boolean(context.selectedOption);
         }
-        if (question.type === "drag-order") {
+        if (question.type === 'drag-order') {
           return context.dragOrder.length > 0;
         }
-        if (question.type === "code-fill") {
+        if (question.type === 'code-fill') {
           return Boolean(context.snippetSelection);
         }
         return false;

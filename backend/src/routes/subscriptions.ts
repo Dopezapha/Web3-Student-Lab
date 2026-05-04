@@ -162,8 +162,13 @@ router.post('/cancel', async (req: Request, res: Response) => {
     }
 
     const now = Math.floor(Date.now() / 1000);
-    const refund = subscription.last_payment > 0 ? 
-      Math.floor((subscription.amount * (subscription.frequency - (now - subscription.last_payment))) / subscription.frequency) : 0;
+    const refund =
+      subscription.last_payment > 0
+        ? Math.floor(
+            (subscription.amount * (subscription.frequency - (now - subscription.last_payment))) /
+              subscription.frequency
+          )
+        : 0;
 
     subscriptions[subIndex] = {
       ...subscription,
@@ -229,7 +234,10 @@ router.post('/resume', async (req: Request, res: Response) => {
 
     const now = Math.floor(Date.now() / 1000);
     const pauseDuration = now - subscription.pause_start;
-    const nextPayment = (subscription.last_payment > 0 ? subscription.last_payment : subscription.created_at) + subscription.frequency + pauseDuration;
+    const nextPayment =
+      (subscription.last_payment > 0 ? subscription.last_payment : subscription.created_at) +
+      subscription.frequency +
+      pauseDuration;
 
     subscriptions[subIndex] = {
       ...subscription,
@@ -359,9 +367,11 @@ router.get('/analytics/:merchantKey', async (req: Request, res: Response) => {
       monthly_revenue: merchantSubs
         .filter((s) => s.last_payment > Math.floor(Date.now() / 1000) - 2592000)
         .reduce((sum, s) => sum + s.amount, 0),
-      average_subscription_length: merchantSubs.length > 0
-        ? merchantSubs.reduce((sum, s) => sum + (s.last_payment - s.created_at), 0) / merchantSubs.length
-        : 0,
+      average_subscription_length:
+        merchantSubs.length > 0
+          ? merchantSubs.reduce((sum, s) => sum + (s.last_payment - s.created_at), 0) /
+            merchantSubs.length
+          : 0,
     };
 
     res.json(analytics);

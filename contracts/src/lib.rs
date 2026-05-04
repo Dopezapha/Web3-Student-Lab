@@ -30,9 +30,6 @@ pub mod token_gated_access;
 pub mod verification;
 pub mod gaming_asset_exchange;
 pub mod rarity_validator;
-pub mod subscription_service;
-pub mod recurring_payments;
-pub mod burn_mechanism;
 pub mod payment_scheduler;
 pub mod execution_engine;
 pub mod sybil_resistance;
@@ -55,7 +52,6 @@ pub mod savings_wallet;
 pub mod interest_accrual;
 pub mod carbon_credit_platform;
 pub mod verification_system;
-pub mod subscription_manager;
 pub mod job_board;
 pub mod skill_verification;
 pub mod timestamping;
@@ -2247,6 +2243,7 @@ impl CertificateContract {
     /// Process a refund for a contributor if the campaign failed or is eligible.
     pub fn process_refund(env: Env, contributor: Address, campaign_id: u64) {
         milestone_release::process_refund(&env, contributor, campaign_id)
+    }
     // --- Blogging Platform Functions ---
 
     pub fn create_post(env: Env, author: Address, title: String, content_hash: BytesN<32>, metadata: String) -> u64 {

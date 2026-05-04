@@ -61,21 +61,18 @@ export class SnippetManager {
     if (filters) {
       if (filters.query) {
         const q = filters.query.toLowerCase();
-        result = result.filter(s => 
-          s.title.toLowerCase().includes(q) || 
-          s.content.toLowerCase().includes(q)
+        result = result.filter(
+          (s) => s.title.toLowerCase().includes(q) || s.content.toLowerCase().includes(q)
         );
       }
       if (filters.tags && filters.tags.length > 0) {
-        result = result.filter(s => 
-          filters.tags!.every(t => s.tags.includes(t))
-        );
+        result = result.filter((s) => filters.tags!.every((t) => s.tags.includes(t)));
       }
       if (filters.language) {
-        result = result.filter(s => s.language === filters.language);
+        result = result.filter((s) => s.language === filters.language);
       }
       if (filters.isPublic !== undefined) {
-        result = result.filter(s => s.isPublic === filters.isPublic);
+        result = result.filter((s) => s.isPublic === filters.isPublic);
       }
     }
 
@@ -83,7 +80,7 @@ export class SnippetManager {
   }
 
   public getSnippetById(id: string): Snippet | undefined {
-    return this.snippets.find(s => s.id === id);
+    return this.snippets.find((s) => s.id === id);
   }
 
   public saveSnippet(snippetData: Partial<Snippet>): Snippet {
@@ -91,7 +88,7 @@ export class SnippetManager {
     let snippet: Snippet;
 
     if (snippetData.id) {
-      const index = this.snippets.findIndex(s => s.id === snippetData.id);
+      const index = this.snippets.findIndex((s) => s.id === snippetData.id);
       if (index !== -1) {
         snippet = {
           ...this.snippets[index],
@@ -136,7 +133,7 @@ export class SnippetManager {
   }
 
   public deleteSnippet(id: string) {
-    this.snippets = this.snippets.filter(s => s.id !== id);
+    this.snippets = this.snippets.filter((s) => s.id !== id);
     this.saveToStorage();
   }
 
@@ -153,7 +150,7 @@ export class SnippetManager {
 
   public getAllTags(): string[] {
     const tags = new Set<string>();
-    this.snippets.forEach(s => s.tags.forEach(t => tags.add(t)));
+    this.snippets.forEach((s) => s.tags.forEach((t) => tags.add(t)));
     return Array.from(tags).sort();
   }
 }

@@ -1,43 +1,51 @@
-"use client";
+'use client';
 
-import React, { useState, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ShieldCheck, 
-  Upload, 
-  FileCheck, 
-  History, 
-  Search, 
-  FileText, 
-  Clock, 
+import React, { useState, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ShieldCheck,
+  Upload,
+  FileCheck,
+  History,
+  Search,
+  FileText,
+  Clock,
   Database,
   ExternalLink,
   CheckCircle2,
   AlertCircle,
   Hash,
   Download,
-  Share2
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
-import { Badge } from "@/components/ui/Badge";
-import { Progress } from "@/components/ui/Progress";
-import { calculateFileHash, notarizeFileOnChain, verifyFileOnChain, getNotarizationHistory, NotarizationRecord } from "@/lib/notarization";
-import { useWallet } from "@/contexts/WalletContext";
-import { formatStellarAddress } from "@/lib/soroban";
+  Share2,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Badge } from '@/components/ui/Badge';
+import { Progress } from '@/components/ui/Progress';
+import {
+  calculateFileHash,
+  notarizeFileOnChain,
+  verifyFileOnChain,
+  getNotarizationHistory,
+  NotarizationRecord,
+} from '@/lib/notarization';
+import { useWallet } from '@/contexts/WalletContext';
+import { formatStellarAddress } from '@/lib/soroban';
 
 const NotarizationDashboard: React.FC = () => {
   const { publicKey, connected } = useWallet();
-  const [activeTab, setActiveTab] = useState("notarize");
+  const [activeTab, setActiveTab] = useState('notarize');
   const [file, setFile] = useState<File | null>(null);
-  const [hash, setHash] = useState<string>("");
-  const [metadata, setMetadata] = useState<string>("");
+  const [hash, setHash] = useState<string>('');
+  const [metadata, setMetadata] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [history, setHistory] = useState<NotarizationRecord[]>([]);
-  const [verificationResult, setVerificationResult] = useState<NotarizationRecord | null | "not_found">(null);
+  const [verificationResult, setVerificationResult] = useState<
+    NotarizationRecord | null | 'not_found'
+  >(null);
   const [successTx, setSuccessTx] = useState<string | null>(null);
 
   // Load history when wallet connects
@@ -64,7 +72,7 @@ const NotarizationDashboard: React.FC = () => {
         setHash(fileHash);
         setProgress(100);
       } catch (error) {
-        console.error("Hashing failed", error);
+        console.error('Hashing failed', error);
       } finally {
         setTimeout(() => setIsProcessing(false), 500);
       }
@@ -73,7 +81,7 @@ const NotarizationDashboard: React.FC = () => {
 
   const handleNotarize = async () => {
     if (!connected || !publicKey || !hash) return;
-    
+
     setIsProcessing(true);
     setProgress(30);
     try {
@@ -83,37 +91,37 @@ const NotarizationDashboard: React.FC = () => {
       await loadHistory();
       setProgress(100);
     } catch (error) {
-      console.error("Notarization failed", error);
+      console.error('Notarization failed', error);
     } finally {
       setTimeout(() => {
         setIsProcessing(false);
         setFile(null);
-        setHash("");
-        setMetadata("");
+        setHash('');
+        setMetadata('');
       }, 1000);
     }
   };
 
   const handleVerify = async () => {
     if (!hash) return;
-    
+
     setIsProcessing(true);
     setVerificationResult(null);
     try {
       const result = await verifyFileOnChain(hash);
-      setVerificationResult(result || "not_found");
+      setVerificationResult(result || 'not_found');
     } catch (error) {
-      console.error("Verification failed", error);
+      console.error('Verification failed', error);
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8 min-h-screen animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="animate-in fade-in mx-auto min-h-screen max-w-6xl space-y-8 p-6 duration-700">
+      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+          <h1 className="text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent dark:from-blue-400 dark:to-indigo-400">
             File Notarization System
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
@@ -122,13 +130,19 @@ const NotarizationDashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           {connected ? (
-            <Badge variant="outline" className="px-4 py-2 text-sm bg-green-500/10 text-green-600 border-green-500/20">
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              {formatStellarAddress(publicKey || "")}
+            <Badge
+              variant="outline"
+              className="border-green-500/20 bg-green-500/10 px-4 py-2 text-sm text-green-600"
+            >
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              {formatStellarAddress(publicKey || '')}
             </Badge>
           ) : (
-            <Badge variant="outline" className="px-4 py-2 text-sm bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
-              <AlertCircle className="w-4 h-4 mr-2" />
+            <Badge
+              variant="outline"
+              className="border-yellow-500/20 bg-yellow-500/10 px-4 py-2 text-sm text-yellow-600"
+            >
+              <AlertCircle className="mr-2 h-4 w-4" />
               Wallet Not Connected
             </Badge>
           )}
@@ -136,17 +150,17 @@ const NotarizationDashboard: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8 p-1 bg-muted/50 rounded-xl">
+        <TabsList className="bg-muted/50 mb-8 grid w-full grid-cols-3 rounded-xl p-1">
           <TabsTrigger value="notarize" className="rounded-lg transition-all duration-300">
-            <Upload className="w-4 h-4 mr-2" />
+            <Upload className="mr-2 h-4 w-4" />
             Notarize
           </TabsTrigger>
           <TabsTrigger value="verify" className="rounded-lg transition-all duration-300">
-            <FileCheck className="w-4 h-4 mr-2" />
+            <FileCheck className="mr-2 h-4 w-4" />
             Verify
           </TabsTrigger>
           <TabsTrigger value="history" className="rounded-lg transition-all duration-300">
-            <History className="w-4 h-4 mr-2" />
+            <History className="mr-2 h-4 w-4" />
             History
           </TabsTrigger>
         </TabsList>
@@ -159,30 +173,31 @@ const NotarizationDashboard: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <Card className="border-2 border-dashed bg-card/50 backdrop-blur-sm overflow-hidden">
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <Card className="bg-card/50 overflow-hidden border-2 border-dashed backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-blue-500" />
+                      <FileText className="h-5 w-5 text-blue-500" />
                       Select File
                     </CardTitle>
                     <CardDescription>
-                      Upload the file you wish to notarize. The file itself is never uploaded to the blockchain, only its unique cryptographic hash.
+                      Upload the file you wish to notarize. The file itself is never uploaded to the
+                      blockchain, only its unique cryptographic hash.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="relative group">
+                    <div className="group relative">
                       <input
                         type="file"
                         onChange={handleFileChange}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                       />
-                      <div className="border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 group-hover:border-blue-500 group-hover:bg-blue-500/5">
-                        <Upload className="w-12 h-12 mx-auto text-muted-foreground group-hover:text-blue-500 transition-colors" />
-                        <p className="mt-4 font-medium text-lg">
-                          {file ? file.name : "Drag and drop file here or click to browse"}
+                      <div className="rounded-xl border-2 border-dashed p-12 text-center transition-all duration-300 group-hover:border-blue-500 group-hover:bg-blue-500/5">
+                        <Upload className="text-muted-foreground mx-auto h-12 w-12 transition-colors group-hover:text-blue-500" />
+                        <p className="mt-4 text-lg font-medium">
+                          {file ? file.name : 'Drag and drop file here or click to browse'}
                         </p>
-                        <p className="text-sm text-muted-foreground mt-2">
+                        <p className="text-muted-foreground mt-2 text-sm">
                           Maximum file size: 50MB
                         </p>
                       </div>
@@ -199,9 +214,9 @@ const NotarizationDashboard: React.FC = () => {
                     )}
 
                     {hash && (
-                      <div className="p-4 rounded-lg bg-muted/50 border border-border/50">
-                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1 mb-2">
-                          <Hash className="w-3 h-3" />
+                      <div className="bg-muted/50 border-border/50 rounded-lg border p-4">
+                        <label className="text-muted-foreground mb-2 flex items-center gap-1 text-xs font-bold tracking-wider uppercase">
+                          <Hash className="h-3 w-3" />
                           SHA-256 Hash
                         </label>
                         <p className="font-mono text-xs break-all text-blue-600 dark:text-blue-400">
@@ -215,7 +230,7 @@ const NotarizationDashboard: React.FC = () => {
                 <Card className="shadow-xl">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-indigo-500" />
+                      <ShieldCheck className="h-5 w-5 text-indigo-500" />
                       Notarization Details
                     </CardTitle>
                     <CardDescription>
@@ -233,41 +248,42 @@ const NotarizationDashboard: React.FC = () => {
                       />
                     </div>
 
-                    <div className="p-4 rounded-lg bg-indigo-500/5 border border-indigo-500/10 space-y-3">
-                      <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-medium">
-                        <Clock className="w-4 h-4" />
+                    <div className="space-y-3 rounded-lg border border-indigo-500/10 bg-indigo-500/5 p-4">
+                      <div className="flex items-center gap-2 font-medium text-indigo-600 dark:text-indigo-400">
+                        <Clock className="h-4 w-4" />
                         Immortal Timestamp
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Your file will be permanently timestamped on the Stellar network. This provides verifiable evidence of the file's existence at this exact moment.
+                      <p className="text-muted-foreground text-sm">
+                        Your file will be permanently timestamped on the Stellar network. This
+                        provides verifiable evidence of the file's existence at this exact moment.
                       </p>
                     </div>
 
-                    <Button 
-                      className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+                    <Button
+                      className="h-12 w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-lg font-semibold shadow-lg shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700"
                       disabled={!hash || !connected || isProcessing}
                       onClick={handleNotarize}
                     >
-                      {isProcessing ? "Processing..." : "Notarize on Blockchain"}
+                      {isProcessing ? 'Processing...' : 'Notarize on Blockchain'}
                     </Button>
 
                     {successTx && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-center"
+                        className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-center"
                       >
-                        <p className="text-green-600 dark:text-green-400 font-medium flex items-center justify-center gap-2 mb-2">
-                          <CheckCircle2 className="w-5 h-5" />
+                        <p className="mb-2 flex items-center justify-center gap-2 font-medium text-green-600 dark:text-green-400">
+                          <CheckCircle2 className="h-5 w-5" />
                           Notarization Successful!
                         </p>
-                        <a 
+                        <a
                           href={`https://stellar.expert/explorer/testnet/tx/${successTx}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-blue-500 hover:underline flex items-center justify-center gap-1"
+                          className="flex items-center justify-center gap-1 text-xs text-blue-500 hover:underline"
                         >
-                          View Transaction <ExternalLink className="w-3 h-3" />
+                          View Transaction <ExternalLink className="h-3 w-3" />
                         </a>
                       </motion.div>
                     )}
@@ -283,12 +299,12 @@ const NotarizationDashboard: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="max-w-3xl mx-auto"
+              className="mx-auto max-w-3xl"
             >
-              <Card className="shadow-2xl border-blue-500/10">
+              <Card className="border-blue-500/10 shadow-2xl">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-blue-600" />
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10">
+                    <Search className="h-8 w-8 text-blue-600" />
                   </div>
                   <CardTitle className="text-2xl">Verify Proof of Existence</CardTitle>
                   <CardDescription>
@@ -297,39 +313,39 @@ const NotarizationDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
-                    <div className="relative group">
+                    <div className="group relative">
                       <input
                         type="file"
                         onChange={handleFileChange}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                       />
-                      <div className="border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 group-hover:border-blue-500 group-hover:bg-blue-500/5">
+                      <div className="rounded-xl border-2 border-dashed p-8 text-center transition-all duration-300 group-hover:border-blue-500 group-hover:bg-blue-500/5">
                         <p className="font-medium">
-                          {file ? file.name : "Drop file here to verify"}
+                          {file ? file.name : 'Drop file here to verify'}
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                        <Hash className="w-4 h-4 text-muted-foreground" />
+                      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                        <Hash className="text-muted-foreground h-4 w-4" />
                       </div>
                       <Input
                         placeholder="Or enter SHA-256 hash manually..."
-                        className="pl-10 h-12 bg-muted/30"
+                        className="bg-muted/30 h-12 pl-10"
                         value={hash}
                         onChange={(e) => setHash(e.target.value)}
                       />
                     </div>
                   </div>
 
-                  <Button 
-                    className="w-full h-12 text-lg"
+                  <Button
+                    className="h-12 w-full text-lg"
                     variant="outline"
                     disabled={!hash || isProcessing}
                     onClick={handleVerify}
                   >
-                    {isProcessing ? "Checking Registry..." : "Verify Status"}
+                    {isProcessing ? 'Checking Registry...' : 'Verify Status'}
                   </Button>
 
                   {verificationResult && (
@@ -338,49 +354,75 @@ const NotarizationDashboard: React.FC = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       className="mt-6"
                     >
-                      {verificationResult === "not_found" ? (
-                        <div className="p-8 text-center border-2 border-dashed rounded-2xl bg-red-500/5 border-red-500/20">
-                          <AlertCircle className="w-12 h-12 mx-auto text-red-500 mb-4" />
-                          <h3 className="text-xl font-bold text-red-600 mb-2">No Proof Found</h3>
+                      {verificationResult === 'not_found' ? (
+                        <div className="rounded-2xl border-2 border-dashed border-red-500/20 bg-red-500/5 p-8 text-center">
+                          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
+                          <h3 className="mb-2 text-xl font-bold text-red-600">No Proof Found</h3>
                           <p className="text-muted-foreground">
                             This file hash has not been notarized in our registry yet.
                           </p>
                         </div>
                       ) : (
                         <div className="overflow-hidden rounded-2xl border border-green-500/20 shadow-lg shadow-green-500/5">
-                          <div className="bg-green-500 px-6 py-3 flex items-center justify-between text-white">
+                          <div className="flex items-center justify-between bg-green-500 px-6 py-3 text-white">
                             <div className="flex items-center gap-2 font-bold">
-                              <ShieldCheck className="w-5 h-5" />
+                              <ShieldCheck className="h-5 w-5" />
                               VERIFIED PROOF
                             </div>
-                            <Badge className="bg-white/20 text-white border-none">On-Chain</Badge>
+                            <Badge className="border-none bg-white/20 text-white">On-Chain</Badge>
                           </div>
-                          <div className="bg-card p-6 space-y-4">
+                          <div className="bg-card space-y-4 p-6">
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1">
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Timestamp</span>
-                                <p className="font-medium">{new Date(Number(verificationResult.proof.timestamp) * 1000).toLocaleString()}</p>
+                                <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                                  Timestamp
+                                </span>
+                                <p className="font-medium">
+                                  {new Date(
+                                    Number(verificationResult.proof.timestamp) * 1000
+                                  ).toLocaleString()}
+                                </p>
                               </div>
                               <div className="space-y-1 text-right">
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Ledger Seq</span>
-                                <p className="font-medium">#{verificationResult.proof.ledger_seq}</p>
+                                <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                                  Ledger Seq
+                                </span>
+                                <p className="font-medium">
+                                  #{verificationResult.proof.ledger_seq}
+                                </p>
                               </div>
                               <div className="space-y-1">
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Owner</span>
-                                <p className="font-mono text-xs">{formatStellarAddress(verificationResult.owner)}</p>
+                                <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                                  Owner
+                                </span>
+                                <p className="font-mono text-xs">
+                                  {formatStellarAddress(verificationResult.owner)}
+                                </p>
                               </div>
                               <div className="space-y-1 text-right">
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Status</span>
-                                <Badge variant="outline" className="text-green-600 bg-green-500/10">Active</Badge>
+                                <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                                  Status
+                                </span>
+                                <Badge variant="outline" className="bg-green-500/10 text-green-600">
+                                  Active
+                                </Badge>
                               </div>
                             </div>
-                            <div className="pt-4 border-t border-border/50">
-                              <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold block mb-1">Metadata</span>
-                              <p className="text-sm italic">"{verificationResult.metadata || "No metadata provided"}"</p>
+                            <div className="border-border/50 border-t pt-4">
+                              <span className="text-muted-foreground mb-1 block text-xs font-bold tracking-wider uppercase">
+                                Metadata
+                              </span>
+                              <p className="text-sm italic">
+                                "{verificationResult.metadata || 'No metadata provided'}"
+                              </p>
                             </div>
-                            <div className="pt-4 border-t border-border/50">
-                              <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold block mb-1">File Hash</span>
-                              <p className="font-mono text-[10px] break-all text-muted-foreground">{verificationResult.hash}</p>
+                            <div className="border-border/50 border-t pt-4">
+                              <span className="text-muted-foreground mb-1 block text-xs font-bold tracking-wider uppercase">
+                                File Hash
+                              </span>
+                              <p className="text-muted-foreground font-mono text-[10px] break-all">
+                                {verificationResult.hash}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -401,35 +443,35 @@ const NotarizationDashboard: React.FC = () => {
               className="space-y-6"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Database className="w-6 h-6 text-indigo-500" />
+                <h2 className="flex items-center gap-2 text-2xl font-bold">
+                  <Database className="h-6 w-6 text-indigo-500" />
                   Your Notarization Registry
                 </h2>
                 <Button variant="outline" size="sm" className="gap-2">
-                  <Download className="w-4 h-4" />
+                  <Download className="h-4 w-4" />
                   Export All
                 </Button>
               </div>
 
               {history.length === 0 ? (
-                <Card className="border-dashed bg-muted/20">
+                <Card className="bg-muted/20 border-dashed">
                   <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                    <FileText className="w-16 h-16 text-muted-foreground/30 mb-4" />
-                    <h3 className="text-xl font-medium text-muted-foreground">No records found</h3>
+                    <FileText className="text-muted-foreground/30 mb-4 h-16 w-16" />
+                    <h3 className="text-muted-foreground text-xl font-medium">No records found</h3>
                     <p className="text-muted-foreground mt-2 max-w-sm">
                       Start notarizing files to build your immutable proof registry.
                     </p>
-                    <Button 
-                      variant="link" 
+                    <Button
+                      variant="link"
                       className="mt-4"
-                      onClick={() => setActiveTab("notarize")}
+                      onClick={() => setActiveTab('notarize')}
                     >
                       Create your first notarization
                     </Button>
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {history.map((record, index) => (
                     <motion.div
                       key={record.hash}
@@ -437,38 +479,43 @@ const NotarizationDashboard: React.FC = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.05 }}
                     >
-                      <Card className="h-full hover:shadow-xl transition-all duration-300 group overflow-hidden border-indigo-500/5 hover:border-indigo-500/20">
+                      <Card className="group h-full overflow-hidden border-indigo-500/5 transition-all duration-300 hover:border-indigo-500/20 hover:shadow-xl">
                         <CardHeader className="pb-3">
-                          <div className="flex justify-between items-start">
-                            <div className="w-10 h-10 bg-indigo-500/10 rounded-lg flex items-center justify-center text-indigo-600">
-                              <FileCheck className="w-6 h-6" />
+                          <div className="flex items-start justify-between">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600">
+                              <FileCheck className="h-6 w-6" />
                             </div>
-                            <Badge variant="outline" className="text-[10px] font-mono bg-muted/30">
+                            <Badge variant="outline" className="bg-muted/30 font-mono text-[10px]">
                               #{record.proof.ledger_seq}
                             </Badge>
                           </div>
-                          <CardTitle className="text-lg mt-3 truncate">
-                            {record.metadata || "Untitled Document"}
+                          <CardTitle className="mt-3 truncate text-lg">
+                            {record.metadata || 'Untitled Document'}
                           </CardTitle>
                           <CardDescription className="flex items-center gap-1 text-xs">
-                            <Clock className="w-3 h-3" />
+                            <Clock className="h-3 w-3" />
                             {new Date(Number(record.proof.timestamp) * 1000).toLocaleDateString()}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="space-y-1">
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Hash</span>
-                            <p className="text-[10px] font-mono break-all text-muted-foreground group-hover:text-foreground transition-colors">
+                            <span className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+                              Hash
+                            </span>
+                            <p className="text-muted-foreground group-hover:text-foreground font-mono text-[10px] break-all transition-colors">
                               {record.hash.substring(0, 32)}...
                             </p>
                           </div>
                           <div className="flex items-center gap-2 pt-2">
-                            <Button size="sm" className="flex-1 gap-2 bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-none shadow-none">
-                              <Download className="w-3 h-3" />
+                            <Button
+                              size="sm"
+                              className="flex-1 gap-2 border-none bg-blue-500/10 text-blue-600 shadow-none hover:bg-blue-500/20"
+                            >
+                              <Download className="h-3 w-3" />
                               Certificate
                             </Button>
-                            <Button size="icon" variant="outline" className="w-8 h-8 rounded-lg">
-                              <Share2 className="w-3 h-3" />
+                            <Button size="icon" variant="outline" className="h-8 w-8 rounded-lg">
+                              <Share2 className="h-3 w-3" />
                             </Button>
                           </div>
                         </CardContent>
@@ -482,9 +529,9 @@ const NotarizationDashboard: React.FC = () => {
         </AnimatePresence>
       </Tabs>
 
-      <footer className="pt-12 text-center text-sm text-muted-foreground border-t border-border/50">
+      <footer className="text-muted-foreground border-border/50 border-t pt-12 text-center text-sm">
         <p className="flex items-center justify-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-green-500" />
+          <ShieldCheck className="h-4 w-4 text-green-500" />
           Powered by Stellar Soroban | Open Source Learning Lab
         </p>
       </footer>

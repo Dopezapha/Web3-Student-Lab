@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { CommentSyncUser } from "../../lib/review/CommentSync";
+import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { CommentSyncUser } from '../../lib/review/CommentSync';
 
 interface CollaborativeCursorsProps {
   editor: any;
@@ -10,7 +10,10 @@ interface CollaborativeCursorsProps {
   users: CommentSyncUser[];
   currentUser: CommentSyncUser;
   onUserCursorUpdate?: (userId: string, position: { line: number; column: number }) => void;
-  onUserSelectionUpdate?: (userId: string, selection: { start: { line: number; column: number }; end: { line: number; column: number } }) => void;
+  onUserSelectionUpdate?: (
+    userId: string,
+    selection: { start: { line: number; column: number }; end: { line: number; column: number } }
+  ) => void;
 }
 
 interface CursorDecoration {
@@ -48,50 +51,61 @@ export default function CollaborativeCursors({
   });
 
   // Generate cursor decoration
-  const createCursorDecoration = (user: CommentSyncUser, position: { line: number; column: number }) => {
+  const createCursorDecoration = (
+    user: CommentSyncUser,
+    position: { line: number; column: number }
+  ) => {
     if (!editor || !monaco) return null;
 
-    const decorationId = editor.deltaDecorations([], [{
-      range: new monaco.Range(
-        position.line,
-        position.column,
-        position.line,
-        position.column
-      ),
-      options: {
-        className: `collaborative-cursor-${user.id}`,
-        hoverMessage: {
-          value: `${user.name}'s cursor`
+    const decorationId = editor.deltaDecorations(
+      [],
+      [
+        {
+          range: new monaco.Range(position.line, position.column, position.line, position.column),
+          options: {
+            className: `collaborative-cursor-${user.id}`,
+            hoverMessage: {
+              value: `${user.name}'s cursor`,
+            },
+            stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+            afterContentClassName: `collaborative-cursor-after-${user.id}`,
+            afterContent: user.name.charAt(0).toUpperCase(),
+          },
         },
-        stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-        afterContentClassName: `collaborative-cursor-after-${user.id}`,
-        afterContent: user.name.charAt(0).toUpperCase(),
-      }
-    }])[0];
+      ]
+    )[0];
 
     return decorationId;
   };
 
   // Generate selection decoration
-  const createSelectionDecoration = (user: CommentSyncUser, selection: { start: { line: number; column: number }; end: { line: number; column: number } }) => {
+  const createSelectionDecoration = (
+    user: CommentSyncUser,
+    selection: { start: { line: number; column: number }; end: { line: number; column: number } }
+  ) => {
     if (!editor || !monaco) return null;
 
-    const decorationId = editor.deltaDecorations([], [{
-      range: new monaco.Range(
-        selection.start.line,
-        selection.start.column,
-        selection.end.line,
-        selection.end.column
-      ),
-      options: {
-        className: `collaborative-selection-${user.id}`,
-        hoverMessage: {
-          value: `${user.name}'s selection`
+    const decorationId = editor.deltaDecorations(
+      [],
+      [
+        {
+          range: new monaco.Range(
+            selection.start.line,
+            selection.start.column,
+            selection.end.line,
+            selection.end.column
+          ),
+          options: {
+            className: `collaborative-selection-${user.id}`,
+            hoverMessage: {
+              value: `${user.name}'s selection`,
+            },
+            stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+            isWholeLine: false,
+          },
         },
-        stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-        isWholeLine: false,
-      }
-    }])[0];
+      ]
+    )[0];
 
     return decorationId;
   };
@@ -170,13 +184,13 @@ export default function CollaborativeCursors({
     // Clear existing decorations
     const existingCursorIds = Array.from(decorationsRef.current.cursors.values());
     const existingSelectionIds = Array.from(decorationsRef.current.selections.values());
-    
+
     editor.deltaDecorations([...existingCursorIds, ...existingSelectionIds], []);
     decorationsRef.current.cursors.clear();
     decorationsRef.current.selections.clear();
 
     // Add new decorations for each user (except current user)
-    users.forEach(user => {
+    users.forEach((user) => {
       if (user.id === currentUser.id) return;
 
       // Update cursor styles
@@ -211,7 +225,7 @@ export default function CollaborativeCursors({
           line: position.lineNumber,
           column: position.column,
         };
-        
+
         // Notify parent component of cursor change
         if (onUserCursorUpdate) {
           onUserCursorUpdate(currentUser.id, cursorPos);
@@ -232,7 +246,7 @@ export default function CollaborativeCursors({
             column: selection.endColumn,
           },
         };
-        
+
         // Notify parent component of selection change
         if (onUserSelectionUpdate) {
           onUserSelectionUpdate(currentUser.id, selectionRange);
@@ -258,7 +272,7 @@ export default function CollaborativeCursors({
   // Cleanup styles on unmount
   useEffect(() => {
     return () => {
-      users.forEach(user => {
+      users.forEach((user) => {
         const cursorId = `collaborative-cursor-${user.id}`;
         const cursorAfterId = `collaborative-cursor-after-${user.id}`;
         const selectionId = `collaborative-selection-${user.id}`;
@@ -275,38 +289,38 @@ export default function CollaborativeCursors({
   }, [users]);
 
   // Active users indicator
-  const activeUsers = users.filter(user => user.id !== currentUser.id);
+  const activeUsers = users.filter((user) => user.id !== currentUser.id);
 
   return (
     <div className="absolute top-4 left-4 z-40">
-      <div className="flex items-center space-x-2 bg-black/50 border border-white/20 rounded-lg px-3 py-2 backdrop-blur-sm">
+      <div className="flex items-center space-x-2 rounded-lg border border-white/20 bg-black/50 px-3 py-2 backdrop-blur-sm">
         <div className="flex items-center space-x-1">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-xs text-white font-medium">
+          <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+          <span className="text-xs font-medium text-white">
             {activeUsers.length} {activeUsers.length === 1 ? 'user' : 'users'} active
           </span>
         </div>
-        
+
         {activeUsers.length > 0 && (
-          <div className="flex items-center space-x-1 ml-2 pl-2 border-l border-white/20">
-            {activeUsers.slice(0, 3).map(user => (
+          <div className="ml-2 flex items-center space-x-1 border-l border-white/20 pl-2">
+            {activeUsers.slice(0, 3).map((user) => (
               <motion.div
                 key={user.id}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="relative group"
+                className="group relative"
               >
                 <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-black/50"
+                  className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-black/50 text-xs font-bold text-white"
                   style={{ backgroundColor: user.color }}
                   title={user.name}
                 >
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                
+
                 {/* User tooltip */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 transform rounded bg-black/90 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
                   {user.name}
                   {user.cursor && (
                     <div className="text-gray-400">
@@ -316,9 +330,9 @@ export default function CollaborativeCursors({
                 </div>
               </motion.div>
             ))}
-            
+
             {activeUsers.length > 3 && (
-              <div className="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs font-bold border-2 border-black/50">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-black/50 bg-gray-600 text-xs font-bold text-white">
                 +{activeUsers.length - 3}
               </div>
             )}

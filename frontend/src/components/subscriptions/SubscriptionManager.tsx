@@ -7,18 +7,18 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { 
-  CreditCard, 
-  Calendar, 
-  DollarSign, 
-  CheckCircle, 
-  XCircle, 
+import {
+  CreditCard,
+  Calendar,
+  DollarSign,
+  CheckCircle,
+  XCircle,
   AlertTriangle,
   RefreshCw,
   Settings,
   TrendingUp,
   Users,
-  Clock
+  Clock,
 } from 'lucide-react';
 import { useSubscriptionStore } from '@/stores/subscriptionStore';
 import { useWebSocket } from '@/hooks/useWebSocket';
@@ -69,7 +69,7 @@ export const SubscriptionManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const {
     subscriptions,
     plans,
@@ -79,7 +79,7 @@ export const SubscriptionManager: React.FC = () => {
     fetchAnalytics,
     createSubscription,
     cancelSubscription,
-    renewSubscription
+    renewSubscription,
   } = useSubscriptionStore();
 
   const { lastMessage, sendMessage } = useWebSocket();
@@ -98,12 +98,8 @@ export const SubscriptionManager: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      await Promise.all([
-        fetchUserSubscriptions(),
-        fetchPlans(),
-        fetchAnalytics()
-      ]);
+
+      await Promise.all([fetchUserSubscriptions(), fetchPlans(), fetchAnalytics()]);
     } catch (err) {
       setError('Failed to load subscription data');
       console.error('Error loading subscription data:', err);
@@ -143,7 +139,7 @@ export const SubscriptionManager: React.FC = () => {
         planId,
         billingPeriod,
         paymentMethod: 'stellar',
-        autoRenew: true
+        autoRenew: true,
       });
     } catch (err) {
       setError('Failed to create subscription');
@@ -191,19 +187,19 @@ export const SubscriptionManager: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return <CheckCircle className="w-4 h-4" />;
+        return <CheckCircle className="h-4 w-4" />;
       case 'CANCELLED':
-        return <XCircle className="w-4 h-4" />;
+        return <XCircle className="h-4 w-4" />;
       case 'EXPIRED':
-        return <Clock className="w-4 h-4" />;
+        return <Clock className="h-4 w-4" />;
       case 'PAUSED':
-        return <AlertTriangle className="w-4 h-4" />;
+        return <AlertTriangle className="h-4 w-4" />;
       case 'SUSPENDED':
-        return <AlertTriangle className="w-4 h-4" />;
+        return <AlertTriangle className="h-4 w-4" />;
       case 'FAILED':
-        return <XCircle className="w-4 h-4" />;
+        return <XCircle className="h-4 w-4" />;
       default:
-        return <AlertTriangle className="w-4 h-4" />;
+        return <AlertTriangle className="h-4 w-4" />;
     }
   };
 
@@ -219,37 +215,37 @@ export const SubscriptionManager: React.FC = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const now = new Date();
-    
+
     const total = end.getTime() - start.getTime();
     const elapsed = now.getTime() - start.getTime();
-    
+
     return Math.min(100, Math.max(0, (elapsed / total) * 100));
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <RefreshCw className="w-8 h-8 animate-spin" />
+      <div className="flex min-h-screen items-center justify-center">
+        <RefreshCw className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Subscription Management</h1>
           <p className="text-muted-foreground">Manage your subscription plans and billing</p>
         </div>
         <Button onClick={loadData} variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Refresh
         </Button>
       </div>
 
       {error && (
         <Alert variant="destructive">
-          <AlertTriangle className="w-4 h-4" />
+          <AlertTriangle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -263,15 +259,15 @@ export const SubscriptionManager: React.FC = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <Users className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {subscriptions.filter(s => s.status === 'ACTIVE').length}
+                  {subscriptions.filter((s) => s.status === 'ACTIVE').length}
                 </div>
               </CardContent>
             </Card>
@@ -279,36 +275,30 @@ export const SubscriptionManager: React.FC = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatCurrency(analytics?.revenue || 0)}
-                </div>
+                <div className="text-2xl font-bold">{formatCurrency(analytics?.revenue || 0)}</div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">New Subscriptions</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <TrendingUp className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {analytics?.newSubscriptions || 0}
-                </div>
+                <div className="text-2xl font-bold">{analytics?.newSubscriptions || 0}</div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Churn Rate</CardTitle>
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                <AlertTriangle className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {analytics?.churnRate?.toFixed(1) || 0}%
-                </div>
+                <div className="text-2xl font-bold">{analytics?.churnRate?.toFixed(1) || 0}%</div>
               </CardContent>
             </Card>
           </div>
@@ -320,13 +310,10 @@ export const SubscriptionManager: React.FC = () => {
             </CardHeader>
             <CardContent>
               {subscriptions.length === 0 ? (
-                <div className="text-center py-8">
-                  <CreditCard className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <div className="py-8 text-center">
+                  <CreditCard className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
                   <p className="text-muted-foreground">No active subscriptions</p>
-                  <Button 
-                    className="mt-4" 
-                    onClick={() => setActiveTab('plans')}
-                  >
+                  <Button className="mt-4" onClick={() => setActiveTab('plans')}>
                     Browse Plans
                   </Button>
                 </div>
@@ -346,16 +333,16 @@ export const SubscriptionManager: React.FC = () => {
                                 </div>
                               </Badge>
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                               {subscription.plan?.description}
                             </p>
-                            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <div className="text-muted-foreground flex items-center space-x-4 text-sm">
                               <div className="flex items-center space-x-1">
-                                <Calendar className="w-4 h-4" />
+                                <Calendar className="h-4 w-4" />
                                 <span>Started: {formatDate(subscription.startDate)}</span>
                               </div>
                               <div className="flex items-center space-x-1">
-                                <Clock className="w-4 h-4" />
+                                <Clock className="h-4 w-4" />
                                 <span>Ends: {formatDate(subscription.endDate)}</span>
                               </div>
                             </div>
@@ -365,7 +352,7 @@ export const SubscriptionManager: React.FC = () => {
                               <div className="font-semibold">
                                 {formatCurrency(subscription.plan?.price || 0)}
                               </div>
-                              <div className="text-sm text-muted-foreground">
+                              <div className="text-muted-foreground text-sm">
                                 {subscription.plan?.billingPeriod}
                               </div>
                             </div>
@@ -390,15 +377,20 @@ export const SubscriptionManager: React.FC = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         {subscription.status === 'ACTIVE' && (
                           <div className="mt-4 space-y-2">
                             <div className="flex justify-between text-sm">
                               <span>Subscription Progress</span>
-                              <span>{calculateDaysRemaining(subscription.endDate)} days remaining</span>
+                              <span>
+                                {calculateDaysRemaining(subscription.endDate)} days remaining
+                              </span>
                             </div>
-                            <Progress 
-                              value={calculateProgress(subscription.startDate, subscription.endDate)} 
+                            <Progress
+                              value={calculateProgress(
+                                subscription.startDate,
+                                subscription.endDate
+                              )}
                               className="h-2"
                             />
                           </div>
@@ -413,7 +405,7 @@ export const SubscriptionManager: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="plans" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {plans.map((plan) => (
               <Card key={plan.id} className="relative">
                 <CardHeader>
@@ -427,31 +419,27 @@ export const SubscriptionManager: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-center">
-                    <div className="text-3xl font-bold">
-                      {formatCurrency(plan.price)}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-3xl font-bold">{formatCurrency(plan.price)}</div>
+                    <div className="text-muted-foreground text-sm">
                       per {plan.billingPeriod.toLowerCase()}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h4 className="font-semibold">Features:</h4>
                     <ul className="space-y-1">
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-center space-x-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <CheckCircle className="h-4 w-4 text-green-500" />
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    Up to {plan.maxUsers} users
-                  </div>
+                  <div className="text-muted-foreground text-sm">Up to {plan.maxUsers} users</div>
 
-                  <Button 
+                  <Button
                     className="w-full"
                     disabled={!plan.isActive}
                     onClick={() => handleCreateSubscription(plan.id, plan.billingPeriod)}
@@ -472,29 +460,31 @@ export const SubscriptionManager: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {subscriptions.flatMap(sub => 
-                  sub.payments?.map(payment => (
-                    <div key={payment.id} className="flex items-center justify-between p-4 border rounded">
-                      <div className="space-y-1">
-                        <div className="font-semibold">
-                          {formatCurrency(payment.amount)} {payment.currency}
+                {subscriptions.flatMap(
+                  (sub) =>
+                    sub.payments?.map((payment) => (
+                      <div
+                        key={payment.id}
+                        className="flex items-center justify-between rounded border p-4"
+                      >
+                        <div className="space-y-1">
+                          <div className="font-semibold">
+                            {formatCurrency(payment.amount)} {payment.currency}
+                          </div>
+                          <div className="text-muted-foreground text-sm">
+                            {formatDate(payment.createdAt)} - {payment.billingPeriod}
+                          </div>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {formatDate(payment.createdAt)} - {payment.billingPeriod}
+                        <div className="flex items-center space-x-2">
+                          <Badge className={getStatusColor(payment.status)}>{payment.status}</Badge>
+                          {payment.transactionId && (
+                            <Button size="sm" variant="outline">
+                              View Receipt
+                            </Button>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge className={getStatusColor(payment.status)}>
-                          {payment.status}
-                        </Badge>
-                        {payment.transactionId && (
-                          <Button size="sm" variant="outline">
-                            View Receipt
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  )) || []
+                    )) || []
                 )}
               </div>
             </CardContent>
@@ -502,7 +492,7 @@ export const SubscriptionManager: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Subscription Overview</CardTitle>
@@ -537,15 +527,11 @@ export const SubscriptionManager: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between">
                     <span>Total Revenue</span>
-                    <span className="font-semibold">
-                      {formatCurrency(analytics?.revenue || 0)}
-                    </span>
+                    <span className="font-semibold">{formatCurrency(analytics?.revenue || 0)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Churn Rate</span>
-                    <span className="font-semibold">
-                      {analytics?.churnRate?.toFixed(1) || 0}%
-                    </span>
+                    <span className="font-semibold">{analytics?.churnRate?.toFixed(1) || 0}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Period</span>

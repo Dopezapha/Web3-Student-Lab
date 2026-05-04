@@ -1,10 +1,8 @@
-"use client";
+'use client';
 
-import { editor } from "monaco-editor";
-import { useEffect, useRef, useState, useCallback } from "react";
-import {
-  RemoteCursor,
-} from "./RemoteCursor";
+import { editor } from 'monaco-editor';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { RemoteCursor } from './RemoteCursor';
 import {
   useRemoteCursorStates,
   useLocalCursorTracker,
@@ -12,7 +10,7 @@ import {
   isUserInactive,
   PixelCursorPosition,
   RemoteUserState,
-} from "@/lib/cursor/CursorSync";
+} from '@/lib/cursor/CursorSync';
 
 interface CursorManagerProps {
   editor: editor.IStandaloneCodeEditor | null;
@@ -28,11 +26,7 @@ interface CursorRenderState {
   isActive: boolean;
 }
 
-export function CursorManager({
-  editor,
-  awareness,
-  containerRef,
-}: CursorManagerProps) {
+export function CursorManager({ editor, awareness, containerRef }: CursorManagerProps) {
   // Track local cursor and broadcast to awareness
   useLocalCursorTracker(editor, awareness);
 
@@ -118,10 +112,7 @@ export function CursorManager({
   }
 
   return (
-    <div
-      className="pointer-events-none absolute inset-0 z-40 overflow-hidden"
-      aria-hidden="true"
-    >
+    <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden" aria-hidden="true">
       {cursorStates.map((cursor) => (
         <RemoteCursor
           key={cursor.clientId}

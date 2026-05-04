@@ -80,9 +80,7 @@ export const AssetMarketplace: React.FC = () => {
     return `rarity-${tier.toLowerCase()}`;
   };
 
-  const filteredAssets = filter === 'All' 
-    ? assets 
-    : assets.filter(a => a.rarityTier === filter);
+  const filteredAssets = filter === 'All' ? assets : assets.filter((a) => a.rarityTier === filter);
 
   return (
     <div className="marketplace-container">
@@ -94,7 +92,7 @@ export const AssetMarketplace: React.FC = () => {
       <div className="marketplace-controls">
         <div className="filter-group">
           {['All', 'Legendary', 'Epic', 'Rare', 'Uncommon', 'Common'].map((f) => (
-            <button 
+            <button
               key={f}
               className={`filter-btn ${filter === f ? 'active' : ''}`}
               onClick={() => setFilter(f)}
@@ -118,11 +116,11 @@ export const AssetMarketplace: React.FC = () => {
                   {asset.rarityTier}
                 </div>
               </div>
-              
+
               <div className="asset-details">
                 <h3 className="asset-name">{asset.name}</h3>
                 <span className="game-id-badge">{asset.gameId}</span>
-                
+
                 <div className="asset-attributes">
                   {Object.entries(asset.attributes).map(([key, val]) => (
                     <div key={key} className="attribute-tag">

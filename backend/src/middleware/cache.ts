@@ -20,10 +20,10 @@ export const cacheMiddleware = (ttlSeconds: number = 300) => {
 
       // Override res.json to cache the response
       const originalJson = res.json;
-      res.json = function(data: any) {
+      res.json = function (data: any) {
         // Only cache successful responses
         if (res.statusCode === 200) {
-          redisConnection.setex(cacheKey, ttlSeconds, JSON.stringify(data)).catch(err => {
+          redisConnection.setex(cacheKey, ttlSeconds, JSON.stringify(data)).catch((err) => {
             console.error('Cache set error:', err);
           });
         }

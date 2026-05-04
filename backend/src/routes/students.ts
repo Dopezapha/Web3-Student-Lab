@@ -26,37 +26,41 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/students/:id - Get student by ID
-router.get('/:id', cacheMiddleware({
-  ttl: cacheTTL.user.profile,
-  keyGenerator: (req) => CACHE_KEYS.user.profile(req.params.id)
-}), async (req, res) => {
-  try {
-    const { id } = req.params;
-    const student = await prisma.student.findUnique({
-      where: { id },
-      include: {
-        enrollments: {
-          include: {
-            course: true,
+router.get(
+  '/:id',
+  cacheMiddleware({
+    ttl: cacheTTL.user.profile,
+    keyGenerator: (req) => CACHE_KEYS.user.profile(req.params.id),
+  }),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const student = await prisma.student.findUnique({
+        where: { id },
+        include: {
+          enrollments: {
+            include: {
+              course: true,
+            },
+          },
+          certificates: {
+            include: {
+              course: true,
+            },
           },
         },
-        certificates: {
-          include: {
-            course: true,
-          },
-        },
-      },
-    });
+      });
 
-    if (!student) {
-      return res.status(404).json({ error: 'Student not found' });
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      res.json(student);
+    } catch {
+      res.status(500).json({ error: 'Failed to fetch student' });
     }
-
-    res.json(student);
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch student' });
   }
-});
+);
 
 // POST /api/students - Create a new student
 router.post('/', async (req, res) => {

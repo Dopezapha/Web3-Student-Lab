@@ -154,19 +154,21 @@ export default function FreelanceDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="border-primary h-10 w-10 animate-spin rounded-full border-b-2" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Freelance Marketplace</h1>
-          <p className="text-muted-foreground">Find work or hire talent with milestone-based escrow</p>
+          <p className="text-muted-foreground">
+            Find work or hire talent with milestone-based escrow
+          </p>
         </div>
         <Button onClick={() => setShowPostJob(true)}>
           <Briefcase className="mr-2 h-4 w-4" />
@@ -176,18 +178,18 @@ export default function FreelanceDashboard() {
 
       {/* Reputation Card */}
       {reputation && (
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-          <CardContent className="p-5 flex items-center gap-6">
+        <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardContent className="flex items-center gap-6 p-5">
             <div className="flex items-center gap-2">
-              <Star className="h-8 w-8 text-yellow-500 fill-yellow-500" />
+              <Star className="h-8 w-8 fill-yellow-500 text-yellow-500" />
               <div>
                 <p className="text-2xl font-bold">{(reputation.average_rating / 100).toFixed(1)}</p>
-                <p className="text-xs text-muted-foreground">{reputation.review_count} reviews</p>
+                <p className="text-muted-foreground text-xs">{reputation.review_count} reviews</p>
               </div>
             </div>
             <div className="flex-1" />
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Completed Jobs</p>
+              <p className="text-muted-foreground text-sm">Completed Jobs</p>
               <p className="text-xl font-bold">{reputation.completed_jobs}</p>
             </div>
           </CardContent>
@@ -211,17 +213,21 @@ export default function FreelanceDashboard() {
         </TabsList>
 
         {/* Browse Jobs */}
-        <TabsContent value="browse" className="space-y-4 mt-4">
+        <TabsContent value="browse" className="mt-4 space-y-4">
           {jobs.length === 0 ? (
             <Card>
-              <CardContent className="p-12 text-center text-muted-foreground">
-                <Briefcase className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <CardContent className="text-muted-foreground p-12 text-center">
+                <Briefcase className="mx-auto mb-3 h-12 w-12 opacity-30" />
                 <p>No open jobs available. Be the first to post one!</p>
               </CardContent>
             </Card>
           ) : (
             jobs.map((job) => (
-              <Card key={job.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSelectedJob(job)}>
+              <Card
+                key={job.id}
+                className="cursor-pointer transition-shadow hover:shadow-md"
+                onClick={() => setSelectedJob(job)}
+              >
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
@@ -229,7 +235,9 @@ export default function FreelanceDashboard() {
                         <h3 className="font-semibold">{job.title}</h3>
                         {getStatusBadge(job.status)}
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
+                      <p className="text-muted-foreground line-clamp-2 text-sm">
+                        {job.description}
+                      </p>
                       <div className="flex items-center gap-4 text-sm">
                         <span className="flex items-center gap-1">
                           <DollarSign className="h-4 w-4" />
@@ -254,7 +262,10 @@ export default function FreelanceDashboard() {
                     <Button
                       size="sm"
                       className="mt-3"
-                      onClick={(e) => { e.stopPropagation(); applyForJob(job.id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        applyForJob(job.id);
+                      }}
                     >
                       Apply
                     </Button>
@@ -266,11 +277,11 @@ export default function FreelanceDashboard() {
         </TabsContent>
 
         {/* My Jobs */}
-        <TabsContent value="my-jobs" className="space-y-4 mt-4">
+        <TabsContent value="my-jobs" className="mt-4 space-y-4">
           {myJobs.length === 0 ? (
             <Card>
-              <CardContent className="p-12 text-center text-muted-foreground">
-                <CheckCircle className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <CardContent className="text-muted-foreground p-12 text-center">
+                <CheckCircle className="mx-auto mb-3 h-12 w-12 opacity-30" />
                 <p>No active jobs. Apply or post to get started!</p>
               </CardContent>
             </Card>
@@ -278,7 +289,7 @@ export default function FreelanceDashboard() {
             myJobs.map((job) => (
               <Card key={job.id}>
                 <CardContent className="p-5">
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="mb-3 flex items-start justify-between">
                     <div>
                       <h3 className="font-semibold">{job.title}</h3>
                       {getStatusBadge(job.status)}
@@ -288,13 +299,13 @@ export default function FreelanceDashboard() {
                   {/* Milestones */}
                   <div className="space-y-2">
                     {job.milestones.map((m, i) => (
-                      <div key={i} className="flex items-center gap-3 p-2 rounded bg-muted/50">
+                      <div key={i} className="bg-muted/50 flex items-center gap-3 rounded p-2">
                         <Progress
                           value={m.released ? 100 : m.approved ? 75 : m.completed ? 50 : 0}
-                          className="flex-1 h-2"
+                          className="h-2 flex-1"
                         />
-                        <span className="text-sm w-32 truncate">{m.description}</span>
-                        <span className="text-sm font-mono">{m.amount.toLocaleString()}</span>
+                        <span className="w-32 truncate text-sm">{m.description}</span>
+                        <span className="font-mono text-sm">{m.amount.toLocaleString()}</span>
                         {job.status === 'InProgress' && (
                           <>
                             {!m.completed && job.freelancer === user?.address && (
@@ -317,12 +328,12 @@ export default function FreelanceDashboard() {
                     <Button
                       size="sm"
                       className="mt-3"
-                      onClick={() => setShowReview({
-                        jobId: job.id,
-                        reviewee: job.client === user?.address
-                          ? job.freelancer!
-                          : job.client,
-                      })}
+                      onClick={() =>
+                        setShowReview({
+                          jobId: job.id,
+                          reviewee: job.client === user?.address ? job.freelancer! : job.client,
+                        })
+                      }
                     >
                       <Star className="mr-1 h-3 w-3" />
                       Leave Review
@@ -335,18 +346,18 @@ export default function FreelanceDashboard() {
         </TabsContent>
 
         {/* Reviews */}
-        <TabsContent value="reviews" className="space-y-4 mt-4">
+        <TabsContent value="reviews" className="mt-4 space-y-4">
           {reviews.length === 0 ? (
             <Card>
-              <CardContent className="p-12 text-center text-muted-foreground">
-                <Star className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <CardContent className="text-muted-foreground p-12 text-center">
+                <Star className="mx-auto mb-3 h-12 w-12 opacity-30" />
                 <p>No reviews yet. Complete jobs to earn reviews!</p>
               </CardContent>
             </Card>
           ) : (
             reviews.map((review, i) => (
               <Card key={i}>
-                <CardContent className="p-4 flex items-start gap-3">
+                <CardContent className="flex items-start gap-3 p-4">
                   <div className="flex items-center gap-1 text-yellow-500">
                     {Array.from({ length: review.rating }).map((_, j) => (
                       <Star key={j} className="h-4 w-4 fill-yellow-500" />
@@ -354,7 +365,7 @@ export default function FreelanceDashboard() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm">{review.comment}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-muted-foreground mt-1 text-xs">
                       Job #{review.job_id} · {formatDistanceToNow(review.timestamp)}
                     </p>
                   </div>
@@ -374,16 +385,24 @@ export default function FreelanceDashboard() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">Job Title</label>
-              <Input value={postTitle} onChange={(e) => setPostTitle(e.target.value)} placeholder="e.g. Build a DeFi dashboard" />
+              <Input
+                value={postTitle}
+                onChange={(e) => setPostTitle(e.target.value)}
+                placeholder="e.g. Build a DeFi dashboard"
+              />
             </div>
             <div>
               <label className="text-sm font-medium">Description</label>
-              <Input value={postDescription} onChange={(e) => setPostDescription(e.target.value)} placeholder="Describe the project requirements..." />
+              <Input
+                value={postDescription}
+                onChange={(e) => setPostDescription(e.target.value)}
+                placeholder="Describe the project requirements..."
+              />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Milestones</label>
+              <label className="mb-2 block text-sm font-medium">Milestones</label>
               {milestones.map((m, i) => (
-                <div key={i} className="flex gap-2 mb-2">
+                <div key={i} className="mb-2 flex gap-2">
                   <Input
                     placeholder={`Milestone ${i + 1} description`}
                     value={m.description}
@@ -406,7 +425,11 @@ export default function FreelanceDashboard() {
                     className="w-32"
                   />
                   {milestones.length > 1 && (
-                    <Button variant="outline" size="sm" onClick={() => setMilestones(milestones.filter((_, j) => j !== i))}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setMilestones(milestones.filter((_, j) => j !== i))}
+                    >
                       ✕
                     </Button>
                   )}
@@ -420,7 +443,9 @@ export default function FreelanceDashboard() {
                 + Add Milestone
               </Button>
             </div>
-            <Button onClick={postJob} className="w-full">Post Job</Button>
+            <Button onClick={postJob} className="w-full">
+              Post Job
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -435,12 +460,20 @@ export default function FreelanceDashboard() {
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button key={star} onClick={() => setRating(star)}>
-                  <Star className={`h-6 w-6 ${star <= rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`} />
+                  <Star
+                    className={`h-6 w-6 ${star <= rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-300'}`}
+                  />
                 </button>
               ))}
             </div>
-            <Input value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} placeholder="Write your review..." />
-            <Button onClick={submitReview} className="w-full">Submit Review</Button>
+            <Input
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              placeholder="Write your review..."
+            />
+            <Button onClick={submitReview} className="w-full">
+              Submit Review
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -453,7 +486,7 @@ export default function FreelanceDashboard() {
           </DialogHeader>
           {selectedJob && (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">{selectedJob.description}</p>
+              <p className="text-muted-foreground text-sm">{selectedJob.description}</p>
               <div className="flex items-center gap-4 text-sm">
                 <span>Budget: {selectedJob.total_budget.toLocaleString()} stroops</span>
                 <span>Status: {getStatusBadge(selectedJob.status)}</span>
@@ -462,7 +495,7 @@ export default function FreelanceDashboard() {
               <div className="space-y-2">
                 <p className="font-medium">Milestones:</p>
                 {selectedJob.milestones.map((m, i) => (
-                  <div key={i} className="flex justify-between text-sm p-2 bg-muted rounded">
+                  <div key={i} className="bg-muted flex justify-between rounded p-2 text-sm">
                     <span>{m.description}</span>
                     <span className="font-mono">{m.amount.toLocaleString()} stroops</span>
                   </div>

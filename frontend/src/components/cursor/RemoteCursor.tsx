@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { motion, useSpring, useMotionValue } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 
 interface RemoteCursorProps {
   x: number;
@@ -22,15 +22,7 @@ const SPRING_CONFIG = {
 const NAME_TAG_FADE_DELAY = 2000;
 const NAME_TAG_FADE_DURATION = 800;
 
-export function RemoteCursor({
-  x,
-  y,
-  height,
-  color,
-  name,
-  isActive,
-  visible,
-}: RemoteCursorProps) {
+export function RemoteCursor({ x, y, height, color, name, isActive, visible }: RemoteCursorProps) {
   const [showNameTag, setShowNameTag] = useState(true);
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -86,7 +78,7 @@ export function RemoteCursor({
 
   return (
     <motion.div
-      className="pointer-events-none absolute left-0 top-0 z-50"
+      className="pointer-events-none absolute top-0 left-0 z-50"
       style={{
         x: springX,
         y: springY,
@@ -103,7 +95,7 @@ export function RemoteCursor({
           className="drop-shadow-lg"
           style={{
             color: color,
-            transform: "translate(-2px, -2px)",
+            transform: 'translate(-2px, -2px)',
           }}
         >
           <path
@@ -126,7 +118,7 @@ export function RemoteCursor({
             opacity: { duration: NAME_TAG_FADE_DURATION / 1000 },
             scale: { duration: 0.2 },
           }}
-          className="absolute left-4 top-4 whitespace-nowrap rounded-md px-2 py-1 text-[10px] font-bold text-white shadow-md"
+          className="absolute top-4 left-4 rounded-md px-2 py-1 text-[10px] font-bold whitespace-nowrap text-white shadow-md"
           style={{
             backgroundColor: color,
           }}
@@ -144,7 +136,7 @@ export function RemoteCursor({
           width: 2,
           height: cursorHeight,
           backgroundColor: color,
-          transform: "translateX(-1px)",
+          transform: 'translateX(-1px)',
         }}
       />
     </motion.div>

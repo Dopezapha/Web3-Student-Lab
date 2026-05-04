@@ -3,7 +3,7 @@
 export enum SubscriptionTier {
   BASIC = 'BASIC',
   PRO = 'PRO',
-  ENTERPRISE = 'ENTERPRISE'
+  ENTERPRISE = 'ENTERPRISE',
 }
 
 export enum SubscriptionStatus {
@@ -12,20 +12,20 @@ export enum SubscriptionStatus {
   CANCELLED = 'CANCELLED',
   EXPIRED = 'EXPIRED',
   SUSPENDED = 'SUSPENDED',
-  FAILED = 'FAILED'
+  FAILED = 'FAILED',
 }
 
 export enum BillingPeriod {
   MONTHLY = 'MONTHLY',
   QUARTERLY = 'QUARTERLY',
-  YEARLY = 'YEARLY'
+  YEARLY = 'YEARLY',
 }
 
 export enum PaymentStatus {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  REFUNDED = 'REFUNDED'
+  REFUNDED = 'REFUNDED',
 }
 
 export interface SubscriptionPlan {

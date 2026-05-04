@@ -6,9 +6,7 @@ import { getDatabaseRoleForOperation } from './requestContext.js';
 const DEFAULT_DATABASE_URL =
   'postgresql://postgres:postgres@localhost:5432/web3-student-lab?schema=public';
 
-const writeConnectionString =
-  process.env.DATABASE_URL ||
-  DEFAULT_DATABASE_URL;
+const writeConnectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
 const readConnectionString = process.env.READ_DATABASE_URL || writeConnectionString;
 
 const parsePoolOption = (value: string | undefined, fallback: number): number => {
@@ -44,11 +42,11 @@ const writePool =
   });
 
 const readPool = hasDedicatedReadReplica
-  ? globalForPrisma.readPool ??
+  ? (globalForPrisma.readPool ??
     new pg.Pool({
       connectionString: readConnectionString,
       ...poolConfig,
-    })
+    }))
   : writePool;
 
 import { getWorkspaceId } from '../middleware/WorkspaceContext.js';
@@ -57,8 +55,14 @@ const writeAdapter = new PrismaPg(writePool);
 const readAdapter = hasDedicatedReadReplica ? new PrismaPg(readPool) : writeAdapter;
 
 const workspaceModels = [
-  'Student', 'Course', 'Certificate', 'Enrollment', 
-  'Feedback', 'LearningProgress', 'AuditLog', 'Canvas'
+  'Student',
+  'Course',
+  'Certificate',
+  'Enrollment',
+  'Feedback',
+  'LearningProgress',
+  'AuditLog',
+  'Canvas',
 ];
 
 const workspaceExtension = Prisma.defineExtension({
@@ -71,13 +75,28 @@ const workspaceExtension = Prisma.defineExtension({
         }
 
         const workspaceId = getWorkspaceId();
-        
+
         // Only enforce workspaceId if one is set in the context
         if (!workspaceId) {
-           throw new Error(`Strict Workspace Isolation: Missing workspace context for ${operation} on ${model}`);
+          throw new Error(
+            `Strict Workspace Isolation: Missing workspace context for ${operation} on ${model}`
+          );
         }
 
-        if (['findFirst', 'findFirstOrThrow', 'findMany', 'count', 'aggregate', 'groupBy', 'update', 'updateMany', 'delete', 'deleteMany'].includes(operation)) {
+        if (
+          [
+            'findFirst',
+            'findFirstOrThrow',
+            'findMany',
+            'count',
+            'aggregate',
+            'groupBy',
+            'update',
+            'updateMany',
+            'delete',
+            'deleteMany',
+          ].includes(operation)
+        ) {
           args.where = { ...args.where, workspaceId };
           return query(args);
         }
@@ -97,8 +116,8 @@ const workspaceExtension = Prisma.defineExtension({
           // Note: We don't modify args.where for upsert because it requires unique fields.
           // However, our update/delete logic already ensures isolation.
           // To be safe for upsert, we can check the record afterwards or before.
-          // But since IDs are cuid/unique, an upsert on a non-existent ID in this workspace 
-          // will either create a new one with correct workspaceId or fail if it exists elsewhere 
+          // But since IDs are cuid/unique, an upsert on a non-existent ID in this workspace
+          // will either create a new one with correct workspaceId or fail if it exists elsewhere
           // (if we had composite unique constraints).
           return query(args);
         }
@@ -113,19 +132,18 @@ const workspaceExtension = Prisma.defineExtension({
         }
 
         return query(args);
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 const basePrismaWrite = globalForPrisma.prismaWrite ?? new PrismaClient({ adapter: writeAdapter });
 const basePrismaRead = hasDedicatedReadReplica
-  ? globalForPrisma.prismaRead ?? new PrismaClient({ adapter: readAdapter })
+  ? (globalForPrisma.prismaRead ?? new PrismaClient({ adapter: readAdapter }))
   : basePrismaWrite;
 
 const prismaWrite = basePrismaWrite.$extends(workspaceExtension) as unknown as PrismaClient;
 const prismaRead = basePrismaRead.$extends(workspaceExtension) as unknown as PrismaClient;
-
 
 const getClientForOperation = (operation: string): PrismaClient => {
   if (!hasDedicatedReadReplica) {

@@ -43,7 +43,11 @@ export class VersionControl {
     localStorage.setItem(VERSIONS_STORAGE_KEY, JSON.stringify(this.versions));
   }
 
-  public createVersion(snippetId: string, content: string, message: string = 'Update'): SnippetVersion {
+  public createVersion(
+    snippetId: string,
+    content: string,
+    message: string = 'Update'
+  ): SnippetVersion {
     const version: SnippetVersion = {
       id: nanoid(),
       snippetId,
@@ -66,7 +70,7 @@ export class VersionControl {
   }
 
   public getVersionById(snippetId: string, versionId: string): SnippetVersion | undefined {
-    return this.versions[snippetId]?.find(v => v.id === versionId);
+    return this.versions[snippetId]?.find((v) => v.id === versionId);
   }
 
   public deleteHistory(snippetId: string) {
@@ -78,7 +82,7 @@ export class VersionControl {
   public getDiff(oldContent: string, newContent: string) {
     const oldLines = oldContent.split('\n');
     const newLines = newContent.split('\n');
-    
+
     // This is a very basic diff for display purposes
     // In a real app, you'd use a library or Monaco's DiffEditor
     return {

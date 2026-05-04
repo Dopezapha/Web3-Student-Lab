@@ -103,18 +103,18 @@ function RouteVisualization({ route }: { route: RouteStep[] }) {
   const total = route.reduce((s, r) => s + r.allocation, 0);
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-muted-foreground">Route Breakdown</p>
+      <p className="text-muted-foreground text-xs font-medium">Route Breakdown</p>
       {route.map((step) => {
         const pct = total > 0 ? Math.round((step.allocation / total) * 100) : 0;
         return (
           <div key={step.poolId} className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium">{step.poolName}</span>
-              <span className="tabular-nums text-muted-foreground">
+              <span className="text-muted-foreground tabular-nums">
                 {formatNumber(step.allocation)} ({pct}%)
               </span>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
               <div
                 className="h-full rounded-full bg-blue-500"
                 style={{ width: `${pct}%` }}
@@ -124,7 +124,7 @@ function RouteVisualization({ route }: { route: RouteStep[] }) {
                 aria-valuemax={100}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Output: {formatNumber(step.output)} · Gas: {formatNumber(step.gasCost)}
             </p>
           </div>
@@ -136,23 +136,23 @@ function RouteVisualization({ route }: { route: RouteStep[] }) {
 
 function PriceComparison({ quote }: { quote: Quote | null }) {
   if (!quote) return null;
-  const singlePoolOut = quote.grossOut - quote.improvementBps * quote.grossOut / 10_000;
+  const singlePoolOut = quote.grossOut - (quote.improvementBps * quote.grossOut) / 10_000;
   return (
     <div className="grid grid-cols-2 gap-3 rounded-md border p-3 text-sm">
       <div>
-        <p className="text-xs text-muted-foreground">Best Single Pool</p>
+        <p className="text-muted-foreground text-xs">Best Single Pool</p>
         <p className="font-semibold tabular-nums">{formatNumber(singlePoolOut)}</p>
       </div>
       <div>
-        <p className="text-xs text-muted-foreground">Split Route</p>
-        <p className="font-semibold tabular-nums text-green-600">{formatNumber(quote.netOut)}</p>
+        <p className="text-muted-foreground text-xs">Split Route</p>
+        <p className="font-semibold text-green-600 tabular-nums">{formatNumber(quote.netOut)}</p>
       </div>
       {quote.improvementBps > 0 && (
         <div className="col-span-2 flex items-center gap-2 border-t pt-2">
           <Badge variant="default" className="text-xs">
             +{formatBps(quote.improvementBps)} better
           </Badge>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             Saved: {formatNumber(quote.netOut - singlePoolOut)}
           </span>
         </div>
@@ -171,9 +171,10 @@ function TradeRow({ trade }: { trade: Trade }) {
     <div className="flex items-center justify-between border-b py-2 last:border-0">
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">
-          {formatNumber(trade.amountIn)} {trade.tokenIn} → {formatNumber(trade.netOut)} {trade.tokenOut}
+          {formatNumber(trade.amountIn)} {trade.tokenIn} → {formatNumber(trade.netOut)}{' '}
+          {trade.tokenOut}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {trade.timestamp} · {trade.poolsUsed} pool{trade.poolsUsed > 1 ? 's' : ''}
         </p>
       </div>
@@ -183,7 +184,9 @@ function TradeRow({ trade }: { trade: Trade }) {
             +{formatBps(trade.improvementBps)}
           </Badge>
         )}
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[trade.status]}`}>
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[trade.status]}`}
+        >
           {trade.status}
         </span>
       </div>
@@ -220,8 +223,20 @@ export function AggregatorInterface() {
     const improvementBps = 120;
 
     const route: RouteStep[] = [
-      { poolId: 0, poolName: 'Pool A', allocation: amount * 0.6, output: netOut * 0.6, gasCost: 50 },
-      { poolId: 1, poolName: 'Pool B', allocation: amount * 0.4, output: netOut * 0.4, gasCost: 60 },
+      {
+        poolId: 0,
+        poolName: 'Pool A',
+        allocation: amount * 0.6,
+        output: netOut * 0.6,
+        gasCost: 50,
+      },
+      {
+        poolId: 1,
+        poolName: 'Pool B',
+        allocation: amount * 0.4,
+        output: netOut * 0.4,
+        gasCost: 60,
+      },
     ];
 
     setQuote({
@@ -237,7 +252,9 @@ export function AggregatorInterface() {
 
   const handleExecute = () => {
     if (!quote) return;
-    showNotice(`Swap executed: ${formatNumber(quote.amountIn)} ${tokenIn} → ${formatNumber(quote.netOut)} ${tokenOut}`);
+    showNotice(
+      `Swap executed: ${formatNumber(quote.amountIn)} ${tokenIn} → ${formatNumber(quote.netOut)} ${tokenOut}`
+    );
     setQuote(null);
     setAmountIn('');
   };
@@ -246,7 +263,7 @@ export function AggregatorInterface() {
     <div className="mx-auto max-w-2xl space-y-4 p-4">
       <div>
         <h1 className="text-2xl font-bold">DEX Aggregator</h1>
-        <p className="text-sm text-muted-foreground">Best price routing across multiple pools</p>
+        <p className="text-muted-foreground text-sm">Best price routing across multiple pools</p>
       </div>
 
       {notice && <Alert variant="default">{notice}</Alert>}
@@ -274,18 +291,18 @@ export function AggregatorInterface() {
             <CardContent className="space-y-4">
               {/* Input */}
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">You pay</label>
+                <label className="text-muted-foreground text-xs font-medium">You pay</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
-                    className="flex-1 rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="bg-background focus:ring-ring flex-1 rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                     placeholder="0.00"
                     value={amountIn}
                     onChange={(e) => setAmountIn(e.target.value)}
                     aria-label="Amount to swap"
                   />
                   <select
-                    className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="bg-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                     value={tokenIn}
                     onChange={(e) => setTokenIn(e.target.value)}
                     aria-label="Input token"
@@ -299,18 +316,18 @@ export function AggregatorInterface() {
 
               {/* Output */}
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">You receive</label>
+                <label className="text-muted-foreground text-xs font-medium">You receive</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    className="flex-1 rounded-md border bg-muted px-3 py-2 text-sm"
+                    className="bg-muted flex-1 rounded-md border px-3 py-2 text-sm"
                     placeholder="0.00"
                     value={quote ? formatNumber(quote.netOut) : ''}
                     readOnly
                     aria-label="Amount to receive"
                   />
                   <select
-                    className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="bg-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                     value={tokenOut}
                     onChange={(e) => setTokenOut(e.target.value)}
                     aria-label="Output token"
@@ -351,16 +368,21 @@ export function AggregatorInterface() {
             </CardHeader>
             <CardContent>
               {MOCK_POOLS.map((pool) => (
-                <div key={pool.id} className="flex items-center justify-between border-b py-3 last:border-0">
+                <div
+                  key={pool.id}
+                  className="flex items-center justify-between border-b py-3 last:border-0"
+                >
                   <div>
                     <p className="text-sm font-medium">{pool.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       Fee: {formatBps(pool.feeBps)} · Gas: {formatNumber(pool.gasCost)}
                     </p>
                   </div>
                   <div className="text-right text-xs">
                     <p className="text-muted-foreground">Reserves</p>
-                    <p className="font-mono">{formatNumber(pool.reserveIn)} / {formatNumber(pool.reserveOut)}</p>
+                    <p className="font-mono">
+                      {formatNumber(pool.reserveIn)} / {formatNumber(pool.reserveOut)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -376,7 +398,7 @@ export function AggregatorInterface() {
             </CardHeader>
             <CardContent>
               {trades.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No trades yet.</p>
+                <p className="text-muted-foreground text-sm">No trades yet.</p>
               ) : (
                 trades.map((trade) => <TradeRow key={trade.id} trade={trade} />)
               )}

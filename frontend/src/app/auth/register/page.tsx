@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register, error, clearError } = useAuth();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -34,30 +34,22 @@ export default function RegisterPage() {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setLocalError("Passwords do not match");
+      setLocalError('Passwords do not match');
       setIsSubmitting(false);
       return;
     }
 
     if (formData.password.length < 6) {
-      setLocalError("Password must be at least 6 characters");
+      setLocalError('Password must be at least 6 characters');
       setIsSubmitting(false);
       return;
     }
 
     try {
-      await register(
-        formData.email,
-        formData.password,
-        formData.firstName,
-        formData.lastName,
-      );
-      router.push("/dashboard");
+      await register(formData.email, formData.password, formData.firstName, formData.lastName);
+      router.push('/dashboard');
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Registration failed. Please try again.";
+      const message = err instanceof Error ? err.message : 'Registration failed. Please try again.';
       setLocalError(message);
     } finally {
       setIsSubmitting(false);
@@ -65,15 +57,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-black relative px-4 py-12 overflow-hidden">
+    <div className="relative flex min-h-[calc(100vh-80px)] items-center justify-center overflow-hidden bg-black px-4 py-12">
       {/* Abstract Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/10 blur-[100px]"></div>
 
-      <div className="relative z-10 max-w-lg w-full bg-zinc-950 border border-white/10 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] p-8">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-red-600 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_15px_rgba(220,38,38,0.5)] transform -rotate-6">
+      <div className="relative z-10 w-full max-w-lg rounded-2xl border border-white/10 bg-zinc-950 p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 -rotate-6 transform items-center justify-center rounded-xl bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]">
             <svg
-              className="w-8 h-8 text-white"
+              className="h-8 w-8 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -86,20 +78,16 @@ export default function RegisterPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-black text-white mb-2 tracking-wide uppercase">
+          <h1 className="mb-2 text-3xl font-black tracking-wide text-white uppercase">
             Initialize <span className="text-red-600">Node</span>
           </h1>
-          <p className="text-gray-400 font-medium">
-            Join the decentralized education protocol
-          </p>
+          <p className="font-medium text-gray-400">Join the decentralized education protocol</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {(error || localError) && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4">
-              <p className="text-red-500 text-sm font-bold text-center">
-                {error || localError}
-              </p>
+            <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+              <p className="text-center text-sm font-bold text-red-500">{error || localError}</p>
             </div>
           )}
 
@@ -107,7 +95,7 @@ export default function RegisterPage() {
             <div>
               <label
                 htmlFor="firstName"
-                className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"
+                className="mb-2 block text-xs font-bold tracking-wider text-gray-400 uppercase"
               >
                 First Name
               </label>
@@ -118,14 +106,14 @@ export default function RegisterPage() {
                 required
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white focus:ring-1 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-600"
+                className="w-full rounded-lg border border-white/20 bg-black px-4 py-3 text-white placeholder-gray-600 transition-colors focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 placeholder="John"
               />
             </div>
             <div>
               <label
                 htmlFor="lastName"
-                className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"
+                className="mb-2 block text-xs font-bold tracking-wider text-gray-400 uppercase"
               >
                 Last Name
               </label>
@@ -136,7 +124,7 @@ export default function RegisterPage() {
                 required
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white focus:ring-1 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-600"
+                className="w-full rounded-lg border border-white/20 bg-black px-4 py-3 text-white placeholder-gray-600 transition-colors focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 placeholder="Doe"
               />
             </div>
@@ -145,7 +133,7 @@ export default function RegisterPage() {
           <div>
             <label
               htmlFor="email"
-              className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"
+              className="mb-2 block text-xs font-bold tracking-wider text-gray-400 uppercase"
             >
               Network ID (Email)
             </label>
@@ -156,7 +144,7 @@ export default function RegisterPage() {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white focus:ring-1 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-600"
+              className="w-full rounded-lg border border-white/20 bg-black px-4 py-3 text-white placeholder-gray-600 transition-colors focus:border-red-500 focus:ring-1 focus:ring-red-500"
               placeholder="student@example.com"
             />
           </div>
@@ -164,7 +152,7 @@ export default function RegisterPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"
+              className="mb-2 block text-xs font-bold tracking-wider text-gray-400 uppercase"
             >
               Passphrase
             </label>
@@ -175,7 +163,7 @@ export default function RegisterPage() {
               required
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white focus:ring-1 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-600"
+              className="w-full rounded-lg border border-white/20 bg-black px-4 py-3 text-white placeholder-gray-600 transition-colors focus:border-red-500 focus:ring-1 focus:ring-red-500"
               placeholder="••••••••"
             />
           </div>
@@ -183,7 +171,7 @@ export default function RegisterPage() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"
+              className="mb-2 block text-xs font-bold tracking-wider text-gray-400 uppercase"
             >
               Confirm Passphrase
             </label>
@@ -194,7 +182,7 @@ export default function RegisterPage() {
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white focus:ring-1 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-600"
+              className="w-full rounded-lg border border-white/20 bg-black px-4 py-3 text-white placeholder-gray-600 transition-colors focus:border-red-500 focus:ring-1 focus:ring-red-500"
               placeholder="••••••••"
             />
           </div>
@@ -202,22 +190,22 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-4 mt-2 rounded-lg font-black tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(220,38,38,0.3)] ${
+            className={`mt-2 w-full rounded-lg py-4 font-black tracking-widest uppercase shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all ${
               isSubmitting
-                ? "bg-red-900 text-gray-400 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-700 text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] transform hover:-translate-y-0.5"
+                ? 'cursor-not-allowed bg-red-900 text-gray-400'
+                : 'transform bg-red-600 text-white hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[0_0_25px_rgba(220,38,38,0.6)]'
             }`}
           >
-            {isSubmitting ? "Initializing..." : "Construct Block"}
+            {isSubmitting ? 'Initializing...' : 'Construct Block'}
           </button>
         </form>
 
-        <div className="mt-8 text-center border-t border-white/10 pt-6">
+        <div className="mt-8 border-t border-white/10 pt-6 text-center">
           <p className="text-gray-400">
-            Node already initialized?{" "}
+            Node already initialized?{' '}
             <Link
               href="/auth/login"
-              className="text-red-500 hover:text-red-400 font-bold tracking-wide uppercase"
+              className="font-bold tracking-wide text-red-500 uppercase hover:text-red-400"
             >
               Connect Session
             </Link>

@@ -1,13 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
@@ -130,8 +124,7 @@ function validateRecipients(recipients: Recipient[]): string | null {
       return 'Each share must be a positive number of basis points.';
     total += r.shareBps;
   }
-  if (total !== TOTAL_BPS)
-    return `Shares must sum to 100% (currently ${formatBps(total)}).`;
+  if (total !== TOTAL_BPS) return `Shares must sum to 100% (currently ${formatBps(total)}).`;
   return null;
 }
 
@@ -140,9 +133,9 @@ export default function SplitterDashboard({ adapter, initialState, viewer }: Pro
     ...sampleState,
     ...(initialState ?? {}),
   }));
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'distribute' | 'manage' | 'history'
-  >('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'distribute' | 'manage' | 'history'>(
+    'overview'
+  );
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -150,7 +143,7 @@ export default function SplitterDashboard({ adapter, initialState, viewer }: Pro
 
   const totalDistributed = useMemo(
     () => state.history.reduce((sum, r) => sum + r.totalAmount, 0n),
-    [state.history],
+    [state.history]
   );
 
   const perRecipientTotals = useMemo(() => {
@@ -238,8 +231,7 @@ export default function SplitterDashboard({ adapter, initialState, viewer }: Pro
         const idx = s.approvers.findIndex((a) => a === (viewer ?? s.owner));
         if (idx < 0) throw new Error('Caller is not an approver.');
         const bit = 1 << idx;
-        if (s.pendingUpdate.approvalMask & bit)
-          throw new Error('Already approved.');
+        if (s.pendingUpdate.approvalMask & bit) throw new Error('Already approved.');
         return {
           ...s,
           pendingUpdate: {
@@ -264,9 +256,7 @@ export default function SplitterDashboard({ adapter, initialState, viewer }: Pro
           throw new Error('Update delay has not elapsed.');
         const approvalCount = bitsSet(p.approvalMask);
         if (approvalCount < s.requiredApprovals)
-          throw new Error(
-            `Need ${s.requiredApprovals} approvals (have ${approvalCount}).`,
-          );
+          throw new Error(`Need ${s.requiredApprovals} approvals (have ${approvalCount}).`);
         return { ...s, recipients: p.recipients, pendingUpdate: null };
       });
     });
@@ -301,7 +291,7 @@ export default function SplitterDashboard({ adapter, initialState, viewer }: Pro
       </header>
 
       {error && (
-        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border p-3 text-sm">
           {error}
         </div>
       )}
@@ -330,11 +320,7 @@ export default function SplitterDashboard({ adapter, initialState, viewer }: Pro
         />
       )}
       {activeTab === 'distribute' && (
-        <DistributeTab
-          state={state}
-          onDistribute={handleDistribute}
-          busy={busy}
-        />
+        <DistributeTab state={state} onDistribute={handleDistribute} busy={busy} />
       )}
       {activeTab === 'manage' && (
         <ManageTab
@@ -376,9 +362,7 @@ function OverviewTab({ state, totalDistributed, perRecipientTotals }: OverviewTa
       <Card className="md:col-span-2">
         <CardHeader>
           <CardTitle>Recipients</CardTitle>
-          <CardDescription>
-            Active allocation. Shares sum to 100%.
-          </CardDescription>
+          <CardDescription>Active allocation. Shares sum to 100%.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {state.recipients.map((r) => {
@@ -390,9 +374,7 @@ function OverviewTab({ state, totalDistributed, perRecipientTotals }: OverviewTa
                   <span className="font-medium">{formatBps(r.shareBps)}</span>
                 </div>
                 <Progress value={r.shareBps} max={TOTAL_BPS} />
-                <div className="text-muted-foreground text-xs">
-                  Earned: {earned.toString()}
-                </div>
+                <div className="text-muted-foreground text-xs">Earned: {earned.toString()}</div>
               </div>
             );
           })}
@@ -408,17 +390,12 @@ function OverviewTab({ state, totalDistributed, perRecipientTotals }: OverviewTa
           <Stat label="Distributions" value={state.history.length.toString()} />
           <Stat label="Total distributed" value={totalDistributed.toString()} />
           <Stat label="Recipients" value={state.recipients.length.toString()} />
-          <Stat
-            label="Update delay"
-            value={`${state.updateDelayLedgers} ledgers`}
-          />
+          <Stat label="Update delay" value={`${state.updateDelayLedgers} ledgers`} />
           <Stat
             label="Approvers"
             value={`${state.approvers.length} (need ${state.requiredApprovals})`}
           />
-          {state.pendingUpdate && (
-            <Badge variant="secondary">Pending update queued</Badge>
-          )}
+          {state.pendingUpdate && <Badge variant="secondary">Pending update queued</Badge>}
         </CardContent>
       </Card>
     </div>
@@ -451,16 +428,15 @@ function DistributeTab({ state, onDistribute, busy }: DistributeTabProps) {
     }
   })();
 
-  const previewPayouts =
-    amount && amount > 0n ? computePayouts(state.recipients, amount) : null;
+  const previewPayouts = amount && amount > 0n ? computePayouts(state.recipients, amount) : null;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Distribute payment</CardTitle>
         <CardDescription>
-          Atomically forwards each recipient&apos;s pro-rata slice. Rounding
-          remainders go to the last recipient.
+          Atomically forwards each recipient&apos;s pro-rata slice. Rounding remainders go to the
+          last recipient.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -532,11 +508,9 @@ function ManageTab({
     setDraft((d) => d.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   };
 
-  const addRecipient = () =>
-    setDraft((d) => [...d, { address: '', shareBps: 0 }]);
+  const addRecipient = () => setDraft((d) => [...d, { address: '', shareBps: 0 }]);
 
-  const removeRecipient = (i: number) =>
-    setDraft((d) => d.filter((_, idx) => idx !== i));
+  const removeRecipient = (i: number) => setDraft((d) => d.filter((_, idx) => idx !== i));
 
   const distributeRemainder = () => {
     if (draft.length === 0) return;
@@ -548,13 +522,10 @@ function ManageTab({
 
   const pending = state.pendingUpdate;
   const readyAt = pending ? pending.queuedAt + state.updateDelayLedgers : null;
-  const delayRemaining =
-    readyAt !== null ? Math.max(0, readyAt - state.currentLedger) : 0;
+  const delayRemaining = readyAt !== null ? Math.max(0, readyAt - state.currentLedger) : 0;
   const approverIdx = state.approvers.findIndex((a) => a === viewer);
   const callerHasApproved =
-    pending && approverIdx >= 0
-      ? Boolean(pending.approvalMask & (1 << approverIdx))
-      : false;
+    pending && approverIdx >= 0 ? Boolean(pending.approvalMask & (1 << approverIdx)) : false;
 
   return (
     <div className="space-y-4">
@@ -563,8 +534,8 @@ function ManageTab({
           <CardHeader>
             <CardTitle className="text-xl">Pending update</CardTitle>
             <CardDescription>
-              Proposed by {shortAddress(pending.proposer)} at ledger{' '}
-              {pending.queuedAt}. Ready at ledger {readyAt}.
+              Proposed by {shortAddress(pending.proposer)} at ledger {pending.queuedAt}. Ready at
+              ledger {readyAt}.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -574,10 +545,7 @@ function ManageTab({
                 label="Approvals"
                 value={`${bitsSet(pending.approvalMask)} / ${state.requiredApprovals}`}
               />
-              <Stat
-                label="New recipients"
-                value={pending.recipients.length.toString()}
-              />
+              <Stat label="New recipients" value={pending.recipients.length.toString()} />
             </div>
             <ul className="space-y-1 text-sm">
               {pending.recipients.map((r) => (
@@ -610,10 +578,7 @@ function ManageTab({
                 </Button>
               )}
               {onAdvanceLedger && delayRemaining > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={() => onAdvanceLedger(delayRemaining)}
-                >
+                <Button variant="outline" onClick={() => onAdvanceLedger(delayRemaining)}>
                   Skip delay (sim)
                 </Button>
               )}
@@ -626,16 +591,13 @@ function ManageTab({
         <CardHeader>
           <CardTitle className="text-xl">Edit recipients</CardTitle>
           <CardDescription>
-            Build the new allocation, then queue it. Changes apply only after
-            the time delay and required approvals.
+            Build the new allocation, then queue it. Changes apply only after the time delay and
+            required approvals.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {draft.map((r, i) => (
-            <div
-              key={i}
-              className="grid grid-cols-[1fr_140px_auto] items-end gap-2"
-            >
+            <div key={i} className="grid grid-cols-[1fr_140px_auto] items-end gap-2">
               <div className="space-y-1">
                 <Label htmlFor={`addr-${i}`}>Address</Label>
                 <Input
@@ -653,9 +615,7 @@ function ManageTab({
                   min={0}
                   max={TOTAL_BPS}
                   value={r.shareBps}
-                  onChange={(e) =>
-                    updateDraftAt(i, { shareBps: Number(e.target.value) || 0 })
-                  }
+                  onChange={(e) => updateDraftAt(i, { shareBps: Number(e.target.value) || 0 })}
                 />
               </div>
               <Button
@@ -688,14 +648,10 @@ function ManageTab({
             </span>
           </div>
 
-          {draftValidation && (
-            <p className="text-destructive text-sm">{draftValidation}</p>
-          )}
+          {draftValidation && <p className="text-destructive text-sm">{draftValidation}</p>}
 
           <Button
-            disabled={
-              busy || Boolean(state.pendingUpdate) || Boolean(draftValidation)
-            }
+            disabled={busy || Boolean(state.pendingUpdate) || Boolean(draftValidation)}
             onClick={() => onPropose(draft)}
           >
             Propose update

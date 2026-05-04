@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@source "../**/*.{ts,tsx}";
+@import 'tailwindcss';
+@source '../**/*.{ts,tsx}';
 
 :root {
   --bg-primary: #ffffff;
@@ -155,13 +155,7 @@ html {
 .skeleton-shimmer {
   animation: shimmer 2s infinite linear;
   background: #18181b;
-  background-image: linear-gradient(
-    to right,
-    #18181b 0%,
-    #27272a 20%,
-    #18181b 40%,
-    #18181b 100%
-  );
+  background-image: linear-gradient(to right, #18181b 0%, #27272a 20%, #18181b 40%, #18181b 100%);
   background-repeat: no-repeat;
   background-size: 1000px 100%;
 }

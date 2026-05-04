@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useI18n, type Locale } from "@/i18n";
+import React from 'react';
+import { useI18n, type Locale } from '@/i18n';
 
 const locales: Array<{ id: Locale; labelKey: string }> = [
-  { id: "en", labelKey: "language.english" },
-  { id: "es", labelKey: "language.spanish" },
-  { id: "zh", labelKey: "language.chinese" },
+  { id: 'en', labelKey: 'language.english' },
+  { id: 'es', labelKey: 'language.spanish' },
+  { id: 'zh', labelKey: 'language.chinese' },
 ];
 
 export function LanguageSelector() {
@@ -16,7 +16,7 @@ export function LanguageSelector() {
     <select
       value={locale}
       onChange={(event) => setLocale(event.target.value as Locale)}
-      className="rounded border border-white/20 bg-black px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-200"
+      className="rounded border border-white/20 bg-black px-2 py-1 text-[10px] font-bold tracking-wider text-zinc-200 uppercase"
       aria-label="Language selector"
     >
       {locales.map((item) => (

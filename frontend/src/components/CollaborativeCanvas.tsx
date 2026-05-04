@@ -1,21 +1,21 @@
 'use client';
 
 import {
-    useAwareness,
-    useCanvasCollaboration,
-    useSharedCanvas,
+  useAwareness,
+  useCanvasCollaboration,
+  useSharedCanvas,
 } from '@/hooks/useCanvasCollaboration';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, {
-    Background,
-    Connection,
-    Controls,
-    EdgeChange,
-    MarkerType,
-    MiniMap,
-    NodeChange
+  Background,
+  Connection,
+  Controls,
+  EdgeChange,
+  MarkerType,
+  MiniMap,
+  NodeChange,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -25,16 +25,11 @@ interface CollaborativeCanvasProps {
   onCanvasReady?: () => void;
 }
 
-export function CollaborativeCanvas({
-  roomId,
-  userId,
-  onCanvasReady,
-}: CollaborativeCanvasProps) {
+export function CollaborativeCanvas({ roomId, userId, onCanvasReady }: CollaborativeCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { doc, awareness, isConnected } =
-    useCanvasCollaboration(roomId, userId);
+  const { doc, awareness, isConnected } = useCanvasCollaboration(roomId, userId);
   const {
     nodes,
     edges,
@@ -207,16 +202,14 @@ export function CollaborativeCanvas({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-col gap-3 border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-900 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-3 border-b border-gray-200 bg-white px-6 py-4 md:flex-row md:items-center md:justify-between dark:border-gray-700 dark:bg-gray-900">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
               Canvas: {roomId}
             </h1>
             <span
-              className={`h-3 w-3 rounded-full ${
-                isConnected ? 'bg-emerald-500' : 'bg-rose-500'
-              }`}
+              className={`h-3 w-3 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}
               title={isConnected ? 'Connected' : 'Disconnected'}
             />
           </div>

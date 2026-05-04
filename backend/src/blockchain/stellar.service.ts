@@ -18,7 +18,9 @@ export class StellarService {
   private treasuryKeypair: Keypair;
 
   constructor() {
-    this.server = new Server(process.env.STELLAR_HORIZON_URL || 'https://horizon-testnet.stellar.org');
+    this.server = new Server(
+      process.env.STELLAR_HORIZON_URL || 'https://horizon-testnet.stellar.org'
+    );
     this.treasuryKeypair = Keypair.fromSecret(process.env.STELLAR_TREASURY_SECRET || '');
   }
 
@@ -30,38 +32,42 @@ export class StellarService {
   }): Promise<PaymentResult> {
     try {
       const sourceAccount = await this.server.loadAccount(this.treasuryKeypair.publicKey());
-      
+
       // Create payment transaction
       const transaction = new TransactionBuilder(sourceAccount, {
         fee: await this.server.fetchBaseFee(),
-        networkPassphrase: Networks.TESTNET
+        networkPassphrase: Networks.TESTNET,
       })
-        .addOperation(Operation.payment({
-          destination: process.env.STELLAR_TREASURY_PUBLIC_KEY!,
-          asset: Asset.native(),
-          amount: (data.amount / 10000000).toString(), // Convert from stroops to XLM
-        }))
-        .addMemo(`Subscription payment for user ${data.userId}, subscription ${data.subscriptionId}`)
+        .addOperation(
+          Operation.payment({
+            destination: process.env.STELLAR_TREASURY_PUBLIC_KEY!,
+            asset: Asset.native(),
+            amount: (data.amount / 10000000).toString(), // Convert from stroops to XLM
+          })
+        )
+        .addMemo(
+          `Subscription payment for user ${data.userId}, subscription ${data.subscriptionId}`
+        )
         .setTimeout(30)
         .build();
 
       transaction.sign(this.treasuryKeypair);
 
       const result = await this.server.submitTransaction(transaction);
-      
+
       logger.info(`Payment processed successfully: ${result.hash}`);
-      
+
       return {
         transactionId: result.hash,
-        status: 'SUCCESS'
+        status: 'SUCCESS',
       };
     } catch (error) {
       logger.error('Payment processing failed:', error);
-      
+
       return {
         transactionId: '',
         status: 'FAILED',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -74,38 +80,42 @@ export class StellarService {
   }): Promise<RefundResult> {
     try {
       const sourceAccount = await this.server.loadAccount(this.treasuryKeypair.publicKey());
-      
+
       // Create refund transaction (in real implementation, this would send to user's wallet)
       const transaction = new TransactionBuilder(sourceAccount, {
         fee: await this.server.fetchBaseFee(),
-        networkPassphrase: Networks.TESTNET
+        networkPassphrase: Networks.TESTNET,
       })
-        .addOperation(Operation.payment({
-          destination: this.treasuryKeypair.publicKey(), // In real implementation, this would be user's wallet
-          asset: Asset.native(),
-          amount: (data.amount / 10000000).toString(),
-        }))
-        .addMemo(`Refund for user ${data.userId}, original transaction ${data.originalTransactionId}`)
+        .addOperation(
+          Operation.payment({
+            destination: this.treasuryKeypair.publicKey(), // In real implementation, this would be user's wallet
+            asset: Asset.native(),
+            amount: (data.amount / 10000000).toString(),
+          })
+        )
+        .addMemo(
+          `Refund for user ${data.userId}, original transaction ${data.originalTransactionId}`
+        )
         .setTimeout(30)
         .build();
 
       transaction.sign(this.treasuryKeypair);
 
       const result = await this.server.submitTransaction(transaction);
-      
+
       logger.info(`Refund processed successfully: ${result.hash}`);
-      
+
       return {
         transactionId: result.hash,
-        status: 'SUCCESS'
+        status: 'SUCCESS',
       };
     } catch (error) {
       logger.error('Refund processing failed:', error);
-      
+
       return {
         transactionId: '',
         status: 'FAILED',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -113,7 +123,7 @@ export class StellarService {
   async getAccountBalance(accountId: string): Promise<string> {
     try {
       const account = await this.server.loadAccount(accountId);
-      const balance = account.balances.find(b => b.asset_type === 'native');
+      const balance = account.balances.find((b) => b.asset_type === 'native');
       return balance?.balance || '0';
     } catch (error) {
       logger.error('Error fetching account balance:', error);

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import type * as Y from "yjs";
-import { DatabaseManager } from "@/lib/storage/DatabaseManager";
+import type * as Y from 'yjs';
+import { DatabaseManager } from '@/lib/storage/DatabaseManager';
 
-type SyncState = "idle" | "syncing" | "offline" | "error";
+type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
 
-const PENDING_CHANGES_KEY = "storage:pending-changes";
+const PENDING_CHANGES_KEY = 'storage:pending-changes';
 
 export class SyncManager {
   private databaseManager: DatabaseManager;
-  private state: SyncState = "idle";
+  private state: SyncState = 'idle';
   private listeners = new Set<(state: SyncState) => void>();
 
   constructor(databaseManager: DatabaseManager) {
@@ -47,7 +47,7 @@ export class SyncManager {
   }
 
   getPendingChanges(): string[] {
-    if (typeof window === "undefined") return [];
+    if (typeof window === 'undefined') return [];
     const raw = window.localStorage.getItem(PENDING_CHANGES_KEY);
     if (!raw) return [];
     try {
@@ -59,7 +59,7 @@ export class SyncManager {
   }
 
   private setPendingChanges(changes: string[]) {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     window.localStorage.setItem(PENDING_CHANGES_KEY, JSON.stringify(changes));
   }
 
@@ -67,16 +67,16 @@ export class SyncManager {
     const persist = async () => {
       try {
         const update = Y.encodeStateAsUpdate(doc);
-        const serialized = Array.from(update).join(",");
+        const serialized = Array.from(update).join(',');
         await this.databaseManager.setMetadata(`ydoc:${storageKey}`, serialized);
       } catch {
-        this.setState("error");
+        this.setState('error');
       }
     };
 
-    doc.on("update", persist);
+    doc.on('update', persist);
     return async () => {
-      doc.off("update", persist);
+      doc.off('update', persist);
       await persist();
     };
   }
@@ -84,7 +84,7 @@ export class SyncManager {
   async restoreYDoc(doc: Y.Doc, storageKey: string) {
     const stored = await this.databaseManager.getMetadata(`ydoc:${storageKey}`);
     if (!stored?.value) return;
-    const bytes = new Uint8Array(stored.value.split(",").map((item) => Number(item)));
+    const bytes = new Uint8Array(stored.value.split(',').map((item) => Number(item)));
     if (bytes.length > 0) {
       Y.applyUpdate(doc, bytes);
     }
@@ -92,20 +92,20 @@ export class SyncManager {
 
   async syncPendingUploads(runUpload: (changeId: string) => Promise<void>) {
     if (!navigator.onLine) {
-      this.setState("offline");
+      this.setState('offline');
       return;
     }
 
-    this.setState("syncing");
+    this.setState('syncing');
     try {
       const pending = this.getPendingChanges();
       for (const changeId of pending) {
         await runUpload(changeId);
         this.resolvePendingChange(changeId);
       }
-      this.setState("idle");
+      this.setState('idle');
     } catch {
-      this.setState("error");
+      this.setState('error');
     }
   }
 }

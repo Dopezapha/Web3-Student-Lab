@@ -1,7 +1,6 @@
-import apiClient from "./api-client";
+import apiClient from './api-client';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 export interface User {
   id: string;
@@ -84,7 +83,7 @@ export interface ExportJobStatus {
 
 export interface ExportSseMessage {
   userId?: string;
-  type?: "EXPORT_PROGRESS" | "EXPORT_COMPLETED" | "EXPORT_FAILED";
+  type?: 'EXPORT_PROGRESS' | 'EXPORT_COMPLETED' | 'EXPORT_FAILED';
   jobId?: string;
   progress?: number;
   stage?: string;
@@ -96,17 +95,17 @@ export interface ExportSseMessage {
 // Authentication APIs
 export const authAPI = {
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post("/auth/register", data, { encrypt: true } as any);
+    const response = await apiClient.post('/auth/register', data, { encrypt: true } as any);
     return response.data;
   },
 
   login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post("/auth/login", data);
+    const response = await apiClient.post('/auth/login', data);
     return response.data;
   },
 
   getCurrentUser: async (): Promise<User> => {
-    const response = await apiClient.get("/auth/me");
+    const response = await apiClient.get('/auth/me');
     return response.data.user;
   },
 };
@@ -114,7 +113,7 @@ export const authAPI = {
 // Courses APIs
 export const coursesAPI = {
   getAll: async (): Promise<Course[]> => {
-    const response = await apiClient.get("/courses");
+    const response = await apiClient.get('/courses');
     return response.data;
   },
 
@@ -124,7 +123,7 @@ export const coursesAPI = {
   },
 
   create: async (data: Partial<Course>): Promise<Course> => {
-    const response = await apiClient.post("/courses", data);
+    const response = await apiClient.post('/courses', data);
     return response.data;
   },
 
@@ -140,16 +139,13 @@ export const coursesAPI = {
 
 // Certificates APIs
 export const certificatesAPI = {
-  issue: async (data: {
-    studentId: string;
-    courseId: string;
-  }): Promise<Certificate> => {
-    const response = await apiClient.post("/certificates", data);
+  issue: async (data: { studentId: string; courseId: string }): Promise<Certificate> => {
+    const response = await apiClient.post('/certificates', data);
     return response.data;
   },
 
   getAll: async (): Promise<Certificate[]> => {
-    const response = await apiClient.get("/certificates");
+    const response = await apiClient.get('/certificates');
     return response.data;
   },
 
@@ -163,12 +159,8 @@ export const certificatesAPI = {
     return response.data;
   },
 
-  verifyOnChain: async (
-    certificateId: string,
-  ): Promise<{ verified: boolean; hash?: string }> => {
-    const response = await apiClient.get(
-      `/certificates/${certificateId}/verify`,
-    );
+  verifyOnChain: async (certificateId: string): Promise<{ verified: boolean; hash?: string }> => {
+    const response = await apiClient.get(`/certificates/${certificateId}/verify`);
     return response.data;
   },
 };
@@ -176,7 +168,7 @@ export const certificatesAPI = {
 // Enrollments APIs
 export const enrollmentsAPI = {
   getAll: async (): Promise<Enrollment[]> => {
-    const response = await apiClient.get("/enrollments");
+    const response = await apiClient.get('/enrollments');
     return response.data;
   },
 
@@ -186,7 +178,7 @@ export const enrollmentsAPI = {
   },
 
   enroll: async (studentId: string, courseId: string): Promise<Enrollment> => {
-    const response = await apiClient.post("/enrollments", {
+    const response = await apiClient.post('/enrollments', {
       studentId,
       courseId,
     });
@@ -211,7 +203,7 @@ export const feedbackAPI = {
     rating: number;
     review?: string;
   }): Promise<Feedback> => {
-    const response = await apiClient.post("/feedback", data);
+    const response = await apiClient.post('/feedback', data);
     return response.data;
   },
 
@@ -221,9 +213,7 @@ export const feedbackAPI = {
   },
 
   getSummary: async (courseId: string): Promise<FeedbackSummary> => {
-    const response = await apiClient.get(
-      `/feedback/course/${courseId}/summary`,
-    );
+    const response = await apiClient.get(`/feedback/course/${courseId}/summary`);
     return response.data;
   },
 };
@@ -247,7 +237,7 @@ export interface StudentDashboard {
 
 export const dashboardAPI = {
   getStats: async (): Promise<DashboardStats> => {
-    const response = await apiClient.get("/dashboard/stats");
+    const response = await apiClient.get('/dashboard/stats');
     return response.data;
   },
 
@@ -269,12 +259,12 @@ export interface AnalyticsOverview {
 
 export const analyticsAPI = {
   getGlobalStats: async (): Promise<unknown> => {
-    const response = await apiClient.get("/analytics/global-stats");
+    const response = await apiClient.get('/analytics/global-stats');
     return response.data;
   },
 
   getOverview: async (): Promise<AnalyticsOverview> => {
-    const response = await apiClient.get("/analytics/overview");
+    const response = await apiClient.get('/analytics/overview');
     return response.data;
   },
 
@@ -284,10 +274,10 @@ export const analyticsAPI = {
   },
 
   subscribeToUpdates: (callback: (data: unknown) => void): WebSocket | null => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) return null;
 
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8080";
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080';
     const ws = new WebSocket(`${wsUrl}/analytics/stream?token=${token}`);
 
     ws.onmessage = (event) => {
@@ -295,7 +285,7 @@ export const analyticsAPI = {
         const data = JSON.parse(event.data);
         callback(data);
       } catch (error) {
-        console.error("Failed to parse WebSocket message:", error);
+        console.error('Failed to parse WebSocket message:', error);
       }
     };
 
@@ -309,7 +299,7 @@ export interface ProjectIdea {
   description: string;
   keyFeatures: string[];
   recommendedTech: string[];
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
 }
 
 export const generatorAPI = {
@@ -318,18 +308,17 @@ export const generatorAPI = {
     techStack: string[];
     difficulty: string;
   }): Promise<ProjectIdea> => {
-    const response = await apiClient.post("/generator/generate", params);
+    const response = await apiClient.post('/generator/generate', params);
     return response.data;
   },
 };
 
-
 export const exportAPI = {
   start: async (data: {
-    type: "students" | "audit" | "courses";
-    format: "csv" | "json";
+    type: 'students' | 'audit' | 'courses';
+    format: 'csv' | 'json';
   }): Promise<{ jobId: string }> => {
-    const response = await apiClient.post("/export", data);
+    const response = await apiClient.post('/export', data);
     return response.data;
   },
 
@@ -339,14 +328,14 @@ export const exportAPI = {
   },
 
   openStatusStream: (): EventSource => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     if (!token) {
-      throw new Error("Missing auth token for SSE connection");
+      throw new Error('Missing auth token for SSE connection');
     }
 
     const streamUrl = new URL(`${API_BASE_URL}/export/events`);
-    streamUrl.searchParams.set("access_token", token);
+    streamUrl.searchParams.set('access_token', token);
 
     return new EventSource(streamUrl.toString());
   },

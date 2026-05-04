@@ -58,7 +58,9 @@ h2 {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .sub-card:hover {
@@ -127,14 +129,31 @@ h2 {
   border: none;
 }
 
-.btn-pause { background: #4a5568; color: #fff; }
-.btn-pause:hover { background: #2d3748; }
+.btn-pause {
+  background: #4a5568;
+  color: #fff;
+}
+.btn-pause:hover {
+  background: #2d3748;
+}
 
-.btn-resume { background: #2b6cb0; color: #fff; }
-.btn-resume:hover { background: #2c5282; }
+.btn-resume {
+  background: #2b6cb0;
+  color: #fff;
+}
+.btn-resume:hover {
+  background: #2c5282;
+}
 
-.btn-cancel { background: rgba(245, 101, 101, 0.1); color: #f56565; border: 1px solid rgba(245, 101, 101, 0.2); }
-.btn-cancel:hover { background: #f56565; color: #fff; }
+.btn-cancel {
+  background: rgba(245, 101, 101, 0.1);
+  color: #f56565;
+  border: 1px solid rgba(245, 101, 101, 0.2);
+}
+.btn-cancel:hover {
+  background: #f56565;
+  color: #fff;
+}
 
 /* Payment Table */
 .table-container {
@@ -169,9 +188,15 @@ h2 {
   font-weight: 600;
 }
 
-.status-text.success { color: #48bb78; }
-.status-text.failed { color: #f56565; }
-.status-text.retrying { color: #ecc94b; }
+.status-text.success {
+  color: #48bb78;
+}
+.status-text.failed {
+  color: #f56565;
+}
+.status-text.retrying {
+  color: #ecc94b;
+}
 
 /* Analytics */
 .analytics-grid {

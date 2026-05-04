@@ -284,23 +284,20 @@ export const usePaymentScheduler = (): UsePaymentSchedulerReturn => {
   /**
    * Get all schedules for an owner
    */
-  const getOwnerSchedules = useCallback(
-    async (owner: string): Promise<PaymentSchedule[]> => {
-      try {
-        // In production, this would call get_owner_schedules on the contract
-        // const client = new PaymentSchedulerClient(env, contractId);
-        // return await client.getOwnerSchedules(owner);
+  const getOwnerSchedules = useCallback(async (owner: string): Promise<PaymentSchedule[]> => {
+    try {
+      // In production, this would call get_owner_schedules on the contract
+      // const client = new PaymentSchedulerClient(env, contractId);
+      // return await client.getOwnerSchedules(owner);
 
-        // For now, return empty array
-        return [];
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch schedules';
-        setError(errorMessage);
-        throw err;
-      }
-    },
-    []
-  );
+      // For now, return empty array
+      return [];
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch schedules';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
 
   return {
     schedules,

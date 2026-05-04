@@ -1,6 +1,5 @@
 'use client';
 
-
 export interface DiffLine {
   type: 'insert' | 'delete' | 'equal';
   text: string;
@@ -18,13 +17,13 @@ export default function DiffView({ mine, theirs, highlightedLines = [] }: DiffVi
   const diffLines = computeLineDiff(mine, theirs);
 
   return (
-    <div className="flex gap-0 border border-zinc-700 rounded-lg overflow-hidden font-mono text-sm">
+    <div className="flex gap-0 overflow-hidden rounded-lg border border-zinc-700 font-mono text-sm">
       {/* Left pane - Mine */}
       <div className="flex-1 border-r border-zinc-700 bg-zinc-900">
-        <div className="px-3 py-2 bg-zinc-800 text-zinc-400 text-xs font-semibold uppercase tracking-wide border-b border-zinc-700">
+        <div className="border-b border-zinc-700 bg-zinc-800 px-3 py-2 text-xs font-semibold tracking-wide text-zinc-400 uppercase">
           Mine
         </div>
-        <div className="overflow-auto max-h-[400px]">
+        <div className="max-h-[400px] overflow-auto">
           {diffLines.map((line, i) => (
             <div
               key={i}
@@ -32,16 +31,18 @@ export default function DiffView({ mine, theirs, highlightedLines = [] }: DiffVi
                 line.type === 'delete'
                   ? 'bg-red-900/30'
                   : line.type === 'insert'
-                  ? 'bg-transparent'
-                  : highlightedLines.includes(i)
-                  ? 'bg-yellow-900/20'
-                  : ''
+                    ? 'bg-transparent'
+                    : highlightedLines.includes(i)
+                      ? 'bg-yellow-900/20'
+                      : ''
               }`}
             >
-              <span className="w-10 text-right pr-2 text-zinc-600 select-none flex-shrink-0 py-0.5">
+              <span className="w-10 flex-shrink-0 py-0.5 pr-2 text-right text-zinc-600 select-none">
                 {line.lineNumberLeft || ''}
               </span>
-              <span className={`py-0.5 ${line.type === 'delete' ? 'text-red-400' : 'text-zinc-300'}`}>
+              <span
+                className={`py-0.5 ${line.type === 'delete' ? 'text-red-400' : 'text-zinc-300'}`}
+              >
                 {line.type !== 'insert' ? line.text : ''}
               </span>
             </div>
@@ -51,10 +52,10 @@ export default function DiffView({ mine, theirs, highlightedLines = [] }: DiffVi
 
       {/* Right pane - Theirs */}
       <div className="flex-1 bg-zinc-900">
-        <div className="px-3 py-2 bg-zinc-800 text-zinc-400 text-xs font-semibold uppercase tracking-wide border-b border-zinc-700">
+        <div className="border-b border-zinc-700 bg-zinc-800 px-3 py-2 text-xs font-semibold tracking-wide text-zinc-400 uppercase">
           Theirs
         </div>
-        <div className="overflow-auto max-h-[400px]">
+        <div className="max-h-[400px] overflow-auto">
           {diffLines.map((line, i) => (
             <div
               key={i}
@@ -62,16 +63,18 @@ export default function DiffView({ mine, theirs, highlightedLines = [] }: DiffVi
                 line.type === 'insert'
                   ? 'bg-green-900/30'
                   : line.type === 'delete'
-                  ? 'bg-transparent'
-                  : highlightedLines.includes(i)
-                  ? 'bg-yellow-900/20'
-                  : ''
+                    ? 'bg-transparent'
+                    : highlightedLines.includes(i)
+                      ? 'bg-yellow-900/20'
+                      : ''
               }`}
             >
-              <span className="w-10 text-right pr-2 text-zinc-600 select-none flex-shrink-0 py-0.5">
+              <span className="w-10 flex-shrink-0 py-0.5 pr-2 text-right text-zinc-600 select-none">
                 {line.lineNumberRight || ''}
               </span>
-              <span className={`py-0.5 ${line.type === 'insert' ? 'text-green-400' : 'text-zinc-300'}`}>
+              <span
+                className={`py-0.5 ${line.type === 'insert' ? 'text-green-400' : 'text-zinc-300'}`}
+              >
                 {line.type !== 'delete' ? line.text : ''}
               </span>
             </div>

@@ -1,5 +1,5 @@
-import { editor } from "monaco-editor";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { editor } from 'monaco-editor';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface CursorPosition {
   line: number;
@@ -30,18 +30,18 @@ export interface PixelCursorPosition {
 const THROTTLE_MS = 50;
 const INACTIVITY_TIMEOUT_MS = 30000;
 const COLORS = [
-  "#f87171",
-  "#fb923c",
-  "#fbbf24",
-  "#a3e635",
-  "#4ade80",
-  "#2dd4bf",
-  "#22d3ee",
-  "#38bdf8",
-  "#818cf8",
-  "#a78bfa",
-  "#e879f9",
-  "#f472b6",
+  '#f87171',
+  '#fb923c',
+  '#fbbf24',
+  '#a3e635',
+  '#4ade80',
+  '#2dd4bf',
+  '#22d3ee',
+  '#38bdf8',
+  '#818cf8',
+  '#a78bfa',
+  '#e879f9',
+  '#f472b6',
 ];
 
 let colorIndex = 0;
@@ -64,10 +64,7 @@ export function resetColorAssignment(): void {
   colorIndex = 0;
 }
 
-function throttle<T extends (...args: any[]) => void>(
-  fn: T,
-  limitMs: number
-): T {
+function throttle<T extends (...args: any[]) => void>(fn: T, limitMs: number): T {
   let lastCall = 0;
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -95,10 +92,7 @@ function throttle<T extends (...args: any[]) => void>(
 /**
  * Broadcast local cursor position to Yjs awareness with throttling.
  */
-export function useLocalCursorTracker(
-  editor: editor.IStandaloneCodeEditor | null,
-  awareness: any
-) {
+export function useLocalCursorTracker(editor: editor.IStandaloneCodeEditor | null, awareness: any) {
   const awarenessRef = useRef(awareness);
   awarenessRef.current = awareness;
 
@@ -180,7 +174,7 @@ export function useRemoteCursorStates(awareness: any): RemoteUserState[] {
         remoteUsers.push({
           clientId,
           name: state.user.name || `User ${clientId}`,
-          color: state.user.color || assignUserColor(state.user.name || ""),
+          color: state.user.color || assignUserColor(state.user.name || ''),
           cursor: state.cursor,
           selection: state.selection,
           lastActivity: state.lastActivity || now,
@@ -190,11 +184,11 @@ export function useRemoteCursorStates(awareness: any): RemoteUserState[] {
       setUsers(remoteUsers);
     };
 
-    awareness.on("change", updateUsers);
+    awareness.on('change', updateUsers);
     updateUsers();
 
     return () => {
-      awareness.off("change", updateUsers);
+      awareness.off('change', updateUsers);
     };
   }, [awareness]);
 
@@ -226,7 +220,7 @@ export function getCursorPixelPosition(
   }
 
   // Account for editor padding/offset
-  const linesContent = editorDom.querySelector(".lines-content") as HTMLElement;
+  const linesContent = editorDom.querySelector('.lines-content') as HTMLElement;
   if (!linesContent) {
     return {
       x: visiblePos.left,

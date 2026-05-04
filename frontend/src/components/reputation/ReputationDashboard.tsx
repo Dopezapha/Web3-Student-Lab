@@ -57,7 +57,12 @@ const MOCK: ReputationData = {
   breakdown: [
     { activity: 'CourseCompletion', points: 625_000, ledger: 4_980_000, timestamp: '2026-04-29' },
     { activity: 'PeerReview', points: 125_000, ledger: 4_960_000, timestamp: '2026-04-27' },
-    { activity: 'OpenSourceContribution', points: 375_000, ledger: 4_940_000, timestamp: '2026-04-25' },
+    {
+      activity: 'OpenSourceContribution',
+      points: 375_000,
+      ledger: 4_940_000,
+      timestamp: '2026-04-25',
+    },
     { activity: 'DailyEngagement', points: 12_500, ledger: 4_920_000, timestamp: '2026-04-23' },
   ],
   attestations: [
@@ -111,10 +116,10 @@ function ScoreGauge({ score, max }: { score: number; max: number }) {
     <div className="space-y-2">
       <div className="flex items-end justify-between">
         <span className="text-4xl font-bold tabular-nums">{formatScore(score)}</span>
-        <span className="text-sm text-muted-foreground">/ {formatScore(max)} max</span>
+        <span className="text-muted-foreground text-sm">/ {formatScore(max)} max</span>
       </div>
       <Progress value={pct} className="h-3" />
-      <p className="text-xs text-muted-foreground">{pct}% of maximum score</p>
+      <p className="text-muted-foreground text-xs">{pct}% of maximum score</p>
     </div>
   );
 }
@@ -122,10 +127,12 @@ function ScoreGauge({ score, max }: { score: number; max: number }) {
 function BreakdownRow({ item }: { item: ScoreBreakdown }) {
   return (
     <div className="flex items-center gap-3 border-b py-2 last:border-0">
-      <span className={`h-2.5 w-2.5 flex-shrink-0 rounded-full ${ACTIVITY_COLORS[item.activity]}`} />
+      <span
+        className={`h-2.5 w-2.5 flex-shrink-0 rounded-full ${ACTIVITY_COLORS[item.activity]}`}
+      />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">{ACTIVITY_LABELS[item.activity]}</p>
-        <p className="text-xs text-muted-foreground">{item.timestamp}</p>
+        <p className="text-muted-foreground text-xs">{item.timestamp}</p>
       </div>
       <span className="text-sm font-semibold tabular-nums">+{formatScore(item.points)}</span>
     </div>
@@ -137,7 +144,7 @@ function AttestationRow({ att }: { att: Attestation }) {
     <div className="flex items-center justify-between border-b py-2 last:border-0">
       <div className="min-w-0 flex-1">
         <p className="truncate font-mono text-xs">{att.attester}</p>
-        <p className="text-xs text-muted-foreground">{att.timestamp}</p>
+        <p className="text-muted-foreground text-xs">{att.timestamp}</p>
       </div>
       <Badge variant="secondary" className="ml-3 flex-shrink-0 tabular-nums">
         +{formatScore(att.weight)} pts
@@ -153,17 +160,22 @@ function AttestForm({ onAttest }: { onAttest: (subject: string) => void }) {
       className="flex gap-2"
       onSubmit={(e) => {
         e.preventDefault();
-        if (subject.trim()) { onAttest(subject.trim()); setSubject(''); }
+        if (subject.trim()) {
+          onAttest(subject.trim());
+          setSubject('');
+        }
       }}
     >
       <input
-        className="flex-1 rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+        className="bg-background focus:ring-ring flex-1 rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
         placeholder="Address to endorse (G...)"
         value={subject}
         onChange={(e) => setSubject(e.target.value)}
         aria-label="Address to endorse"
       />
-      <Button type="submit" disabled={!subject.trim()}>Endorse</Button>
+      <Button type="submit" disabled={!subject.trim()}>
+        Endorse
+      </Button>
     </form>
   );
 }
@@ -194,7 +206,7 @@ export function ReputationDashboard() {
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold">Reputation</h1>
-          <p className="font-mono text-sm text-muted-foreground">{data.address}</p>
+          <p className="text-muted-foreground font-mono text-sm">{data.address}</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant={data.streakDays >= 7 ? 'default' : 'outline'}>
@@ -214,7 +226,7 @@ export function ReputationDashboard() {
         <CardContent className="space-y-4">
           <ScoreGauge score={data.effectiveScore} max={MAX_DISPLAY_SCORE} />
           {decay > 0 && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Raw score: {formatScore(data.rawScore)} — {decay}% decayed due to inactivity
             </p>
           )}
@@ -231,7 +243,7 @@ export function ReputationDashboard() {
         ].map(({ label, value }) => (
           <Card key={label}>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className="text-muted-foreground text-xs">{label}</p>
               <p className="text-lg font-semibold tabular-nums">{value}</p>
             </CardContent>
           </Card>
@@ -256,7 +268,9 @@ export function ReputationDashboard() {
         {/* Overview */}
         <TabsContent value="overview" hidden={activeTab !== 'overview'}>
           <Card>
-            <CardHeader><CardTitle>Score Composition</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Score Composition</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-3">
               {/* Activity type bar chart */}
               {Object.entries(ACTIVITY_LABELS).map(([key, label]) => {
@@ -269,9 +283,11 @@ export function ReputationDashboard() {
                   <div key={key} className="space-y-1">
                     <div className="flex justify-between text-xs">
                       <span>{label}</span>
-                      <span className="tabular-nums">{formatScore(total)} pts ({pct}%)</span>
+                      <span className="tabular-nums">
+                        {formatScore(total)} pts ({pct}%)
+                      </span>
                     </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
                       <div
                         className={`h-full rounded-full ${ACTIVITY_COLORS[key as ActivityType]}`}
                         style={{ width: `${pct}%` }}
@@ -291,10 +307,12 @@ export function ReputationDashboard() {
         {/* Breakdown */}
         <TabsContent value="breakdown" hidden={activeTab !== 'breakdown'}>
           <Card>
-            <CardHeader><CardTitle>Activity History</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Activity History</CardTitle>
+            </CardHeader>
             <CardContent>
               {data.breakdown.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No activity recorded yet.</p>
+                <p className="text-muted-foreground text-sm">No activity recorded yet.</p>
               ) : (
                 data.breakdown.map((item, i) => <BreakdownRow key={i} item={item} />)
               )}
@@ -305,11 +323,13 @@ export function ReputationDashboard() {
         {/* Attestations */}
         <TabsContent value="attestations" hidden={activeTab !== 'attestations'}>
           <Card>
-            <CardHeader><CardTitle>Endorsements</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Endorsements</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4">
               <AttestForm onAttest={handleAttest} />
               {data.attestations.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No endorsements received yet.</p>
+                <p className="text-muted-foreground text-sm">No endorsements received yet.</p>
               ) : (
                 data.attestations.map((att, i) => <AttestationRow key={i} att={att} />)
               )}

@@ -86,8 +86,6 @@ router.get('/me', authenticate, (req: Request, res: Response) => {
   res.json({ user: req.user });
 });
 
-
-
 /**
  * @route   POST /api/auth/refresh
  * @desc    Rotate refresh token
@@ -131,7 +129,8 @@ router.post('/logout', authenticate, async (req: Request, res: Response) => {
  * @desc    Generate a cryptographic nonce for Web3 wallet authentication
  * @access  Public
  */
-router.get('/nonce',
+router.get(
+  '/nonce',
   slidingWindowRateLimiter({
     windowMs: 60 * 1000, // 1 minute
     limit: 10, // 10 requests per minute per IP
@@ -184,7 +183,10 @@ router.post('/verify', validateRequest(web3VerifySchema), async (req: Request, r
         res.status(401).json({ error: error.message });
         return;
       }
-      if (error.message === 'Signature verification failed' || error.message === 'Invalid signature format') {
+      if (
+        error.message === 'Signature verification failed' ||
+        error.message === 'Invalid signature format'
+      ) {
         res.status(401).json({ error: 'Invalid signature' });
         return;
       }

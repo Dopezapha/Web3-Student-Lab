@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import apiClient from "@/lib/api-client";
+import { useEffect, useState } from 'react';
+import apiClient from '@/lib/api-client';
 
 export interface AnalyticsData {
   learningProgress: ProgressDataPoint[];
@@ -56,7 +56,7 @@ export function useAnalytics(userId?: string) {
       try {
         setIsLoading(true);
         const response = await apiClient.get(
-          userId ? `/analytics/user/${userId}` : "/analytics/overview"
+          userId ? `/analytics/user/${userId}` : '/analytics/overview'
         );
         setData(response.data);
       } catch (err) {

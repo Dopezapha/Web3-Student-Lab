@@ -1,21 +1,8 @@
 'use client';
 
 import { useThemeMode } from '@/hooks/useThemeMode';
-import {
-    getChartAxisStyle,
-    getChartStyles,
-    getLineChartStyle
-} from '@/lib/theme/chartTheme';
-import { 
-  select, 
-  scaleLinear, 
-  scaleBand, 
-  max, 
-  line, 
-  area, 
-  axisBottom, 
-  axisLeft 
-} from 'd3';
+import { getChartAxisStyle, getChartStyles, getLineChartStyle } from '@/lib/theme/chartTheme';
+import { select, scaleLinear, scaleBand, max, line, area, axisBottom, axisLeft } from 'd3';
 import { useEffect, useRef } from 'react';
 
 interface D3ChartProps {
@@ -54,9 +41,7 @@ export const ThemedLineChart: React.FC<D3ChartProps> = ({
       .attr('height', height)
       .attr('viewBox', `0 0 ${width} ${height}`);
 
-    const g = svg
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Scales
     const xScale = scaleLinear()
@@ -147,10 +132,7 @@ export const ThemedLineChart: React.FC<D3ChartProps> = ({
           .attr('r', lineStyles.pointRadius * 1.5);
       })
       .on('mouseout', function () {
-        select(this)
-          .transition()
-          .duration(200)
-          .attr('r', lineStyles.pointRadius);
+        select(this).transition().duration(200).attr('r', lineStyles.pointRadius);
       });
 
     // Title
@@ -167,13 +149,7 @@ export const ThemedLineChart: React.FC<D3ChartProps> = ({
     }
   }, [data, theme, mounted, height, width, title]);
 
-  return (
-    <svg
-      ref={svgRef}
-      style={{ width: '100%', height: 'auto' }}
-      className="rounded-lg"
-    />
-  );
+  return <svg ref={svgRef} style={{ width: '100%', height: 'auto' }} className="rounded-lg" />;
 };
 
 // Example D3 Bar Chart with theme support
@@ -204,9 +180,7 @@ export const ThemedBarChart: React.FC<D3ChartProps> = ({
       .attr('height', height)
       .attr('viewBox', `0 0 ${width} ${height}`);
 
-    const g = svg
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Scales
     const xScale = scaleBand()
@@ -285,11 +259,5 @@ export const ThemedBarChart: React.FC<D3ChartProps> = ({
     }
   }, [data, theme, mounted, height, width, title]);
 
-  return (
-    <svg
-      ref={svgRef}
-      style={{ width: '100%', height: 'auto' }}
-      className="rounded-lg"
-    />
-  );
+  return <svg ref={svgRef} style={{ width: '100%', height: 'auto' }} className="rounded-lg" />;
 };

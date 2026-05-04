@@ -210,7 +210,7 @@ export const getStudentProgress = async (
 ): Promise<Progress> => {
   const key = `${studentId}:${courseId}`;
   const cacheKey = `${CACHE_KEYS.user.progress(studentId)}:${courseId}`;
-  
+
   const cached = await cacheService.get<Progress>(cacheKey);
   if (cached) return cached;
 
@@ -289,14 +289,16 @@ export const updateStudentProgress = async (
   if (input.status === 'completed') {
     if (!completedLessonSet.has(input.lessonId)) {
       // Log individual lesson completion activity
-      (prisma as any).studentActivity.create({
-        data: {
-          studentId,
-          courseId,
-          lessonId: input.lessonId,
-          action: 'COMPLETED_LESSON',
-        }
-      }).catch((err: any) => console.warn('Failed to log student activity:', err));
+      (prisma as any).studentActivity
+        .create({
+          data: {
+            studentId,
+            courseId,
+            lessonId: input.lessonId,
+            action: 'COMPLETED_LESSON',
+          },
+        })
+        .catch((err: any) => console.warn('Failed to log student activity:', err));
     }
     completedLessonSet.add(input.lessonId);
   } else {

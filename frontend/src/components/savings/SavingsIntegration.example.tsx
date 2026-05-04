@@ -1,6 +1,6 @@
 /**
  * Example integration of SavingsDashboard component
- * 
+ *
  * This file demonstrates how to integrate the savings wallet
  * functionality into your application.
  */
@@ -37,7 +37,7 @@ export async function createSavingsAccount(
   // Example using Stellar SDK
   // const contract = new Contract(contractId);
   // const lockPeriodSeconds = BigInt(lockPeriodDays * 86400);
-  // 
+  //
   // const tx = await contract.call(
   //   'create_savings',
   //   owner,
@@ -45,17 +45,14 @@ export async function createSavingsAccount(
   //   lockPeriodSeconds,
   //   interestRateBps
   // );
-  // 
+  //
   // return await tx.send();
 }
 
 /**
  * Example: Claiming interest
  */
-export async function claimInterest(
-  contractId: string,
-  owner: string
-) {
+export async function claimInterest(contractId: string, owner: string) {
   // const contract = new Contract(contractId);
   // const tx = await contract.call('claim_interest', owner);
   // return await tx.send();
@@ -64,11 +61,7 @@ export async function claimInterest(
 /**
  * Example: Early withdrawal with penalty
  */
-export async function withdrawEarly(
-  contractId: string,
-  owner: string,
-  amount: bigint
-) {
+export async function withdrawEarly(contractId: string, owner: string, amount: bigint) {
   // const contract = new Contract(contractId);
   // const tx = await contract.call('withdraw_early', owner, amount);
   // return await tx.send();
@@ -77,10 +70,7 @@ export async function withdrawEarly(
 /**
  * Example: Get account details
  */
-export async function getSavingsAccount(
-  contractId: string,
-  owner: string
-) {
+export async function getSavingsAccount(contractId: string, owner: string) {
   // const contract = new Contract(contractId);
   // const account = await contract.call('get_account', owner);
   // return account;

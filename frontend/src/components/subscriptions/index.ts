@@ -1,2 +1,2 @@
-export { default as SubscriptionDashboard } from "./SubscriptionDashboard";
-export * from "./types";
+export { default as SubscriptionDashboard } from './SubscriptionDashboard';
+export * from './types';

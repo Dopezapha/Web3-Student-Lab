@@ -1,13 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
@@ -90,29 +84,18 @@ const sampleState: MembershipState = {
     },
     {
       tier: 'Silver',
-      benefits: [
-        'All Bronze benefits',
-        'Premium courses',
-        'Monthly office hours',
-      ],
+      benefits: ['All Bronze benefits', 'Premium courses', 'Monthly office hours'],
       ratePerEpoch: 5n,
       count: 38,
     },
     {
       tier: 'Gold',
-      benefits: [
-        'All Silver benefits',
-        'Mentor matching',
-        'Capstone reviews',
-        'Job-board access',
-      ],
+      benefits: ['All Silver benefits', 'Mentor matching', 'Capstone reviews', 'Job-board access'],
       ratePerEpoch: 15n,
       count: 7,
     },
   ],
-  tokens: [
-    { tokenId: 42, tier: 'Silver', soulbound: false, mintedAt: 1_700_000_000 },
-  ],
+  tokens: [{ tokenId: 42, tier: 'Silver', soulbound: false, mintedAt: 1_700_000_000 }],
   resources: [
     { name: 'public-course', minTier: 'Bronze', paused: false },
     { name: 'premium-course', minTier: 'Silver', paused: false },
@@ -157,12 +140,10 @@ function evaluateAccess(
   resource: ResourceConfig,
   viewerTier: Tier | null,
   grants: TempGrant[],
-  now: number,
+  now: number
 ): Decision {
   if (resource.paused) return { allowed: false, reason: 'paused' };
-  const grant = grants.find(
-    (g) => g.resource === resource.name && g.grantedUntil > now,
-  );
+  const grant = grants.find((g) => g.resource === resource.name && g.grantedUntil > now);
   if (grant) return { allowed: true, reason: 'temp-grant' };
   if (viewerTier && TIER_RANK[viewerTier] >= TIER_RANK[resource.minTier])
     return { allowed: true, reason: 'tier' };
@@ -174,9 +155,9 @@ export default function MembershipDashboard({ adapter, initialState }: Props) {
     ...sampleState,
     ...(initialState ?? {}),
   }));
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'tiers' | 'access' | 'benefits'
-  >('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tiers' | 'access' | 'benefits'>(
+    'overview'
+  );
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -188,14 +169,10 @@ export default function MembershipDashboard({ adapter, initialState }: Props) {
     return map;
   }, [state.tiers]);
 
-  const ratePerEpoch = viewerTier
-    ? tierByName.get(viewerTier)?.ratePerEpoch ?? 0n
-    : 0n;
+  const ratePerEpoch = viewerTier ? (tierByName.get(viewerTier)?.ratePerEpoch ?? 0n) : 0n;
 
   const elapsedEpochs =
-    state.lastClaimEpoch === null
-      ? 0
-      : Math.max(0, state.currentEpoch - state.lastClaimEpoch);
+    state.lastClaimEpoch === null ? 0 : Math.max(0, state.currentEpoch - state.lastClaimEpoch);
 
   const pendingBenefits = BigInt(elapsedEpochs) * ratePerEpoch;
 
@@ -213,8 +190,7 @@ export default function MembershipDashboard({ adapter, initialState }: Props) {
 
   const handleClaim = () =>
     wrap(async () => {
-      if (!viewerTier)
-        throw new Error('Mint a membership before claiming benefits.');
+      if (!viewerTier) throw new Error('Mint a membership before claiming benefits.');
       if (adapter) {
         await adapter.claimBenefits();
         const next = await adapter.load();
@@ -286,15 +262,8 @@ export default function MembershipDashboard({ adapter, initialState }: Props) {
           tierByName={tierByName}
         />
       )}
-      {activeTab === 'tiers' && (
-        <TiersTab tiers={state.tiers} viewerTier={viewerTier} />
-      )}
-      {activeTab === 'access' && (
-        <AccessTab
-          state={state}
-          viewerTier={viewerTier}
-        />
-      )}
+      {activeTab === 'tiers' && <TiersTab tiers={state.tiers} viewerTier={viewerTier} />}
+      {activeTab === 'access' && <AccessTab state={state} viewerTier={viewerTier} />}
       {activeTab === 'benefits' && (
         <BenefitsTab
           state={state}
@@ -367,9 +336,7 @@ function OverviewTab({
                   <div className="flex items-center gap-3">
                     <span className="font-mono">#{t.tokenId}</span>
                     <TierBadge tier={t.tier} />
-                    {t.soulbound && (
-                      <Badge variant="secondary">soulbound</Badge>
-                    )}
+                    {t.soulbound && <Badge variant="secondary">soulbound</Badge>}
                   </div>
                   <span className="text-muted-foreground text-xs">
                     Minted {formatTimestamp(t.mintedAt)}
@@ -387,26 +354,11 @@ function OverviewTab({
           <CardDescription>Accrual since last claim.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <Stat
-            label="Tier"
-            value={viewerTier ?? '—'}
-          />
-          <Stat
-            label="Rate / epoch"
-            value={ratePerEpoch.toString()}
-          />
-          <Stat
-            label="Epochs elapsed"
-            value={elapsedEpochs.toString()}
-          />
-          <Stat
-            label="Pending"
-            value={pendingBenefits.toString()}
-          />
-          <Stat
-            label="Claimed balance"
-            value={state.claimedBalance.toString()}
-          />
+          <Stat label="Tier" value={viewerTier ?? '—'} />
+          <Stat label="Rate / epoch" value={ratePerEpoch.toString()} />
+          <Stat label="Epochs elapsed" value={elapsedEpochs.toString()} />
+          <Stat label="Pending" value={pendingBenefits.toString()} />
+          <Stat label="Claimed balance" value={state.claimedBalance.toString()} />
         </CardContent>
       </Card>
 
@@ -447,24 +399,14 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function TiersTab({
-  tiers,
-  viewerTier,
-}: {
-  tiers: TierMeta[];
-  viewerTier: Tier | null;
-}) {
+function TiersTab({ tiers, viewerTier }: { tiers: TierMeta[]; viewerTier: Tier | null }) {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {tiers.map((t) => {
         const isCurrent = viewerTier === t.tier;
-        const isUnlocked =
-          viewerTier !== null && TIER_RANK[viewerTier] >= TIER_RANK[t.tier];
+        const isUnlocked = viewerTier !== null && TIER_RANK[viewerTier] >= TIER_RANK[t.tier];
         return (
-          <Card
-            key={t.tier}
-            className={isCurrent ? 'border-primary border-2' : ''}
-          >
+          <Card key={t.tier} className={isCurrent ? 'border-primary border-2' : ''}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>{t.tier}</CardTitle>
@@ -485,9 +427,7 @@ function TiersTab({
               </ul>
               <div className="pt-2">
                 {isCurrent && <Badge>Current tier</Badge>}
-                {!isCurrent && isUnlocked && (
-                  <Badge variant="secondary">Included</Badge>
-                )}
+                {!isCurrent && isUnlocked && <Badge variant="secondary">Included</Badge>}
                 {!isUnlocked && <Badge variant="outline">Locked</Badge>}
               </div>
             </CardContent>
@@ -498,20 +438,12 @@ function TiersTab({
   );
 }
 
-function AccessTab({
-  state,
-  viewerTier,
-}: {
-  state: MembershipState;
-  viewerTier: Tier | null;
-}) {
+function AccessTab({ state, viewerTier }: { state: MembershipState; viewerTier: Tier | null }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Resources</CardTitle>
-        <CardDescription>
-          Live access decisions for the connected viewer.
-        </CardDescription>
+        <CardDescription>Live access decisions for the connected viewer.</CardDescription>
       </CardHeader>
       <CardContent>
         <table className="w-full text-sm">
@@ -525,12 +457,7 @@ function AccessTab({
           </thead>
           <tbody>
             {state.resources.map((r) => {
-              const decision = evaluateAccess(
-                r,
-                viewerTier,
-                state.tempGrants,
-                state.nowSeconds,
-              );
+              const decision = evaluateAccess(r, viewerTier, state.tempGrants, state.nowSeconds);
               return (
                 <tr key={r.name} className="border-t">
                   <td className="py-2 font-mono">{r.name}</td>
@@ -597,8 +524,8 @@ function BenefitsTab({
       <CardHeader>
         <CardTitle>Claim benefits</CardTitle>
         <CardDescription>
-          Benefits accrue per epoch based on your tier. The first claim
-          registers your accrual start at the current epoch.
+          Benefits accrue per epoch based on your tier. The first claim registers your accrual start
+          at the current epoch.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -606,20 +533,11 @@ function BenefitsTab({
           <Stat label="Tier" value={viewerTier ?? '—'} />
           <Stat label="Rate / epoch" value={ratePerEpoch.toString()} />
           <Stat label="Current epoch" value={state.currentEpoch.toString()} />
-          <Stat
-            label="Last claim epoch"
-            value={state.lastClaimEpoch?.toString() ?? '—'}
-          />
+          <Stat label="Last claim epoch" value={state.lastClaimEpoch?.toString() ?? '—'} />
           <Stat label="Epochs elapsed" value={elapsedEpochs.toString()} />
           <Stat label="Pending" value={pendingBenefits.toString()} />
-          <Stat
-            label="Claimed balance"
-            value={state.claimedBalance.toString()}
-          />
-          <Stat
-            label="Epoch length"
-            value={`${state.epochSeconds}s`}
-          />
+          <Stat label="Claimed balance" value={state.claimedBalance.toString()} />
+          <Stat label="Epoch length" value={`${state.epochSeconds}s`} />
         </div>
 
         <div className="flex flex-wrap gap-2">

@@ -29,7 +29,7 @@ export class SubscriptionService {
       // Get from database
       const plans = await prisma.subscriptionPlan.findMany({
         where: { isActive: true },
-        orderBy: { price: 'asc' }
+        orderBy: { price: 'asc' },
       });
 
       // Cache for 5 minutes
@@ -46,10 +46,10 @@ export class SubscriptionService {
   async getPlanByTier(tier: string): Promise<SubscriptionPlan> {
     try {
       const plan = await prisma.subscriptionPlan.findFirst({
-        where: { 
+        where: {
           tier: tier.toUpperCase(),
-          isActive: true 
-        }
+          isActive: true,
+        },
       });
 
       if (!plan) {
@@ -68,7 +68,7 @@ export class SubscriptionService {
     try {
       const cacheKey = `user_subscriptions:${userId}`;
       const cachedSubscriptions = await redisConnection.get(cacheKey);
-      
+
       if (cachedSubscriptions) {
         return JSON.parse(cachedSubscriptions);
       }
@@ -79,10 +79,10 @@ export class SubscriptionService {
           plan: true,
           payments: {
             orderBy: { createdAt: 'desc' },
-            take: 5
-          }
+            take: 5,
+          },
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       // Cache for 1 minute
@@ -108,8 +108,8 @@ export class SubscriptionService {
       const existingSubscription = await prisma.subscription.findFirst({
         where: {
           userId: data.userId,
-          status: 'ACTIVE'
-        }
+          status: 'ACTIVE',
+        },
       });
 
       if (existingSubscription) {
@@ -118,7 +118,7 @@ export class SubscriptionService {
 
       // Get plan details
       const plan = await this.getPlanByTier(data.tier);
-      
+
       // Calculate subscription period
       const billingPeriodDays = this.getBillingPeriodDays(data.billingPeriod);
       const startDate = new Date();
@@ -136,11 +136,11 @@ export class SubscriptionService {
           nextBillingDate: endDate,
           autoRenew: data.autoRenew,
           paymentMethod: data.paymentMethod,
-          stellarTransactionId: null // Will be set after payment
+          stellarTransactionId: null, // Will be set after payment
         },
         include: {
-          plan: true
-        }
+          plan: true,
+        },
       });
 
       // Process payment via Stellar
@@ -149,13 +149,13 @@ export class SubscriptionService {
           userId: data.userId,
           amount: plan.price,
           currency: plan.currency,
-          subscriptionId: subscription.id
+          subscriptionId: subscription.id,
         });
 
         // Update subscription with transaction ID
         await prisma.subscription.update({
           where: { id: subscription.id },
-          data: { stellarTransactionId: paymentResult.transactionId }
+          data: { stellarTransactionId: paymentResult.transactionId },
         });
 
         // Create payment record
@@ -167,17 +167,16 @@ export class SubscriptionService {
             currency: plan.currency,
             status: 'COMPLETED',
             transactionId: paymentResult.transactionId,
-            billingPeriod: data.billingPeriod
-          }
+            billingPeriod: data.billingPeriod,
+          },
         });
-
       } catch (paymentError) {
         logger.error('Payment processing failed:', paymentError);
-        
+
         // Mark subscription as failed
         await prisma.subscription.update({
           where: { id: subscription.id },
-          data: { status: 'FAILED' }
+          data: { status: 'FAILED' },
         });
 
         throw new Error('Payment processing failed');
@@ -187,7 +186,7 @@ export class SubscriptionService {
       await redisConnection.del(`user_subscriptions:${data.userId}`);
 
       logger.info(`Subscription created for user ${data.userId}: ${subscription.id}`);
-      
+
       return subscription;
     } catch (error) {
       logger.error('Error creating subscription:', error);
@@ -196,17 +195,20 @@ export class SubscriptionService {
   }
 
   // Cancel subscription
-  async cancelSubscription(subscriptionId: number, userId: string): Promise<{ refundAmount?: number }> {
+  async cancelSubscription(
+    subscriptionId: number,
+    userId: string
+  ): Promise<{ refundAmount?: number }> {
     try {
       const subscription = await prisma.subscription.findFirst({
         where: {
           id: subscriptionId,
-          userId
+          userId,
         },
         include: {
           plan: true,
-          payments: true
-        }
+          payments: true,
+        },
       });
 
       if (!subscription) {
@@ -220,8 +222,12 @@ export class SubscriptionService {
       // Calculate refund if applicable
       let refundAmount: number | undefined;
       const now = new Date();
-      const remainingDays = Math.ceil((subscription.endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      const totalDays = Math.ceil((subscription.endDate.getTime() - subscription.startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const remainingDays = Math.ceil(
+        (subscription.endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      const totalDays = Math.ceil(
+        (subscription.endDate.getTime() - subscription.startDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       if (remainingDays > 0 && totalDays > 0) {
         const refundPercentage = remainingDays / totalDays;
@@ -233,7 +239,7 @@ export class SubscriptionService {
             userId,
             amount: refundAmount,
             currency: subscription.plan.currency,
-            originalTransactionId: subscription.payments[0]?.transactionId
+            originalTransactionId: subscription.payments[0]?.transactionId,
           });
         } catch (refundError) {
           logger.error('Refund processing failed:', refundError);
@@ -246,8 +252,8 @@ export class SubscriptionService {
         where: { id: subscriptionId },
         data: {
           status: 'CANCELLED',
-          endDate: now
-        }
+          endDate: now,
+        },
       });
 
       // Create payment record for refund if applicable
@@ -259,13 +265,13 @@ export class SubscriptionService {
             amount: -refundAmount, // Negative amount for refund
             currency: subscription.plan.currency,
             status: 'REFUNDED',
-            billingPeriod: subscription.payments[0]?.billingPeriod || 'MONTHLY'
-          }
+            billingPeriod: subscription.payments[0]?.billingPeriod || 'MONTHLY',
+          },
         });
       }
 
       logger.info(`Subscription ${subscriptionId} cancelled by user ${userId}`);
-      
+
       return { refundAmount };
     } catch (error) {
       logger.error('Error cancelling subscription:', error);
@@ -279,11 +285,11 @@ export class SubscriptionService {
       const subscription = await prisma.subscription.findFirst({
         where: {
           id: subscriptionId,
-          userId
+          userId,
         },
         include: {
-          plan: true
-        }
+          plan: true,
+        },
       });
 
       if (!subscription) {
@@ -296,7 +302,9 @@ export class SubscriptionService {
 
       // Calculate new end date
       const billingPeriodDays = this.getBillingPeriodDays(subscription.plan.billingPeriod);
-      const newEndDate = new Date(subscription.endDate.getTime() + billingPeriodDays * 24 * 60 * 60 * 1000);
+      const newEndDate = new Date(
+        subscription.endDate.getTime() + billingPeriodDays * 24 * 60 * 60 * 1000
+      );
 
       // Process payment
       try {
@@ -304,7 +312,7 @@ export class SubscriptionService {
           userId,
           amount: subscription.plan.price,
           currency: subscription.plan.currency,
-          subscriptionId
+          subscriptionId,
         });
 
         // Update subscription
@@ -314,11 +322,11 @@ export class SubscriptionService {
             endDate: newEndDate,
             lastBillingDate: new Date(),
             nextBillingDate: newEndDate,
-            stellarTransactionId: paymentResult.transactionId
+            stellarTransactionId: paymentResult.transactionId,
           },
           include: {
-            plan: true
-          }
+            plan: true,
+          },
         });
 
         // Create payment record
@@ -330,12 +338,12 @@ export class SubscriptionService {
             currency: subscription.plan.currency,
             status: 'COMPLETED',
             transactionId: paymentResult.transactionId,
-            billingPeriod: subscription.plan.billingPeriod
-          }
+            billingPeriod: subscription.plan.billingPeriod,
+          },
         });
 
         logger.info(`Subscription ${subscriptionId} renewed by user ${userId}`);
-        
+
         return updatedSubscription;
       } catch (paymentError) {
         logger.error('Renewal payment processing failed:', paymentError);
@@ -352,7 +360,7 @@ export class SubscriptionService {
     try {
       const cacheKey = `subscription:${subscriptionId}`;
       const cachedSubscription = await redisConnection.get(cacheKey);
-      
+
       if (cachedSubscription) {
         const subscription = JSON.parse(cachedSubscription);
         // Verify user ownership
@@ -364,15 +372,15 @@ export class SubscriptionService {
       const subscription = await prisma.subscription.findFirst({
         where: {
           id: subscriptionId,
-          userId
+          userId,
         },
         include: {
           plan: true,
           payments: {
             orderBy: { createdAt: 'desc' },
-            take: 10
-          }
-        }
+            take: 10,
+          },
+        },
       });
 
       if (!subscription) {
@@ -398,9 +406,9 @@ export class SubscriptionService {
       const payments = await prisma.payment.findMany({
         where: {
           subscriptionId,
-          userId
+          userId,
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return payments;
@@ -419,11 +427,11 @@ export class SubscriptionService {
   }): Promise<{ subscriptions: Subscription[]; total: number; page: number; totalPages: number }> {
     try {
       const where: any = {};
-      
+
       if (options.status) {
         where.status = options.status;
       }
-      
+
       if (options.tier) {
         where.plan = { tier: options.tier.toUpperCase() };
       }
@@ -437,26 +445,26 @@ export class SubscriptionService {
               select: {
                 id: true,
                 email: true,
-                name: true
-              }
+                name: true,
+              },
             },
             payments: {
               orderBy: { createdAt: 'desc' },
-              take: 1
-            }
+              take: 1,
+            },
           },
           orderBy: { createdAt: 'desc' },
           skip: (options.page - 1) * options.limit,
-          take: options.limit
+          take: options.limit,
         }),
-        prisma.subscription.count({ where })
+        prisma.subscription.count({ where }),
       ]);
 
       return {
         subscriptions,
         total,
         page: options.page,
-        totalPages: Math.ceil(total / options.limit)
+        totalPages: Math.ceil(total / options.limit),
       };
     } catch (error) {
       logger.error('Error fetching all subscriptions:', error);
@@ -478,34 +486,34 @@ export class SubscriptionService {
         cancelledSubscriptions,
         revenue,
         subscriptionsByTier,
-        churnRate
+        churnRate,
       ] = await Promise.all([
         prisma.subscription.count(),
         prisma.subscription.count({ where: { status: 'ACTIVE' } }),
         prisma.subscription.count({
           where: {
-            createdAt: { gte: startDate }
-          }
+            createdAt: { gte: startDate },
+          },
         }),
         prisma.subscription.count({
           where: {
             status: 'CANCELLED',
-            updatedAt: { gte: startDate }
-          }
+            updatedAt: { gte: startDate },
+          },
         }),
         prisma.payment.aggregate({
           where: {
             status: 'COMPLETED',
-            createdAt: { gte: startDate }
+            createdAt: { gte: startDate },
           },
-          _sum: { amount: true }
+          _sum: { amount: true },
         }),
         prisma.subscription.groupBy({
           by: ['planId'],
           where: { status: 'ACTIVE' },
-          _count: true
+          _count: true,
         }),
-        this.calculateChurnRate(startDate)
+        this.calculateChurnRate(startDate),
       ]);
 
       return {
@@ -516,7 +524,7 @@ export class SubscriptionService {
         revenue: revenue._sum.amount || 0,
         subscriptionsByTier,
         churnRate,
-        period
+        period,
       };
     } catch (error) {
       logger.error('Error fetching subscription analytics:', error);
@@ -545,7 +553,7 @@ export class SubscriptionService {
           currency: data.currency,
           features: data.features,
           maxUsers: data.maxUsers,
-          isActive: data.isActive
+          isActive: data.isActive,
         },
         create: {
           tier: data.tier.toUpperCase(),
@@ -556,15 +564,15 @@ export class SubscriptionService {
           features: data.features,
           maxUsers: data.maxUsers,
           isActive: data.isActive,
-          billingPeriod: this.getDefaultBillingPeriod(data.tier)
-        }
+          billingPeriod: this.getDefaultBillingPeriod(data.tier),
+        },
       });
 
       // Invalidate cache
       await redisConnection.del('subscription_plans');
 
       logger.info(`Plan ${data.tier} updated`);
-      
+
       return plan;
     } catch (error) {
       logger.error('Error updating plan:', error);
@@ -578,11 +586,11 @@ export class SubscriptionService {
       // This would interact with the Soroban smart contract
       // For now, we'll just log and update database status
       logger.warn(`Contract pause requested: ${reason}`);
-      
+
       // Update system status in database
       await prisma.systemStatus.update({
         where: { key: 'contract_status' },
-        data: { value: 'PAUSED' }
+        data: { value: 'PAUSED' },
       });
     } catch (error) {
       logger.error('Error pausing contract:', error);
@@ -594,11 +602,11 @@ export class SubscriptionService {
   async unpauseContract(): Promise<void> {
     try {
       logger.info('Contract unpause requested');
-      
+
       // Update system status in database
       await prisma.systemStatus.update({
         where: { key: 'contract_status' },
-        data: { value: 'ACTIVE' }
+        data: { value: 'ACTIVE' },
       });
     } catch (error) {
       logger.error('Error unpausing contract:', error);
@@ -610,11 +618,11 @@ export class SubscriptionService {
   async emergencyPauseContract(reason: string): Promise<void> {
     try {
       logger.error(`Emergency pause activated: ${reason}`);
-      
+
       // Update system status
       await prisma.systemStatus.update({
         where: { key: 'contract_status' },
-        data: { value: 'EMERGENCY_PAUSE' }
+        data: { value: 'EMERGENCY_PAUSE' },
       });
     } catch (error) {
       logger.error('Error activating emergency pause:', error);
@@ -655,24 +663,24 @@ export class SubscriptionService {
         prisma.subscription.count({
           where: {
             status: 'ACTIVE',
-            createdAt: { lt: startDate }
-          }
+            createdAt: { lt: startDate },
+          },
         }),
         prisma.subscription.count({
           where: {
-            status: 'ACTIVE'
-          }
+            status: 'ACTIVE',
+          },
         }),
         prisma.subscription.count({
           where: {
             status: 'CANCELLED',
-            updatedAt: { gte: startDate }
-          }
-        })
+            updatedAt: { gte: startDate },
+          },
+        }),
       ]);
 
       if (startActive === 0) return 0;
-      
+
       return (cancelled / startActive) * 100;
     } catch (error) {
       logger.error('Error calculating churn rate:', error);

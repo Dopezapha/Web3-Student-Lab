@@ -1,14 +1,12 @@
 // Dynamic imports for Stellar SDK to reduce initial bundle size
 // and allow for better code splitting
 const getStellarSDK = async () => {
-  return await import("@stellar/stellar-sdk");
+  return await import('@stellar/stellar-sdk');
 };
 
 const SOROBAN_RPC_URL =
-  process.env.NEXT_PUBLIC_SOROBAN_RPC_URL ||
-  "https://soroban-test.stellar.org:443";
-const CERTIFICATE_CONTRACT_ID =
-  process.env.NEXT_PUBLIC_CERTIFICATE_CONTRACT_ID || "";
+  process.env.NEXT_PUBLIC_SOROBAN_RPC_URL || 'https://soroban-test.stellar.org:443';
+const CERTIFICATE_CONTRACT_ID = process.env.NEXT_PUBLIC_CERTIFICATE_CONTRACT_ID || '';
 
 export interface CertificateData {
   symbol: string;
@@ -20,30 +18,28 @@ export interface CertificateData {
 /**
  * Verify a certificate on the Soroban blockchain
  */
-export const verifyCertificateOnChain = async (
-  symbol: string,
-): Promise<CertificateData | null> => {
+export const verifyCertificateOnChain = async (symbol: string): Promise<CertificateData | null> => {
   try {
     const { rpc } = await getStellarSDK();
-    
+
     if (!CERTIFICATE_CONTRACT_ID) {
-      console.warn("Certificate contract ID not configured");
+      console.warn('Certificate contract ID not configured');
       return null;
     }
 
     // Simulate the contract call (read-only)
     const server = new rpc.Server(SOROBAN_RPC_URL);
     const simulation = await server.getHealth(); // Check health first
-    if (simulation.status !== "healthy") {
-      throw new Error("Soroban RPC is not healthy");
+    if (simulation.status !== 'healthy') {
+      throw new Error('Soroban RPC is not healthy');
     }
 
     // Call the contract - simplified for linting
     // In production, this would build a proper Soroban transaction
-    console.log("Would verify certificate on-chain:", symbol);
+    console.log('Would verify certificate on-chain:', symbol);
     return null;
   } catch (error) {
-    console.error("Error verifying certificate on-chain:", error);
+    console.error('Error verifying certificate on-chain:', error);
     return null;
   }
 };
@@ -55,15 +51,15 @@ export const verifyCertificateOnChain = async (
 export const issueCertificateOnChain = async (
   symbol: string,
   student: string,
-  courseName: string,
+  courseName: string
 ): Promise<string | null> => {
   try {
     if (!CERTIFICATE_CONTRACT_ID) {
-      console.warn("Certificate contract ID not configured");
+      console.warn('Certificate contract ID not configured');
       return null;
     }
 
-    console.log("Issuing certificate:", { symbol, student, courseName });
+    console.log('Issuing certificate:', { symbol, student, courseName });
 
     // TODO: Implement actual certificate issuance
     // This requires:
@@ -72,9 +68,9 @@ export const issueCertificateOnChain = async (
     // 3. Submitting to the network
     // 4. Waiting for confirmation
 
-    return "transaction_hash_placeholder";
+    return 'transaction_hash_placeholder';
   } catch (error) {
-    console.error("Error issuing certificate on-chain:", error);
+    console.error('Error issuing certificate on-chain:', error);
     return null;
   }
 };
@@ -82,9 +78,7 @@ export const issueCertificateOnChain = async (
 /**
  * Check if a certificate exists on-chain
  */
-export const certificateExistsOnChain = async (
-  symbol: string,
-): Promise<boolean> => {
+export const certificateExistsOnChain = async (symbol: string): Promise<boolean> => {
   try {
     const cert = await verifyCertificateOnChain(symbol);
     return cert !== null;

@@ -148,7 +148,7 @@ export function EnrollmentWizard({
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="mx-auto w-full max-w-4xl">
       <AnimatePresence mode="wait">
         {showResumePrompt ? (
           <motion.div
@@ -156,12 +156,12 @@ export function EnrollmentWizard({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-zinc-900 rounded-2xl p-8 border border-zinc-800"
+            className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8"
           >
             <div className="text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
                 <svg
-                  className="w-8 h-8 text-red-500"
+                  className="h-8 w-8 text-red-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -174,21 +174,19 @@ export function EnrollmentWizard({
                   />
                 </svg>
               </div>
-              <h2 className="text-2xl font-black text-white mb-2">Resume Enrollment?</h2>
-              <p className="text-zinc-400 mb-6">
+              <h2 className="mb-2 text-2xl font-black text-white">Resume Enrollment?</h2>
+              <p className="mb-6 text-zinc-400">
                 You have an unfinished enrollment from{' '}
-                {wizard.lastSaved
-                  ? new Date(wizard.lastSaved).toLocaleDateString()
-                  : 'previously'}
-                . Would you like to continue where you left off?
+                {wizard.lastSaved ? new Date(wizard.lastSaved).toLocaleDateString() : 'previously'}.
+                Would you like to continue where you left off?
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className="flex justify-center gap-4">
                 <button
                   onClick={() => {
                     wizard.resume();
                     setShowResumePrompt(false);
                   }}
-                  className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="rounded-lg bg-red-600 px-6 py-3 font-medium text-white transition-colors hover:bg-red-700"
                 >
                   Resume
                 </button>
@@ -197,7 +195,7 @@ export function EnrollmentWizard({
                     wizard.reset();
                     setShowResumePrompt(false);
                   }}
-                  className="px-6 py-3 bg-zinc-800 text-white rounded-lg font-medium hover:bg-zinc-700 transition-colors"
+                  className="rounded-lg bg-zinc-800 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700"
                 >
                   Start Fresh
                 </button>
@@ -210,9 +208,9 @@ export function EnrollmentWizard({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-zinc-950 rounded-2xl border border-zinc-800 overflow-hidden"
+            className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950"
           >
-            <div className="p-6 border-b border-zinc-800 bg-zinc-900/50">
+            <div className="border-b border-zinc-800 bg-zinc-900/50 p-6">
               <WizardProgress
                 currentStep={wizard.currentStep}
                 totalSteps={5}
@@ -220,7 +218,7 @@ export function EnrollmentWizard({
               />
             </div>
 
-            <div className="p-6 min-h-[400px]">
+            <div className="min-h-[400px] p-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={wizard.currentStep}
@@ -238,10 +236,10 @@ export function EnrollmentWizard({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mx-6 mb-4 bg-red-500/10 border border-red-500/30 rounded-lg p-4"
+                className="mx-6 mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-4"
               >
-                <p className="text-red-400 text-sm flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p className="flex items-center gap-2 text-sm text-red-400">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -254,7 +252,7 @@ export function EnrollmentWizard({
               </motion.div>
             )}
 
-            <div className="p-6 border-t border-zinc-800 bg-zinc-900/30">
+            <div className="border-t border-zinc-800 bg-zinc-900/30 p-6">
               <WizardNavigation
                 canGoBack={wizard.canGoBack}
                 canProceed={wizard.validationResult.isValid}
@@ -272,7 +270,7 @@ export function EnrollmentWizard({
 
             {wizard.lastSaved && (
               <div className="px-6 pb-4 text-center">
-                <p className="text-zinc-600 text-xs">
+                <p className="text-xs text-zinc-600">
                   Auto-saved: {new Date(wizard.lastSaved).toLocaleTimeString()}
                 </p>
               </div>

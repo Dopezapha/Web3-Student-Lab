@@ -69,7 +69,7 @@ router.get(
     } catch {
       res.status(500).json({ error: 'Failed to fetch course' });
     }
-  },
+  }
 );
 
 // POST /api/courses - Create a new course

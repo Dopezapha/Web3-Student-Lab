@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useState } from "react";
-import type { CertificateData } from "@/lib/soroban";
+import React from 'react';
+import { useState } from 'react';
+import type { CertificateData } from '@/lib/soroban';
 
 export default function VerifyCertificatePage() {
-  const [certificateId, setCertificateId] = useState("");
+  const [certificateId, setCertificateId] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [result, setResult] = useState<CertificateData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -21,35 +21,33 @@ export default function VerifyCertificatePage() {
     setVerified(false);
 
     try {
-      const { verifyCertificateOnChain } = await import("@/lib/soroban");
+      const { verifyCertificateOnChain } = await import('@/lib/soroban');
       const data = await verifyCertificateOnChain(certificateId.trim());
 
       if (data) {
         setResult(data);
         setVerified(true);
       } else {
-        setError("Certificate not found on blockchain");
+        setError('Certificate not found on blockchain');
       }
     } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Failed to verify certificate",
-      );
+      setError(err instanceof Error ? err.message : 'Failed to verify certificate');
     } finally {
       setIsVerifying(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-black text-white relative px-4 py-16 overflow-hidden">
+    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-black px-4 py-16 text-white">
       {/* Abstract Background Glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-red-600/5 blur-[120px]"></div>
 
-      <div className="relative z-10 max-w-3xl mx-auto">
+      <div className="relative z-10 mx-auto max-w-3xl">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="w-20 h-20 bg-zinc-950 border border-red-500/50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(220,38,38,0.2)]">
+        <div className="mb-16 text-center">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-red-500/50 bg-zinc-950 shadow-[0_0_20px_rgba(220,38,38,0.2)]">
             <svg
-              className="w-10 h-10 text-red-500"
+              className="h-10 w-10 text-red-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -62,23 +60,23 @@ export default function VerifyCertificatePage() {
               />
             </svg>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
+          <h1 className="mb-4 text-4xl font-black tracking-tight text-white uppercase md:text-5xl">
             Cryptographic <span className="text-red-600">Verification</span>
           </h1>
-          <p className="text-lg text-gray-400 font-light tracking-wide">
+          <p className="text-lg font-light tracking-wide text-gray-400">
             Query the Stellar network to validate on-chain credentials
           </p>
         </div>
 
         {/* Verification Form */}
-        <div className="bg-zinc-950 border border-white/10 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] p-10 mb-10 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-transparent"></div>
+        <div className="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-red-600 to-transparent"></div>
 
           <form onSubmit={handleVerify} className="space-y-8">
             <div>
               <label
                 htmlFor="certificateId"
-                className="block text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest"
+                className="mb-3 block text-sm font-bold tracking-widest text-gray-400 uppercase"
               >
                 Credential Symbol / Hash
               </label>
@@ -87,12 +85,14 @@ export default function VerifyCertificatePage() {
                   id="certificateId"
                   type="text"
                   value={certificateId}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCertificateId(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setCertificateId(e.target.value)
+                  }
                   placeholder="e.g. SOLID, INIT505, 0x..."
-                  className="w-full px-6 py-5 rounded-xl border border-white/20 bg-black text-white font-mono focus:ring-1 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-700 text-lg uppercase tracking-wider"
+                  className="w-full rounded-xl border border-white/20 bg-black px-6 py-5 font-mono text-lg tracking-wider text-white uppercase placeholder-gray-700 transition-colors focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center animate-pulse">
-                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                <div className="absolute top-1/2 right-4 flex h-4 w-4 -translate-y-1/2 animate-pulse items-center justify-center rounded-full bg-red-500/20">
+                  <div className="h-2 w-2 rounded-full bg-red-500"></div>
                 </div>
               </div>
             </div>
@@ -100,18 +100,15 @@ export default function VerifyCertificatePage() {
             <button
               type="submit"
               disabled={isVerifying || !certificateId.trim()}
-              className={`w-full py-5 px-6 rounded-xl font-black tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(220,38,38,0.3)] ${
+              className={`w-full rounded-xl px-6 py-5 font-black tracking-widest uppercase shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all ${
                 isVerifying || !certificateId.trim()
-                  ? "bg-red-900/50 text-gray-500 cursor-not-allowed border border-red-900/50"
-                  : "bg-red-600 hover:bg-red-700 text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.6)] transform hover:-translate-y-0.5"
+                  ? 'cursor-not-allowed border border-red-900/50 bg-red-900/50 text-gray-500'
+                  : 'transform bg-red-600 text-white hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]'
               }`}
             >
               {isVerifying ? (
                 <span className="flex items-center justify-center gap-3">
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-5 w-5 animate-spin text-white" viewBox="0 0 24 24">
                     <circle
                       className="opacity-25"
                       cx="12"
@@ -130,7 +127,7 @@ export default function VerifyCertificatePage() {
                   Querying Blockchain...
                 </span>
               ) : (
-                "Run Verification"
+                'Run Verification'
               )}
             </button>
           </form>
@@ -138,11 +135,11 @@ export default function VerifyCertificatePage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-950/30 border border-red-500/50 rounded-xl p-6 mb-10 backdrop-blur-sm animate-pulse">
+          <div className="mb-10 animate-pulse rounded-xl border border-red-500/50 bg-red-950/30 p-6 backdrop-blur-sm">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center flex-shrink-0 border border-red-500/20">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-red-500/20 bg-red-500/10">
                 <svg
-                  className="w-6 h-6 text-red-500"
+                  className="h-6 w-6 text-red-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -156,10 +153,10 @@ export default function VerifyCertificatePage() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-black text-red-500 mb-1 uppercase tracking-wider">
+                <h3 className="mb-1 text-lg font-black tracking-wider text-red-500 uppercase">
                   Query Failed
                 </h3>
-                <p className="text-red-400/80 font-mono text-sm">{error}</p>
+                <p className="font-mono text-sm text-red-400/80">{error}</p>
               </div>
             </div>
           </div>
@@ -167,13 +164,13 @@ export default function VerifyCertificatePage() {
 
         {/* Success Result */}
         {result && verified && (
-          <div className="bg-black border border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.1)] rounded-2xl p-10 mb-10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-bl-full pointer-events-none"></div>
+          <div className="relative mb-10 overflow-hidden rounded-2xl border border-green-500/30 bg-black p-10 shadow-[0_0_30px_rgba(34,197,94,0.1)]">
+            <div className="pointer-events-none absolute top-0 right-0 h-32 w-32 rounded-bl-full bg-green-500/10"></div>
 
-            <div className="flex items-start gap-5 mb-8 relative z-10">
-              <div className="w-14 h-14 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+            <div className="relative z-10 mb-8 flex items-start gap-5">
+              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-green-500/30 bg-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
                 <svg
-                  className="w-8 h-8 text-green-500"
+                  className="h-8 w-8 text-green-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -187,76 +184,67 @@ export default function VerifyCertificatePage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-wide">
+                <h3 className="mb-2 text-2xl font-black tracking-wide text-white uppercase">
                   Credential <span className="text-green-500">Verified</span>
                 </h3>
-                <p className="text-green-500/80 font-mono text-sm">
+                <p className="font-mono text-sm text-green-500/80">
                   Cryptographic proof confirmed on Stellar
                 </p>
               </div>
             </div>
 
-            <div className="bg-zinc-950 border border-white/5 rounded-xl p-8 space-y-6 relative z-10">
+            <div className="relative z-10 space-y-6 rounded-xl border border-white/5 bg-zinc-950 p-8">
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">
+                  <p className="mb-2 text-xs font-bold tracking-widest text-gray-500 uppercase">
                     Symbol
                   </p>
-                  <p className="text-2xl font-black text-white">
-                    {result.symbol}
-                  </p>
+                  <p className="text-2xl font-black text-white">{result.symbol}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">
+                  <p className="mb-2 text-xs font-bold tracking-widest text-gray-500 uppercase">
                     Identity
                   </p>
-                  <p className="text-xl font-bold text-gray-300">
-                    {result.student}
-                  </p>
+                  <p className="text-xl font-bold text-gray-300">{result.student}</p>
                 </div>
               </div>
-              <div className="pt-6 border-t border-white/5">
-                <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">
+              <div className="border-t border-white/5 pt-6">
+                <p className="mb-2 text-xs font-bold tracking-widest text-gray-500 uppercase">
                   Protocol / Curriculum
                 </p>
-                <p className="text-lg font-bold text-white">
-                  {result.course_name}
-                </p>
+                <p className="text-lg font-bold text-white">{result.course_name}</p>
               </div>
-              <div className="pt-6 border-t border-white/5">
-                <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">
+              <div className="border-t border-white/5 pt-6">
+                <p className="mb-2 text-xs font-bold tracking-widest text-gray-500 uppercase">
                   Timestamp
                 </p>
-                <p className="text-lg font-mono text-gray-300">
-                  {new Date(Number(result.issue_date) * 1000).toLocaleString(
-                    "en-US",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      timeZoneName: "short",
-                    },
-                  )}
+                <p className="font-mono text-lg text-gray-300">
+                  {new Date(Number(result.issue_date) * 1000).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZoneName: 'short',
+                  })}
                 </p>
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-green-500/20 flex items-center justify-between">
-              <div className="flex items-center gap-3 text-sm font-bold text-green-500 uppercase tracking-widest">
+            <div className="mt-8 flex items-center justify-between border-t border-green-500/20 pt-6">
+              <div className="flex items-center gap-3 text-sm font-bold tracking-widest text-green-500 uppercase">
                 <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
                 </span>
                 Immutable Record Connected
               </div>
               <a
                 href="#"
-                className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors border border-white/10"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-zinc-900 transition-colors hover:bg-zinc-800"
               >
                 <svg
-                  className="w-4 h-4 text-white"
+                  className="h-4 w-4 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -274,25 +262,24 @@ export default function VerifyCertificatePage() {
         )}
 
         {/* Info Section */}
-        <div className="mt-16 bg-zinc-950 border border-white/10 rounded-2xl p-10 shadow-sm relative overflow-hidden">
-          <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-red-600/10 rounded-full blur-[40px] pointer-events-none"></div>
+        <div className="relative mt-16 overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 p-10 shadow-sm">
+          <div className="pointer-events-none absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-red-600/10 blur-[40px]"></div>
 
-          <h2 className="text-xl font-black text-white mb-6 uppercase tracking-widest flex items-center gap-3">
-            <span className="w-8 h-px bg-red-600"></span> Protocol Specs
+          <h2 className="mb-6 flex items-center gap-3 text-xl font-black tracking-widest text-white uppercase">
+            <span className="h-px w-8 bg-red-600"></span> Protocol Specs
           </h2>
 
-          <div className="space-y-6 text-gray-400 font-light">
+          <div className="space-y-6 font-light text-gray-400">
             <p className="leading-relaxed">
-              Credentials mapped to the Web3 Student Lab are permanently minted
-              on the Stellar blockchain via highly optimized Soroban smart
-              contracts. This cryptographic attestation guarantees unforgeable
-              proof-of-knowledge.
+              Credentials mapped to the Web3 Student Lab are permanently minted on the Stellar
+              blockchain via highly optimized Soroban smart contracts. This cryptographic
+              attestation guarantees unforgeable proof-of-knowledge.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 border-t border-white/5 pt-8">
+            <div className="mt-8 grid grid-cols-1 gap-6 border-t border-white/5 pt-8 md:grid-cols-3">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-black border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black">
                   <svg
-                    className="w-5 h-5 text-red-500"
+                    className="h-5 w-5 text-red-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -306,18 +293,16 @@ export default function VerifyCertificatePage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="font-bold text-white mb-1 uppercase tracking-wider text-sm">
+                  <h4 className="mb-1 text-sm font-bold tracking-wider text-white uppercase">
                     Immutable
                   </h4>
-                  <p className="text-xs text-gray-500">
-                    Tamper-proof ledger encoding.
-                  </p>
+                  <p className="text-xs text-gray-500">Tamper-proof ledger encoding.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-black border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black">
                   <svg
-                    className="w-5 h-5 text-white"
+                    className="h-5 w-5 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -331,18 +316,16 @@ export default function VerifyCertificatePage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="font-bold text-white mb-1 uppercase tracking-wider text-sm">
+                  <h4 className="mb-1 text-sm font-bold tracking-wider text-white uppercase">
                     Real-Time
                   </h4>
-                  <p className="text-xs text-gray-500">
-                    Sub-second global verification.
-                  </p>
+                  <p className="text-xs text-gray-500">Sub-second global verification.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-black border border-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black">
                   <svg
-                    className="w-5 h-5 text-red-500"
+                    className="h-5 w-5 text-red-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -356,12 +339,10 @@ export default function VerifyCertificatePage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="font-bold text-white mb-1 uppercase tracking-wider text-sm">
+                  <h4 className="mb-1 text-sm font-bold tracking-wider text-white uppercase">
                     Decentralized
                   </h4>
-                  <p className="text-xs text-gray-500">
-                    Powered by Soroban Network.
-                  </p>
+                  <p className="text-xs text-gray-500">Powered by Soroban Network.</p>
                 </div>
               </div>
             </div>

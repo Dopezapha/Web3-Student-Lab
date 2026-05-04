@@ -142,16 +142,12 @@ export default function BrainstormPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-80px)] flex flex-col bg-gray-50 dark:bg-gray-950">
+    <div className="flex h-[calc(100vh-80px)] flex-col bg-gray-50 dark:bg-gray-950">
       {/* Top navigation bar */}
       <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            Brainstorming Canvas
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {sessionName}
-          </p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Brainstorming Canvas</h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{sessionName}</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -186,9 +182,7 @@ export default function BrainstormPage() {
         <div className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
-            <p className="text-gray-600 dark:text-gray-400">
-              Initializing canvas...
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">Initializing canvas...</p>
           </div>
         </div>
       )}

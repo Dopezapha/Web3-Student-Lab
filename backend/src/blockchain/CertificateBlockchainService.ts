@@ -207,4 +207,3 @@ export class CertificateBlockchainService {
 }
 
 export const certificateBlockchainService = new CertificateBlockchainService();
-

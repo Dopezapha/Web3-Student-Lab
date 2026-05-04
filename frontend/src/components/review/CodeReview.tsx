@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
-import { Editor, OnMount } from "@monaco-editor/react";
-import { MessageCircle, Plus, Users, Eye, EyeOff } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import InlineComment, { CommentThread, CommentReply } from "./InlineComment";
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Editor, OnMount } from '@monaco-editor/react';
+import { MessageCircle, Plus, Users, Eye, EyeOff } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import InlineComment, { CommentThread, CommentReply } from './InlineComment';
 
 interface CodeReviewProps {
   code: string;
@@ -26,16 +26,16 @@ interface CommentPosition {
 }
 
 const DEFAULT_USER = {
-  id: "current-user",
-  name: "Current User",
-  color: "#f87171",
+  id: 'current-user',
+  name: 'Current User',
+  color: '#f87171',
 };
 
 export default function CodeReview({
   code,
-  language = "typescript",
-  roomId = "default-room",
-  height = "500px",
+  language = 'typescript',
+  roomId = 'default-room',
+  height = '500px',
   readOnly = false,
   onCodeChange,
   currentUser = DEFAULT_USER,
@@ -44,10 +44,10 @@ export default function CodeReview({
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [newCommentLine, setNewCommentLine] = useState<number | null>(null);
-  const [newCommentContent, setNewCommentContent] = useState("");
+  const [newCommentContent, setNewCommentContent] = useState('');
   const [showComments, setShowComments] = useState(true);
   const [commentPositions, setCommentPositions] = useState<Map<number, CommentPosition>>(new Map());
-  
+
   const editorRef = useRef<any>(null);
   const monacoRef = useRef<any>(null);
   const decorationsRef = useRef<string[]>([]);
@@ -69,25 +69,16 @@ export default function CodeReview({
 
     // Create new decorations for comments
     const decorations = comments.map((comment) => ({
-      range: new monaco.Range(
-        comment.line,
-        1,
-        comment.line,
-        1
-      ),
+      range: new monaco.Range(comment.line, 1, comment.line, 1),
       options: {
         isWholeLine: true,
-        className: comment.isResolved 
-          ? "comment-decoration-resolved" 
-          : "comment-decoration",
-        glyphMarginClassName: comment.isResolved
-          ? "comment-glyph-resolved"
-          : "comment-glyph",
+        className: comment.isResolved ? 'comment-decoration-resolved' : 'comment-decoration',
+        glyphMarginClassName: comment.isResolved ? 'comment-glyph-resolved' : 'comment-glyph',
         hoverMessage: {
-          value: `${comment.author.name}: ${comment.content.substring(0, 100)}${comment.content.length > 100 ? "..." : ""}`
+          value: `${comment.author.name}: ${comment.content.substring(0, 100)}${comment.content.length > 100 ? '...' : ''}`,
         },
-        stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges
-      }
+        stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+      },
     }));
 
     decorationsRef.current = editor.deltaDecorations(decorationsRef.current, decorations);
@@ -99,26 +90,26 @@ export default function CodeReview({
     monacoRef.current = monaco;
 
     // Define custom styles for comment decorations
-    monaco.editor.defineTheme("code-review-theme", {
-      base: "vs-dark",
+    monaco.editor.defineTheme('code-review-theme', {
+      base: 'vs-dark',
       inherit: true,
       rules: [
-        { token: "comment", foreground: "6B7280", fontStyle: "italic" },
-        { token: "keyword", foreground: "F87171", fontStyle: "bold" },
-        { token: "string", foreground: "34D399" },
+        { token: 'comment', foreground: '6B7280', fontStyle: 'italic' },
+        { token: 'keyword', foreground: 'F87171', fontStyle: 'bold' },
+        { token: 'string', foreground: '34D399' },
       ],
       colors: {
-        "editor.background": "#09090b",
-        "editor.lineHighlightBackground": "#111827",
-        "editorCursor.foreground": "#f87171",
-        "editorGutter.background": "#09090b",
+        'editor.background': '#09090b',
+        'editor.lineHighlightBackground': '#111827',
+        'editorCursor.foreground': '#f87171',
+        'editorGutter.background': '#09090b',
       },
     });
 
-    monaco.editor.setTheme("code-review-theme");
+    monaco.editor.setTheme('code-review-theme');
 
     // Add CSS for comment decorations
-    const style = document.createElement("style");
+    const style = document.createElement('style');
     style.textContent = `
       .comment-decoration {
         background-color: rgba(239, 68, 68, 0.1);
@@ -147,8 +138,10 @@ export default function CodeReview({
 
     // Handle line click for adding comments
     editor.onMouseDown((e: any) => {
-      if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN || 
-          e.target.type === monaco.editor.MouseTargetType.GUTTER_LINE_NUMBERS) {
+      if (
+        e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN ||
+        e.target.type === monaco.editor.MouseTargetType.GUTTER_LINE_NUMBERS
+      ) {
         const line = e.target.position.lineNumber;
         startAddingComment(line);
       }
@@ -160,9 +153,9 @@ export default function CodeReview({
   // Start adding a comment
   const startAddingComment = (line: number) => {
     if (readOnly) return;
-    
+
     setNewCommentLine(line);
-    setNewCommentContent("");
+    setNewCommentContent('');
     setIsAddingComment(true);
     setActiveCommentId(null);
   };
@@ -184,7 +177,7 @@ export default function CodeReview({
     setComments((prev) => [...prev, newComment]);
     setIsAddingComment(false);
     setNewCommentLine(null);
-    setNewCommentContent("");
+    setNewCommentContent('');
     setActiveCommentId(newComment.id);
   };
 
@@ -192,9 +185,7 @@ export default function CodeReview({
   const editComment = (commentId: string, content: string) => {
     setComments((prev) =>
       prev.map((comment) =>
-        comment.id === commentId
-          ? { ...comment, content, timestamp: new Date() }
-          : comment
+        comment.id === commentId ? { ...comment, content, timestamp: new Date() } : comment
       )
     );
   };
@@ -218,9 +209,7 @@ export default function CodeReview({
 
     setComments((prev) =>
       prev.map((comment) =>
-        comment.id === commentId
-          ? { ...comment, replies: [...comment.replies, newReply] }
-          : comment
+        comment.id === commentId ? { ...comment, replies: [...comment.replies, newReply] } : comment
       )
     );
   };
@@ -228,11 +217,7 @@ export default function CodeReview({
   // Resolve/unresolve comment
   const toggleCommentResolution = (commentId: string, isResolved: boolean) => {
     setComments((prev) =>
-      prev.map((comment) =>
-        comment.id === commentId
-          ? { ...comment, isResolved }
-          : comment
-      )
+      prev.map((comment) => (comment.id === commentId ? { ...comment, isResolved } : comment))
     );
   };
 
@@ -254,7 +239,7 @@ export default function CodeReview({
   return (
     <div className="relative">
       {/* Editor */}
-      <div className="relative rounded-3xl border border-white/10 overflow-hidden">
+      <div className="relative overflow-hidden rounded-3xl border border-white/10">
         <Editor
           height={height}
           language={language}
@@ -264,14 +249,14 @@ export default function CodeReview({
           options={{
             readOnly,
             minimap: { enabled: false },
-            lineNumbers: "on",
+            lineNumbers: 'on',
             scrollBeyondLastLine: false,
             automaticLayout: true,
             glyphMargin: true,
             lineDecorationsWidth: 20,
             lineNumbersMinChars: 3,
             folding: true,
-            wordWrap: "on",
+            wordWrap: 'on',
           }}
         />
       </div>
@@ -280,14 +265,14 @@ export default function CodeReview({
       <div className="absolute top-4 right-4 flex items-center space-x-2">
         <button
           onClick={() => setShowComments(!showComments)}
-          className="p-2 rounded-lg bg-black/50 border border-white/20 text-white hover:bg-white/10 transition-colors"
-          title={showComments ? "Hide comments" : "Show comments"}
+          className="rounded-lg border border-white/20 bg-black/50 p-2 text-white transition-colors hover:bg-white/10"
+          title={showComments ? 'Hide comments' : 'Show comments'}
         >
-          {showComments ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+          {showComments ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
         </button>
-        
-        <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-black/50 border border-white/20">
-          <MessageCircle className="w-4 h-4 text-red-400" />
+
+        <div className="flex items-center space-x-2 rounded-lg border border-white/20 bg-black/50 px-3 py-2">
+          <MessageCircle className="h-4 w-4 text-red-400" />
           <span className="text-sm text-white">{comments.length}</span>
         </div>
       </div>
@@ -299,9 +284,9 @@ export default function CodeReview({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute top-20 right-4 w-80 bg-zinc-950 border border-white/20 rounded-2xl p-4 shadow-xl z-50"
+            className="absolute top-20 right-4 z-50 w-80 rounded-2xl border border-white/20 bg-zinc-950 p-4 shadow-xl"
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-white">
                 Add comment on line {newCommentLine}
               </h3>
@@ -309,28 +294,28 @@ export default function CodeReview({
                 onClick={() => {
                   setIsAddingComment(false);
                   setNewCommentLine(null);
-                  setNewCommentContent("");
+                  setNewCommentContent('');
                 }}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 transition-colors hover:text-white"
               >
                 ×
               </button>
             </div>
-            
+
             <textarea
               value={newCommentContent}
               onChange={(e) => setNewCommentContent(e.target.value)}
               placeholder="Leave a comment..."
-              className="w-full p-3 text-sm bg-black/50 border border-white/20 rounded-lg text-white resize-none focus:outline-none focus:border-red-500/60"
+              className="w-full resize-none rounded-lg border border-white/20 bg-black/50 p-3 text-sm text-white focus:border-red-500/60 focus:outline-none"
               rows={4}
               autoFocus
             />
-            
-            <div className="flex space-x-2 mt-3">
+
+            <div className="mt-3 flex space-x-2">
               <button
                 onClick={addComment}
                 disabled={!newCommentContent.trim()}
-                className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Add Comment
               </button>
@@ -338,9 +323,9 @@ export default function CodeReview({
                 onClick={() => {
                   setIsAddingComment(false);
                   setNewCommentLine(null);
-                  setNewCommentContent("");
+                  setNewCommentContent('');
                 }}
-                className="px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                className="rounded-lg bg-gray-600 px-3 py-2 text-sm text-white transition-colors hover:bg-gray-500"
               >
                 Cancel
               </button>
@@ -352,17 +337,17 @@ export default function CodeReview({
       {/* Comment threads */}
       <AnimatePresence>
         {showComments && (
-          <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none">
+          <div className="pointer-events-none absolute top-0 right-0 bottom-0 left-0">
             {getLinesWithComments().map((line) => {
               const lineComments = getCommentsForLine(line);
               return lineComments.map((comment, index) => (
                 <div
                   key={comment.id}
-                  className="absolute pointer-events-auto"
+                  className="pointer-events-auto absolute"
                   style={{
                     top: `${(line - 1) * 20}px`,
-                    left: "-20px",
-                    transform: "translateX(-100%)",
+                    left: '-20px',
+                    transform: 'translateX(-100%)',
                     zIndex: activeCommentId === comment.id ? 50 : 40 + index,
                   }}
                 >
@@ -375,9 +360,9 @@ export default function CodeReview({
                     onUnresolve={(id) => toggleCommentResolution(id, false)}
                     currentUser={currentUser}
                     isActive={activeCommentId === comment.id}
-                    onClick={() => setActiveCommentId(
-                      activeCommentId === comment.id ? null : comment.id
-                    )}
+                    onClick={() =>
+                      setActiveCommentId(activeCommentId === comment.id ? null : comment.id)
+                    }
                   />
                 </div>
               ));

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { analyticsAPI } from "@/lib/api";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { analyticsAPI } from '@/lib/api';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [stats, setStats] = useState({
     coursesCount: 0,
     studentsCount: 0,
     certificatesCount: 0,
-    verificationRate: "100%",
+    verificationRate: '100%',
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,16 +28,16 @@ export default function Home() {
           coursesCount: courseStat?._count?._all || 0,
           studentsCount: studentStat?._count?._all || 0,
           certificatesCount: enrollmentStat?._count?._all || 0,
-          verificationRate: "99% Secured",
+          verificationRate: '99% Secured',
         });
       } catch (error) {
-        console.error("Failed to fetch stats:", error);
+        console.error('Failed to fetch stats:', error);
         // Fallback to initial placeholders if API fails
         setStats({
           coursesCount: 12,
           studentsCount: 1250,
           certificatesCount: 450,
-          verificationRate: "98% Verified",
+          verificationRate: '98% Verified',
         });
       } finally {
         setIsLoading(false);
@@ -49,39 +49,48 @@ export default function Home() {
   return (
     <div className="bg-black text-white selection:bg-red-600 selection:text-white">
       {/* Hero Section */}
-      <section aria-label="Hero" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 overflow-hidden">
+      <section
+        aria-label="Hero"
+        className="relative mx-auto max-w-7xl overflow-hidden px-4 py-24 sm:px-6 sm:py-32 lg:px-8"
+      >
         {/* Abstract Background Glows */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-[120px] pointer-events-none" aria-hidden="true"></div>
+        <div
+          className="pointer-events-none absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/20 blur-[120px]"
+          aria-hidden="true"
+        ></div>
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 bg-red-500/10 text-red-500 font-medium text-sm mb-8 animate-pulse" role="status" aria-live="polite">
-            <span className="w-2 h-2 rounded-full bg-red-500" aria-hidden="true"></span>
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
+          <div
+            className="mb-8 inline-flex animate-pulse items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500"
+            role="status"
+            aria-live="polite"
+          >
+            <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden="true"></span>
             Stellar Testnet Integration Live
           </div>
 
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white mb-8 tracking-tighter uppercase leading-[1.1]">
+          <h1 className="mb-8 text-5xl leading-[1.1] font-black tracking-tighter text-white uppercase sm:text-6xl md:text-7xl">
             Master Web3. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-red-500 to-red-600">
+            <span className="bg-gradient-to-r from-white via-red-500 to-red-600 bg-clip-text text-transparent">
               Build The Future.
             </span>
           </h1>
 
-          <p className="text-xl sm:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-            Elite hands-on courses covering Soroban smart contracts, Stellar
-            blockchain, and decentralized applications. Earn verifiable
-            credentials directly on-chain.
+          <p className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed font-light text-gray-400 sm:text-2xl">
+            Elite hands-on courses covering Soroban smart contracts, Stellar blockchain, and
+            decentralized applications. Earn verifiable credentials directly on-chain.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
             <Link
               href="/auth/register"
-              className="w-full sm:w-auto px-10 py-5 bg-red-600 hover:bg-red-700 text-white rounded-md font-bold text-lg shadow-[0_0_20px_rgba(220,38,38,0.5)] hover:shadow-[0_0_35px_rgba(220,38,38,0.8)] transition-all duration-300 uppercase tracking-wide transform hover:-translate-y-1"
+              className="w-full transform rounded-md bg-red-600 px-10 py-5 text-lg font-bold tracking-wide text-white uppercase shadow-[0_0_20px_rgba(220,38,38,0.5)] transition-all duration-300 hover:-translate-y-1 hover:bg-red-700 hover:shadow-[0_0_35px_rgba(220,38,38,0.8)] sm:w-auto"
             >
               Start Learning Now
             </Link>
             <Link
               href="/courses"
-              className="w-full sm:w-auto px-10 py-5 bg-transparent text-white border-2 border-white/20 hover:border-white rounded-md font-bold text-lg transition-all duration-300 uppercase tracking-wide"
+              className="w-full rounded-md border-2 border-white/20 bg-transparent px-10 py-5 text-lg font-bold tracking-wide text-white uppercase transition-all duration-300 hover:border-white sm:w-auto"
             >
               Explore Modules
             </Link>
@@ -90,26 +99,29 @@ export default function Home() {
       </section>
 
       {/* Features Grid - The Lab Modules */}
-      <section className="relative bg-zinc-950 py-24 border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-black uppercase tracking-widest text-white mb-4">
+      <section className="relative border-y border-white/5 bg-zinc-950 py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-black tracking-widest text-white uppercase">
               The <span className="text-red-600">Lab</span> Ecosystem
             </h2>
-            <p className="text-gray-500 font-light">
+            <p className="font-light text-gray-500">
               Interactive environments designed for rapid Stellar mastery.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             <Link
               href="/simulator"
-              className="bg-black border border-white/10 hover:border-red-500/50 rounded-2xl p-8 transition-all hover:-translate-y-2 group"
+              className="group rounded-2xl border border-white/10 bg-black p-8 transition-all hover:-translate-y-2 hover:border-red-500/50"
               aria-label="Simulator - Observe live Stellar ledger activity"
             >
-              <div className="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center mb-6 border border-red-500/20 group-hover:bg-red-600 transition-colors" aria-hidden="true">
+              <div
+                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 transition-colors group-hover:bg-red-600"
+                aria-hidden="true"
+              >
                 <svg
-                  className="w-7 h-7 text-red-500 group-hover:text-white"
+                  className="h-7 w-7 text-red-500 group-hover:text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -124,26 +136,31 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-tight">
+              <h3 className="mb-3 text-xl font-bold tracking-tight text-white uppercase">
                 Simulator
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed font-light mb-4">
-                Observe live Stellar ledger activity in a terminal-themed
-                visualization.
+              <p className="mb-4 text-xs leading-relaxed font-light text-gray-500">
+                Observe live Stellar ledger activity in a terminal-themed visualization.
               </p>
-              <span className="text-[10px] font-black text-red-500 uppercase tracking-widest group-hover:pl-2 transition-all" aria-hidden="true">
+              <span
+                className="text-[10px] font-black tracking-widest text-red-500 uppercase transition-all group-hover:pl-2"
+                aria-hidden="true"
+              >
                 Enter →
               </span>
             </Link>
 
             <Link
               href="/playground"
-              className="bg-black border border-white/10 hover:border-red-500/50 rounded-2xl p-8 transition-all hover:-translate-y-2 group"
+              className="group rounded-2xl border border-white/10 bg-black p-8 transition-all hover:-translate-y-2 hover:border-red-500/50"
               aria-label="Playground - Compile and execute Soroban smart contracts"
             >
-              <div className="w-14 h-14 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:bg-white group-hover:text-black transition-colors" aria-hidden="true">
+              <div
+                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-white/10 bg-white/5 transition-colors group-hover:bg-white group-hover:text-black"
+                aria-hidden="true"
+              >
                 <svg
-                  className="w-7 h-7 text-white group-hover:text-black"
+                  className="h-7 w-7 text-white group-hover:text-black"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -158,26 +175,31 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-tight">
+              <h3 className="mb-3 text-xl font-bold tracking-tight text-white uppercase">
                 Playground
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed font-light mb-4">
-                Compile and execute Soroban smart contract logic in a sandboxed
-                environment.
+              <p className="mb-4 text-xs leading-relaxed font-light text-gray-500">
+                Compile and execute Soroban smart contract logic in a sandboxed environment.
               </p>
-              <span className="text-[10px] font-black text-white uppercase tracking-widest group-hover:pl-2 transition-all" aria-hidden="true">
+              <span
+                className="text-[10px] font-black tracking-widest text-white uppercase transition-all group-hover:pl-2"
+                aria-hidden="true"
+              >
                 Execute →
               </span>
             </Link>
 
             <Link
               href="/roadmap"
-              className="bg-black border border-white/10 hover:border-red-500/50 rounded-2xl p-8 transition-all hover:-translate-y-2 group"
+              className="group rounded-2xl border border-white/10 bg-black p-8 transition-all hover:-translate-y-2 hover:border-red-500/50"
               aria-label="Roadmap - Track your progression through the Stellar mastery tree"
             >
-              <div className="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center mb-6 border border-red-500/20 group-hover:bg-red-600 transition-colors" aria-hidden="true">
+              <div
+                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 transition-colors group-hover:bg-red-600"
+                aria-hidden="true"
+              >
                 <svg
-                  className="w-7 h-7 text-red-500 group-hover:text-white"
+                  className="h-7 w-7 text-red-500 group-hover:text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -192,26 +214,31 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-tight">
+              <h3 className="mb-3 text-xl font-bold tracking-tight text-white uppercase">
                 Roadmap
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed font-light mb-4">
-                Track your progression through the multi-stage Stellar mastery
-                tree.
+              <p className="mb-4 text-xs leading-relaxed font-light text-gray-500">
+                Track your progression through the multi-stage Stellar mastery tree.
               </p>
-              <span className="text-[10px] font-black text-red-500 uppercase tracking-widest group-hover:pl-2 transition-all" aria-hidden="true">
+              <span
+                className="text-[10px] font-black tracking-widest text-red-500 uppercase transition-all group-hover:pl-2"
+                aria-hidden="true"
+              >
                 Visualize →
               </span>
             </Link>
 
             <Link
               href="/ideas"
-              className="bg-black border border-white/10 hover:border-red-500/50 rounded-2xl p-8 transition-all hover:-translate-y-2 group"
+              className="group rounded-2xl border border-white/10 bg-black p-8 transition-all hover:-translate-y-2 hover:border-red-500/50"
               aria-label="Incubator - Generate optimized project concepts for your next build"
             >
-              <div className="w-14 h-14 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:bg-white group-hover:text-black transition-colors" aria-hidden="true">
+              <div
+                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-white/10 bg-white/5 transition-colors group-hover:bg-white group-hover:text-black"
+                aria-hidden="true"
+              >
                 <svg
-                  className="w-7 h-7 text-white group-hover:text-black"
+                  className="h-7 w-7 text-white group-hover:text-black"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -226,14 +253,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-tight">
+              <h3 className="mb-3 text-xl font-bold tracking-tight text-white uppercase">
                 Incubator
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed font-light mb-4">
-                Generate heuristically optimized project concepts for your next
-                build.
+              <p className="mb-4 text-xs leading-relaxed font-light text-gray-500">
+                Generate heuristically optimized project concepts for your next build.
               </p>
-              <span className="text-[10px] font-black text-white uppercase tracking-widest group-hover:pl-2 transition-all" aria-hidden="true">
+              <span
+                className="text-[10px] font-black tracking-widest text-white uppercase transition-all group-hover:pl-2"
+                aria-hidden="true"
+              >
                 Initialize →
               </span>
             </Link>
@@ -242,38 +271,54 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 bg-black border-b border-white/5" aria-label="Platform statistics">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center" aria-live="polite" aria-busy={isLoading}>
+      <section className="border-b border-white/5 bg-black py-24" aria-label="Platform statistics">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div
+            className="grid grid-cols-2 gap-12 text-center md:grid-cols-4"
+            aria-live="polite"
+            aria-busy={isLoading}
+          >
             <div className="p-6">
-              <p className="text-5xl font-black text-red-600 mb-4 tracking-tighter" aria-label={`${stats.coursesCount} active modules`}>
+              <p
+                className="mb-4 text-5xl font-black tracking-tighter text-red-600"
+                aria-label={`${stats.coursesCount} active modules`}
+              >
                 {isLoading ? <span aria-hidden="true">...</span> : `${stats.coursesCount}+`}
               </p>
-              <p className="text-gray-300 font-bold uppercase tracking-widest text-sm">
+              <p className="text-sm font-bold tracking-widest text-gray-300 uppercase">
                 Active Modules
               </p>
             </div>
             <div className="p-6">
-              <p className="text-5xl font-black text-white mb-4 tracking-tighter shadow-white" aria-label={`${stats.studentsCount} engineers enrolled`}>
+              <p
+                className="mb-4 text-5xl font-black tracking-tighter text-white shadow-white"
+                aria-label={`${stats.studentsCount} engineers enrolled`}
+              >
                 {isLoading ? <span aria-hidden="true">...</span> : `${stats.studentsCount}+`}
               </p>
-              <p className="text-gray-300 font-bold uppercase tracking-widest text-sm">
+              <p className="text-sm font-bold tracking-widest text-gray-300 uppercase">
                 Engineers Enrolled
               </p>
             </div>
             <div className="p-6">
-              <p className="text-5xl font-black text-red-600 mb-4 tracking-tighter" aria-label={`${stats.certificatesCount} credentials issued`}>
+              <p
+                className="mb-4 text-5xl font-black tracking-tighter text-red-600"
+                aria-label={`${stats.certificatesCount} credentials issued`}
+              >
                 {isLoading ? <span aria-hidden="true">...</span> : `${stats.certificatesCount}+`}
               </p>
-              <p className="text-gray-300 font-bold uppercase tracking-widest text-sm">
+              <p className="text-sm font-bold tracking-widest text-gray-300 uppercase">
                 Credentials Issued
               </p>
             </div>
             <div className="p-6">
-              <p className="text-5xl font-black text-white mb-4 tracking-tighter shadow-white" aria-label={`${stats.verificationRate} on-chain verified`}>
+              <p
+                className="mb-4 text-5xl font-black tracking-tighter text-white shadow-white"
+                aria-label={`${stats.verificationRate} on-chain verified`}
+              >
                 {isLoading ? <span aria-hidden="true">...</span> : stats.verificationRate}
               </p>
-              <p className="text-gray-300 font-bold uppercase tracking-widest text-sm">
+              <p className="text-sm font-bold tracking-widest text-gray-300 uppercase">
                 On-Chain Verified
               </p>
             </div>
@@ -282,23 +327,23 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-32 bg-black border-t border-white/10 overflow-hidden">
+      <section className="relative overflow-hidden border-t border-white/10 bg-black py-32">
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-5xl bg-gradient-to-b from-red-900/20 to-transparent blur-3xl rounded-full"></div>
+          <div className="absolute top-0 left-1/2 h-full w-full max-w-5xl -translate-x-1/2 rounded-full bg-gradient-to-b from-red-900/20 to-transparent blur-3xl"></div>
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter uppercase">
+        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
+          <h2 className="mb-8 text-4xl font-black tracking-tighter text-white uppercase md:text-6xl">
             Initialize Your Node
           </h2>
-          <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-            Join the decentralized education protocol. Grant reviewers are
-            looking for this exact level of sophistication.
+          <p className="mx-auto mb-12 max-w-2xl text-xl leading-relaxed font-light text-gray-400">
+            Join the decentralized education protocol. Grant reviewers are looking for this exact
+            level of sophistication.
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
             <Link
               href="/auth/register"
-              className="w-full sm:w-auto px-12 py-5 bg-white text-black rounded-md font-black text-lg hover:bg-gray-200 transition-colors uppercase tracking-widest"
+              className="w-full rounded-md bg-white px-12 py-5 text-lg font-black tracking-widest text-black uppercase transition-colors hover:bg-gray-200 sm:w-auto"
             >
               Launch Platform
             </Link>
@@ -307,13 +352,20 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-zinc-950 border-t border-white/5 py-12" role="contentinfo" aria-label="Site footer">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+      <footer
+        className="border-t border-white/5 bg-zinc-950 py-12"
+        role="contentinfo"
+        aria-label="Site footer"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-red-600 rounded-md flex items-center justify-center" aria-hidden="true">
+              <div
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-red-600"
+                aria-hidden="true"
+              >
                 <svg
-                  className="w-5 h-5 text-white"
+                  className="h-5 w-5 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -328,28 +380,25 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <span className="text-lg font-black text-white tracking-widest uppercase">
+              <span className="text-lg font-black tracking-widest text-white uppercase">
                 Web3 <span className="text-red-600">Lab</span>
               </span>
             </div>
 
-            <nav className="flex gap-8 text-sm font-bold tracking-wide uppercase text-gray-500" aria-label="Footer navigation">
-              <Link
-                href="/courses"
-                className="hover:text-white transition-colors"
-              >
+            <nav
+              className="flex gap-8 text-sm font-bold tracking-wide text-gray-500 uppercase"
+              aria-label="Footer navigation"
+            >
+              <Link href="/courses" className="transition-colors hover:text-white">
                 Modules
               </Link>
-              <Link
-                href="/verify"
-                className="hover:text-red-500 transition-colors"
-              >
+              <Link href="/verify" className="transition-colors hover:text-red-500">
                 Verify Credential
               </Link>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="#" className="transition-colors hover:text-white">
                 Privacy
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="#" className="transition-colors hover:text-white">
                 Terms
               </a>
             </nav>

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { SnippetLibrary } from "@/components/snippets/SnippetLibrary";
+import { SnippetLibrary } from '@/components/snippets/SnippetLibrary';
 
 export default function SnippetsPage() {
   return (

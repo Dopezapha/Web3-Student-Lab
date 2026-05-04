@@ -5,11 +5,7 @@ interface SkeletonProps {
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({ className }) => {
-  return (
-    <div
-      className={`animate-pulse rounded-md bg-white/5 ${className}`}
-    />
-  );
+  return <div className={`animate-pulse rounded-md bg-white/5 ${className}`} />;
 };
 
 export const CardSkeleton: React.FC = () => {
@@ -25,7 +21,7 @@ export const CardSkeleton: React.FC = () => {
 export const ChartSkeleton: React.FC = () => {
   return (
     <div className="flex h-[300px] w-full flex-col items-center justify-center gap-4 rounded-xl border border-white/5 bg-black/20 p-6">
-      <div className="flex w-full items-end justify-between gap-2 h-full px-4">
+      <div className="flex h-full w-full items-end justify-between gap-2 px-4">
         {[40, 70, 45, 90, 65, 80, 50].map((height, i) => (
           <Skeleton key={i} className="w-full" style={{ height: `${height}%` }} />
         ))}

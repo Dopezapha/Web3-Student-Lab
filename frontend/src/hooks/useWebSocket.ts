@@ -20,12 +20,12 @@ export const useWebSocket = (url?: string) => {
     }
 
     const socketUrl = url || process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080';
-    
+
     socketRef.current = io(socketUrl, {
       auth: {
-        token
+        token,
       },
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
     });
 
     const socket = socketRef.current;
@@ -54,7 +54,7 @@ export const useWebSocket = (url?: string) => {
       setLastMessage({
         type: 'subscription_created',
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -62,7 +62,7 @@ export const useWebSocket = (url?: string) => {
       setLastMessage({
         type: 'subscription_cancelled',
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -70,7 +70,7 @@ export const useWebSocket = (url?: string) => {
       setLastMessage({
         type: 'subscription_renewed',
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -78,7 +78,7 @@ export const useWebSocket = (url?: string) => {
       setLastMessage({
         type: 'plan_updated',
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -86,7 +86,7 @@ export const useWebSocket = (url?: string) => {
       setLastMessage({
         type: 'contract_paused',
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -94,7 +94,7 @@ export const useWebSocket = (url?: string) => {
       setLastMessage({
         type: 'contract_unpaused',
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -108,7 +108,7 @@ export const useWebSocket = (url?: string) => {
       socketRef.current.emit('message', {
         type,
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   };
@@ -131,6 +131,6 @@ export const useWebSocket = (url?: string) => {
     error,
     sendMessage,
     disconnect,
-    reconnect
+    reconnect,
   };
 };

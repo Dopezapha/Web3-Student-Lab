@@ -1,7 +1,7 @@
-import { WebsocketProvider } from "y-websocket";
-import * as Y from "yjs";
-import { CommentReply, CommentThread } from "../../components/review/InlineComment";
-import { ReviewRequest, ReviewSummary } from "./ReviewManager";
+import { WebsocketProvider } from 'y-websocket';
+import * as Y from 'yjs';
+import { CommentReply, CommentThread } from '../../components/review/InlineComment';
+import { ReviewRequest, ReviewSummary } from './ReviewManager';
 
 export interface CommentSyncUser {
   id: string;
@@ -19,14 +19,17 @@ export interface CommentSyncUser {
 }
 
 export interface CommentSyncEvents {
-  "comment-added": (comment: CommentThread) => void;
-  "comment-updated": (commentId: string, comment: CommentThread) => void;
-  "comment-deleted": (commentId: string) => void;
-  "reply-added": (commentId: string, reply: CommentReply) => void;
-  "user-joined": (user: CommentSyncUser) => void;
-  "user-left": (userId: string) => void;
-  "user-cursor": (userId: string, cursor: { line: number; column: number }) => void;
-  "user-selection": (userId: string, selection: { start: { line: number; column: number }; end: { line: number; column: number } }) => void;
+  'comment-added': (comment: CommentThread) => void;
+  'comment-updated': (commentId: string, comment: CommentThread) => void;
+  'comment-deleted': (commentId: string) => void;
+  'reply-added': (commentId: string, reply: CommentReply) => void;
+  'user-joined': (user: CommentSyncUser) => void;
+  'user-left': (userId: string) => void;
+  'user-cursor': (userId: string, cursor: { line: number; column: number }) => void;
+  'user-selection': (
+    userId: string,
+    selection: { start: { line: number; column: number }; end: { line: number; column: number } }
+  ) => void;
 }
 
 export class CommentSync {
@@ -141,7 +144,7 @@ export class CommentSync {
   private emit<K extends keyof CommentSyncEvents>(event: K, ...args: any[]) {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         try {
           listener(...args);
         } catch (error) {
@@ -179,7 +182,7 @@ export class CommentSync {
     if (comment) {
       const updated: CommentThread = {
         ...comment,
-        replies: [...(comment.replies || []), reply]
+        replies: [...(comment.replies || []), reply],
       };
       yComment.set(commentId, updated);
       this.emit('reply-added', commentId, reply);
@@ -201,15 +204,18 @@ export class CommentSync {
     const currentState = this.awareness.getLocalState() || {};
     this.awareness.setLocalStateField('user', {
       ...currentState.user,
-      cursor: position
+      cursor: position,
     });
   }
 
-  updateSelection(selection: { start: { line: number; column: number }; end: { line: number; column: number } }) {
+  updateSelection(selection: {
+    start: { line: number; column: number };
+    end: { line: number; column: number };
+  }) {
     const currentState = this.awareness.getLocalState() || {};
     this.awareness.setLocalStateField('user', {
       ...currentState.user,
-      selection
+      selection,
     });
   }
 
@@ -217,7 +223,7 @@ export class CommentSync {
     const currentState = this.awareness.getLocalState() || {};
     this.awareness.setLocalStateField('user', {
       ...currentState.user,
-      cursor: undefined
+      cursor: undefined,
     });
   }
 
@@ -225,15 +231,15 @@ export class CommentSync {
     const currentState = this.awareness.getLocalState() || {};
     this.awareness.setLocalStateField('user', {
       ...currentState.user,
-      selection: undefined
+      selection: undefined,
     });
   }
 
   getConnectedUsers(): CommentSyncUser[] {
     const states = this.awareness.getStates() as Map<string, any>;
     return Array.from(states.values())
-      .filter(state => state.user)
-      .map(state => state.user);
+      .filter((state) => state.user)
+      .map((state) => state.user);
   }
 
   // Review synchronization
@@ -326,7 +332,7 @@ export class CommentSync {
 }
 
 // React hook for using CommentSync
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
 export function useCommentSync(roomId: string, user: CommentSyncUser, wsUrl?: string) {
   const [sync, setSync] = useState<CommentSync | null>(null);
@@ -341,10 +347,10 @@ export function useCommentSync(roomId: string, user: CommentSyncUser, wsUrl?: st
     const handleConnect = () => setIsConnected(true);
     const handleDisconnect = () => setIsConnected(false);
     const handleUserJoined = (newUser: CommentSyncUser) => {
-      setConnectedUsers(prev => [...prev.filter(u => u.id !== newUser.id), newUser]);
+      setConnectedUsers((prev) => [...prev.filter((u) => u.id !== newUser.id), newUser]);
     };
     const handleUserLeft = (userId: string) => {
-      setConnectedUsers(prev => prev.filter(u => u.id !== userId));
+      setConnectedUsers((prev) => prev.filter((u) => u.id !== userId));
     };
 
     commentSync.on('user-joined', handleUserJoined);
@@ -365,29 +371,50 @@ export function useCommentSync(roomId: string, user: CommentSyncUser, wsUrl?: st
     };
   }, [roomId, user, wsUrl]);
 
-  const addComment = useCallback((comment: CommentThread) => {
-    if (sync) sync.addComment(comment);
-  }, [sync]);
+  const addComment = useCallback(
+    (comment: CommentThread) => {
+      if (sync) sync.addComment(comment);
+    },
+    [sync]
+  );
 
-  const updateComment = useCallback((commentId: string, updates: Partial<CommentThread>) => {
-    if (sync) sync.updateComment(commentId, updates);
-  }, [sync]);
+  const updateComment = useCallback(
+    (commentId: string, updates: Partial<CommentThread>) => {
+      if (sync) sync.updateComment(commentId, updates);
+    },
+    [sync]
+  );
 
-  const deleteComment = useCallback((commentId: string) => {
-    if (sync) sync.deleteComment(commentId);
-  }, [sync]);
+  const deleteComment = useCallback(
+    (commentId: string) => {
+      if (sync) sync.deleteComment(commentId);
+    },
+    [sync]
+  );
 
-  const addReply = useCallback((commentId: string, reply: CommentReply) => {
-    if (sync) sync.addReply(commentId, reply);
-  }, [sync]);
+  const addReply = useCallback(
+    (commentId: string, reply: CommentReply) => {
+      if (sync) sync.addReply(commentId, reply);
+    },
+    [sync]
+  );
 
-  const updateCursor = useCallback((position: { line: number; column: number }) => {
-    if (sync) sync.updateCursor(position);
-  }, [sync]);
+  const updateCursor = useCallback(
+    (position: { line: number; column: number }) => {
+      if (sync) sync.updateCursor(position);
+    },
+    [sync]
+  );
 
-  const updateSelection = useCallback((selection: { start: { line: number; column: number }; end: { line: number; column: number } }) => {
-    if (sync) sync.updateSelection(selection);
-  }, [sync]);
+  const updateSelection = useCallback(
+    (selection: {
+      start: { line: number; column: number };
+      end: { line: number; column: number };
+    }) => {
+      if (sync) sync.updateSelection(selection);
+    },
+    [sync]
+  );
 
   return {
     sync,

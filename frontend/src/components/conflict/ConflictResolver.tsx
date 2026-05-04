@@ -1,7 +1,12 @@
 'use client';
 
 import { ConflictInfo, conflictManager } from '@/lib/conflict/ConflictManager';
-import { applyMergeToYjs, broadcastResolution, MergeStrategyType, resolveConflict } from '@/lib/conflict/MergeStrategy';
+import {
+  applyMergeToYjs,
+  broadcastResolution,
+  MergeStrategyType,
+  resolveConflict,
+} from '@/lib/conflict/MergeStrategy';
 import { useEffect, useState } from 'react';
 import * as Y from 'yjs';
 import DiffView from './DiffView';
@@ -77,25 +82,25 @@ export default function ConflictResolver({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-zinc-900 border border-zinc-700 rounded-xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl">
+      <div className="flex max-h-[90vh] w-full max-w-5xl flex-col rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-zinc-700 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-zinc-700 px-6 py-4">
           <div>
             <h2 className="text-lg font-semibold text-white">Resolve Conflict</h2>
-            <p className="text-sm text-zinc-400 mt-0.5">
+            <p className="mt-0.5 text-sm text-zinc-400">
               {conflicts.length} conflict{conflicts.length > 1 ? 's' : ''} detected
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handleAcceptAll('mine')}
-              className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
             >
               Accept All Mine
             </button>
             <button
               onClick={() => handleAcceptAll('theirs')}
-              className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              className="rounded-lg bg-green-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-green-700"
             >
               Accept All Theirs
             </button>
@@ -104,17 +109,17 @@ export default function ConflictResolver({
 
         {/* Conflict selector */}
         {conflicts.length > 1 && (
-          <div className="px-6 py-2 border-b border-zinc-800 flex gap-2 overflow-x-auto">
+          <div className="flex gap-2 overflow-x-auto border-b border-zinc-800 px-6 py-2">
             {conflicts.map((c, i) => (
               <button
                 key={c.id}
                 onClick={() => setActiveConflict(c)}
-                className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                className={`rounded-full px-3 py-1 text-xs transition-colors ${
                   activeConflict.id === c.id
                     ? 'bg-blue-600 text-white'
                     : c.resolved
-                    ? 'bg-green-900/50 text-green-400'
-                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                      ? 'bg-green-900/50 text-green-400'
+                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                 }`}
               >
                 Conflict {i + 1} {c.resolved ? '✓' : ''}
@@ -130,30 +135,30 @@ export default function ConflictResolver({
           </div>
         ) : (
           <div className="flex-1 overflow-auto p-6">
-            <div className="grid grid-cols-3 gap-4 h-full">
+            <div className="grid h-full grid-cols-3 gap-4">
               <div>
-                <div className="text-xs font-semibold text-zinc-400 mb-2">Mine</div>
+                <div className="mb-2 text-xs font-semibold text-zinc-400">Mine</div>
                 <textarea
                   readOnly
                   value={activeConflict.mine}
-                  className="w-full h-[300px] bg-zinc-800 text-zinc-300 p-3 rounded-lg text-sm font-mono resize-none border border-zinc-700"
+                  className="h-[300px] w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 p-3 font-mono text-sm text-zinc-300"
                 />
               </div>
               <div>
-                <div className="text-xs font-semibold text-zinc-400 mb-2">Theirs</div>
+                <div className="mb-2 text-xs font-semibold text-zinc-400">Theirs</div>
                 <textarea
                   readOnly
                   value={activeConflict.theirs}
-                  className="w-full h-[300px] bg-zinc-800 text-zinc-300 p-3 rounded-lg text-sm font-mono resize-none border border-zinc-700"
+                  className="h-[300px] w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 p-3 font-mono text-sm text-zinc-300"
                 />
               </div>
               <div>
-                <div className="text-xs font-semibold text-zinc-400 mb-2">Result (edit here)</div>
+                <div className="mb-2 text-xs font-semibold text-zinc-400">Result (edit here)</div>
                 <textarea
                   value={manualMergeText}
                   onChange={(e) => setManualMergeText(e.target.value)}
                   placeholder="Manually edit the merged result..."
-                  className="w-full h-[300px] bg-zinc-800 text-white p-3 rounded-lg text-sm font-mono resize-none border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="h-[300px] w-full resize-none rounded-lg border border-blue-600 bg-zinc-800 p-3 font-mono text-sm text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -161,11 +166,11 @@ export default function ConflictResolver({
         )}
 
         {/* Actions */}
-        <div className="px-6 py-4 border-t border-zinc-700 flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-zinc-700 px-6 py-4">
           <div className="flex gap-2">
             <button
               onClick={() => setMode(mode === 'view' ? 'manual' : 'view')}
-              className="px-4 py-2 text-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg transition-colors"
+              className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
             >
               {mode === 'view' ? 'Manual Merge' : 'Diff View'}
             </button>
@@ -173,13 +178,13 @@ export default function ConflictResolver({
           <div className="flex gap-2">
             <button
               onClick={() => handleResolve('mine')}
-              className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700"
             >
               Accept Mine
             </button>
             <button
               onClick={() => handleResolve('theirs')}
-              className="px-4 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700"
             >
               Accept Theirs
             </button>
@@ -187,7 +192,7 @@ export default function ConflictResolver({
               <button
                 onClick={() => handleResolve('manual')}
                 disabled={!manualMergeText}
-                className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
               >
                 Apply Merge
               </button>

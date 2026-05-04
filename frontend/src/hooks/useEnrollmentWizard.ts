@@ -74,9 +74,12 @@ export function useEnrollmentWizard(
   useEffect(() => {
     if (!autoSaveStarted.current) {
       autoSaveStarted.current = true;
-      wizardPersistence.startAutoSave(() => state, (savedState) => {
-        setState((prev) => ({ ...prev, lastSaved: savedState.lastSaved }));
-      });
+      wizardPersistence.startAutoSave(
+        () => state,
+        (savedState) => {
+          setState((prev) => ({ ...prev, lastSaved: savedState.lastSaved }));
+        }
+      );
     }
 
     return () => {

@@ -1,11 +1,28 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, RefreshCw } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Download, RefreshCw } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 /**
  * AnalyticsDashboard Component
@@ -48,13 +65,13 @@ interface SummaryMetric {
   label: string;
   value: number;
   trend: number;
-  trendDirection: "up" | "down" | "stable";
+  trendDirection: 'up' | 'down' | 'stable';
 }
 
 interface ChartConfig {
   metricId: string;
   metricName: string;
-  chartType: "line" | "bar";
+  chartType: 'line' | 'bar';
 }
 
 export function AnalyticsDashboard() {
@@ -66,11 +83,11 @@ export function AnalyticsDashboard() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Filter state
-  const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "all">("24h");
-  const [eventType, setEventType] = useState<string>("all");
+  const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
+  const [eventType, setEventType] = useState<string>('all');
   const [selectedMetrics, setSelectedMetrics] = useState<ChartConfig[]>([
-    { metricId: "1", metricName: "Certificates Minted", chartType: "line" },
-    { metricId: "2", metricName: "Revocation Rate", chartType: "line" },
+    { metricId: '1', metricName: 'Certificates Minted', chartType: 'line' },
+    { metricId: '2', metricName: 'Revocation Rate', chartType: 'line' },
   ]);
 
   // Polling interval reference
@@ -95,34 +112,35 @@ export function AnalyticsDashboard() {
       // Update summary metrics
       const avgValue = mockData.reduce((sum, d) => sum + d.value, 0) / mockData.length;
       const totalEvents = mockData.reduce((sum, d) => sum + d.eventCount, 0);
-      const trend = mockData.length > 1
-        ? ((mockData[mockData.length - 1].value - mockData[0].value) / mockData[0].value) * 100
-        : 0;
+      const trend =
+        mockData.length > 1
+          ? ((mockData[mockData.length - 1].value - mockData[0].value) / mockData[0].value) * 100
+          : 0;
 
       setSummaryMetrics([
         {
-          label: "Total Events Indexed",
+          label: 'Total Events Indexed',
           value: totalEvents,
           trend: 0,
-          trendDirection: "stable",
+          trendDirection: 'stable',
         },
         {
-          label: "Active Metrics",
+          label: 'Active Metrics',
           value: selectedMetrics.length,
           trend: 0,
-          trendDirection: "stable",
+          trendDirection: 'stable',
         },
         {
-          label: "Average Metric Value",
+          label: 'Average Metric Value',
           value: Math.floor(avgValue),
           trend: trend,
-          trendDirection: trend > 0 ? "up" : trend < 0 ? "down" : "stable",
+          trendDirection: trend > 0 ? 'up' : trend < 0 ? 'down' : 'stable',
         },
       ]);
 
       setLastUpdated(new Date());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch metrics");
+      setError(err instanceof Error ? err.message : 'Failed to fetch metrics');
     } finally {
       setLoading(false);
     }
@@ -160,23 +178,19 @@ export function AnalyticsDashboard() {
    */
   const exportAsCSV = () => {
     try {
-      const headers = ["Timestamp", "Value", "Event Count"];
-      const rows = metrics.map((m) => [
-        new Date(m.timestamp).toISOString(),
-        m.value,
-        m.eventCount,
-      ]);
+      const headers = ['Timestamp', 'Value', 'Event Count'];
+      const rows = metrics.map((m) => [new Date(m.timestamp).toISOString(), m.value, m.eventCount]);
 
-      const csv = [headers, ...rows].map((row) => row.join(",")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
+      const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
       link.download = `analytics-export-${Date.now()}.csv`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setError("Failed to export data");
+      setError('Failed to export data');
     }
   };
 
@@ -194,16 +208,16 @@ export function AnalyticsDashboard() {
       };
 
       const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
+        type: 'application/json',
       });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
       link.download = `analytics-export-${Date.now()}.json`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setError("Failed to export data");
+      setError('Failed to export data');
     }
   };
 
@@ -217,14 +231,14 @@ export function AnalyticsDashboard() {
   /**
    * Get trend indicator icon
    */
-  const getTrendIcon = (direction: "up" | "down" | "stable") => {
+  const getTrendIcon = (direction: 'up' | 'down' | 'stable') => {
     switch (direction) {
-      case "up":
-        return "📈";
-      case "down":
-        return "📉";
-      case "stable":
-        return "➡️";
+      case 'up':
+        return '📈';
+      case 'down':
+        return '📉';
+      case 'stable':
+        return '➡️';
     }
   };
 
@@ -234,9 +248,7 @@ export function AnalyticsDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-          <p className="text-gray-600">
-            Real-time on-chain metrics and analytics
-          </p>
+          <p className="text-gray-600">Real-time on-chain metrics and analytics</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -272,9 +284,7 @@ export function AnalyticsDashboard() {
         {summaryMetrics.map((metric, idx) => (
           <Card key={idx}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                {metric.label}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">{metric.label}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline justify-between">
@@ -282,8 +292,9 @@ export function AnalyticsDashboard() {
                 <div className="text-lg">{getTrendIcon(metric.trendDirection)}</div>
               </div>
               {metric.trend !== 0 && (
-                <p className="text-xs text-gray-500 mt-1">
-                  {metric.trend > 0 ? "+" : ""}{metric.trend.toFixed(1)}%
+                <p className="mt-1 text-xs text-gray-500">
+                  {metric.trend > 0 ? '+' : ''}
+                  {metric.trend.toFixed(1)}%
                 </p>
               )}
             </CardContent>
@@ -299,9 +310,7 @@ export function AnalyticsDashboard() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Time Range
-              </label>
+              <label className="mb-2 block text-sm font-medium">Time Range</label>
               <Select value={timeRange} onValueChange={(value: any) => setTimeRange(value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -316,9 +325,7 @@ export function AnalyticsDashboard() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Event Type
-              </label>
+              <label className="mb-2 block text-sm font-medium">Event Type</label>
               <Select value={eventType} onValueChange={setEventType}>
                 <SelectTrigger>
                   <SelectValue />
@@ -343,10 +350,10 @@ export function AnalyticsDashboard() {
           <CardHeader>
             <CardTitle>Metric Trends</CardTitle>
             <CardDescription>
-              {timeRange === "24h" && "Last 24 hours"}
-              {timeRange === "7d" && "Last 7 days"}
-              {timeRange === "30d" && "Last 30 days"}
-              {timeRange === "all" && "All time"}
+              {timeRange === '24h' && 'Last 24 hours'}
+              {timeRange === '7d' && 'Last 7 days'}
+              {timeRange === '30d' && 'Last 30 days'}
+              {timeRange === 'all' && 'All time'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -358,15 +365,11 @@ export function AnalyticsDashboard() {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={metrics}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="timestamp"
-                    tickFormatter={formatTime}
-                    tick={{ fontSize: 12 }}
-                  />
+                  <XAxis dataKey="timestamp" tickFormatter={formatTime} tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip
                     labelFormatter={(value) => formatTime(value)}
-                    formatter={(value) => [value, "Value"]}
+                    formatter={(value) => [value, 'Value']}
                   />
                   <Legend />
                   <Line
@@ -401,15 +404,11 @@ export function AnalyticsDashboard() {
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={metrics}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="timestamp"
-                    tickFormatter={formatTime}
-                    tick={{ fontSize: 12 }}
-                  />
+                  <XAxis dataKey="timestamp" tickFormatter={formatTime} tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip
                     labelFormatter={(value) => formatTime(value)}
-                    formatter={(value) => [value, "Count"]}
+                    formatter={(value) => [value, 'Count']}
                   />
                   <Legend />
                   <Bar dataKey="eventCount" fill="#10b981" name="Event Count" />
@@ -428,9 +427,7 @@ export function AnalyticsDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>Export Data</CardTitle>
-          <CardDescription>
-            Download dashboard data for further analysis
-          </CardDescription>
+          <CardDescription>Download dashboard data for further analysis</CardDescription>
         </CardHeader>
         <CardContent className="flex gap-2">
           <Button

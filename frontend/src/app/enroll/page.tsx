@@ -55,10 +55,10 @@ function EnrollmentContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-black">
+      <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-black">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-red-500 font-mono uppercase tracking-widest text-sm">
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-red-600/30 border-t-red-600" />
+          <p className="font-mono text-sm tracking-widest text-red-500 uppercase">
             Initializing...
           </p>
         </div>
@@ -68,11 +68,11 @@ function EnrollmentContent() {
 
   if (!user) {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-black">
-        <div className="text-center bg-zinc-950 border border-red-500/50 p-12 rounded-2xl max-w-md mx-4">
-          <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-black">
+        <div className="mx-4 max-w-md rounded-2xl border border-red-500/50 bg-zinc-950 p-12 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
             <svg
-              className="w-8 h-8 text-red-500"
+              className="h-8 w-8 text-red-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -85,15 +85,15 @@ function EnrollmentContent() {
               />
             </svg>
           </div>
-          <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-4">
+          <h2 className="mb-4 text-2xl font-black tracking-widest text-white uppercase">
             Authentication Required
           </h2>
-          <p className="text-zinc-400 mb-8">
+          <p className="mb-8 text-zinc-400">
             Please sign in to enroll in courses and track your progress.
           </p>
           <Link
             href="/auth/login"
-            className="inline-flex items-center justify-center px-8 py-4 bg-red-600 text-white rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition-colors"
+            className="inline-flex items-center justify-center rounded-lg bg-red-600 px-8 py-4 font-bold tracking-wider text-white uppercase transition-colors hover:bg-red-700"
           >
             Sign In
           </Link>
@@ -103,14 +103,14 @@ function EnrollmentContent() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-black text-white py-12 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-[calc(100vh-80px)] bg-black px-4 py-12 text-white">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-8">
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-red-500 transition-colors text-sm font-medium"
+            className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors hover:text-red-500"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -122,15 +122,15 @@ function EnrollmentContent() {
           </Link>
         </div>
 
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 bg-red-500/10 text-red-500 font-medium text-sm mb-6">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+        <div className="mb-12 text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
             Multi-Step Enrollment
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
+          <h1 className="mb-4 text-4xl font-black tracking-tight text-white uppercase md:text-5xl">
             Course Enrollment
           </h1>
-          <p className="text-zinc-400 max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-zinc-400">
             Complete the 5-step wizard to customize your learning experience. Your progress is
             automatically saved every 30 seconds.
           </p>
@@ -154,12 +154,10 @@ export default function EnrollmentPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-black">
+        <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-black">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-red-500 font-mono uppercase tracking-widest text-sm">
-              Loading...
-            </p>
+            <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-red-600/30 border-t-red-600" />
+            <p className="font-mono text-sm tracking-widest text-red-500 uppercase">Loading...</p>
           </div>
         </div>
       }

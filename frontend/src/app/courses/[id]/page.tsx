@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useAuth } from "@/contexts/AuthContext";
-import { certificatesAPI, Course, coursesAPI, enrollmentsAPI } from "@/lib/api";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useAuth } from '@/contexts/AuthContext';
+import { certificatesAPI, Course, coursesAPI, enrollmentsAPI } from '@/lib/api';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -25,14 +25,12 @@ export default function CourseDetailPage() {
         // Check if user is enrolled
         if (user) {
           const enrollments = await enrollmentsAPI.getByStudentId(user.id);
-          const enrolled = enrollments.some(
-            (enrollment) => enrollment.courseId === data.id,
-          );
+          const enrolled = enrollments.some((enrollment) => enrollment.courseId === data.id);
           setIsEnrolled(enrolled);
         }
       } catch (error) {
-        console.error("Failed to load course:", error);
-        router.push("/courses");
+        console.error('Failed to load course:', error);
+        router.push('/courses');
       } finally {
         setIsLoading(false);
       }
@@ -56,10 +54,10 @@ export default function CourseDetailPage() {
       // The mock API requires an object mapping. Assuming certificatesAPI.issue accepts payload.
       await certificatesAPI.issue({ studentId: user.id, courseId: course.id });
       setMintSuccess(true);
-      setTimeout(() => router.push("/certificates"), 2000);
+      setTimeout(() => router.push('/certificates'), 2000);
     } catch (error) {
-      console.error("Failed to mint:", error);
-      alert("Failed to mint cryptographic token. It may already exist.");
+      console.error('Failed to mint:', error);
+      alert('Failed to mint cryptographic token. It may already exist.');
     } finally {
       setIsMinting(false);
     }
@@ -67,10 +65,10 @@ export default function CourseDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-black">
+      <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-black">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-red-500 font-mono uppercase tracking-widest text-sm">
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-red-600/30 border-t-red-600"></div>
+          <p className="font-mono text-sm tracking-widest text-red-500 uppercase">
             Loading Header Data...
           </p>
         </div>
@@ -80,18 +78,16 @@ export default function CourseDetailPage() {
 
   if (!course) {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-black">
-        <div className="text-center bg-zinc-950 border border-red-500/50 p-12 rounded-2xl shadow-[0_0_30px_rgba(220,38,38,0.2)]">
-          <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-4">
+      <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-black">
+        <div className="rounded-2xl border border-red-500/50 bg-zinc-950 p-12 text-center shadow-[0_0_30px_rgba(220,38,38,0.2)]">
+          <h2 className="mb-4 text-2xl font-black tracking-widest text-white uppercase">
             Node Not Found
           </h2>
           <Link
             href="/courses"
-            className="text-red-500 hover:text-red-400 uppercase text-sm font-bold tracking-widest flex items-center justify-center gap-2 group"
+            className="group flex items-center justify-center gap-2 text-sm font-bold tracking-widest text-red-500 uppercase hover:text-red-400"
           >
-            <span className="transform group-hover:-translate-x-1 transition-transform">
-              ←
-            </span>{" "}
+            <span className="transform transition-transform group-hover:-translate-x-1">←</span>{' '}
             Return to Directory
           </Link>
         </div>
@@ -100,40 +96,36 @@ export default function CourseDetailPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-black text-white pb-20 relative overflow-hidden">
+    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-black pb-20 text-white">
       {/* Background Glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="pointer-events-none absolute top-0 right-0 h-[600px] w-[600px] rounded-full bg-red-600/10 blur-[120px]"></div>
 
       {/* Header */}
-      <div className="relative border-b border-white/10 bg-zinc-950/80 backdrop-blur-sm z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="relative z-10 border-b border-white/10 bg-zinc-950/80 backdrop-blur-sm">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <Link
             href="/courses"
-            className="text-gray-500 hover:text-red-500 uppercase text-xs font-bold tracking-widest mb-8 inline-flex items-center gap-2 group transition-colors"
+            className="group mb-8 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-gray-500 uppercase transition-colors hover:text-red-500"
           >
-            <span className="transform group-hover:-translate-x-1 transition-transform">
-              ←
-            </span>{" "}
+            <span className="transform transition-transform group-hover:-translate-x-1">←</span>{' '}
             Network Directory
           </Link>
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
-              <div className="inline-block px-3 py-1 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-mono uppercase tracking-widest rounded-full mb-4">
+              <div className="mb-4 inline-block rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 font-mono text-xs tracking-widest text-red-500 uppercase">
                 Module Initialization
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4 group-hover:text-red-50 transition-colors">
+              <h1 className="mb-4 text-4xl font-black tracking-tight text-white uppercase transition-colors group-hover:text-red-50 md:text-5xl">
                 {course.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-6 text-gray-400 font-mono text-sm uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-6 font-mono text-sm tracking-wider text-gray-400 uppercase">
                 <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-gray-600"></span>
-                  Instructor:{" "}
-                  <span className="text-white">{course.instructor}</span>
+                  <span className="h-2 w-2 rounded-full bg-gray-600"></span>
+                  Instructor: <span className="text-white">{course.instructor}</span>
                 </span>
                 <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                  Payload:{" "}
-                  <span className="text-white">{course.credits} UNIT</span>
+                  <span className="h-2 w-2 rounded-full bg-red-600"></span>
+                  Payload: <span className="text-white">{course.credits} UNIT</span>
                 </span>
               </div>
             </div>
@@ -142,29 +134,28 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Course Details */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="bg-zinc-950 border border-white/10 rounded-2xl p-8 hover:border-red-500/30 transition-colors">
-              <h2 className="text-2xl font-black text-white mb-6 uppercase tracking-widest flex items-center gap-3">
-                <span className="w-4 h-4 bg-red-600 rounded-sm inline-block"></span>{" "}
-                Protocol Specifications
+          <div className="space-y-8 lg:col-span-2">
+            <div className="rounded-2xl border border-white/10 bg-zinc-950 p-8 transition-colors hover:border-red-500/30">
+              <h2 className="mb-6 flex items-center gap-3 text-2xl font-black tracking-widest text-white uppercase">
+                <span className="inline-block h-4 w-4 rounded-sm bg-red-600"></span> Protocol
+                Specifications
               </h2>
-              <p className="text-gray-400 font-light text-lg leading-relaxed mb-8">
-                {course.description ||
-                  "System metadata missing. Awaiting curriculum upload."}
+              <p className="mb-8 text-lg leading-relaxed font-light text-gray-400">
+                {course.description || 'System metadata missing. Awaiting curriculum upload.'}
               </p>
 
-              <div className="border-t border-white/10 pt-8 mt-8">
-                <h3 className="text-lg font-bold text-gray-300 mb-6 uppercase tracking-widest">
+              <div className="mt-8 border-t border-white/10 pt-8">
+                <h3 className="mb-6 text-lg font-bold tracking-widest text-gray-300 uppercase">
                   Execution Objectives
                 </h3>
                 <ul className="space-y-4">
                   <li className="flex items-start gap-4 text-gray-400">
-                    <div className="w-6 h-6 rounded bg-red-500/10 flex items-center justify-center flex-shrink-0 border border-red-500/20 mt-0.5">
+                    <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border border-red-500/20 bg-red-500/10">
                       <svg
-                        className="w-3 h-3 text-red-500"
+                        className="h-3 w-3 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -177,14 +168,12 @@ export default function CourseDetailPage() {
                         />
                       </svg>
                     </div>
-                    <span>
-                      Mastery of core decentralized computing paradigms
-                    </span>
+                    <span>Mastery of core decentralized computing paradigms</span>
                   </li>
                   <li className="flex items-start gap-4 text-gray-400">
-                    <div className="w-6 h-6 rounded bg-red-500/10 flex items-center justify-center flex-shrink-0 border border-red-500/20 mt-0.5">
+                    <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border border-red-500/20 bg-red-500/10">
                       <svg
-                        className="w-3 h-3 text-red-500"
+                        className="h-3 w-3 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -197,14 +186,12 @@ export default function CourseDetailPage() {
                         />
                       </svg>
                     </div>
-                    <span>
-                      Direct compilation and deployment of Soroban contracts
-                    </span>
+                    <span>Direct compilation and deployment of Soroban contracts</span>
                   </li>
                   <li className="flex items-start gap-4 text-gray-400">
-                    <div className="w-6 h-6 rounded bg-red-500/10 flex items-center justify-center flex-shrink-0 border border-red-500/20 mt-0.5">
+                    <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border border-red-500/20 bg-red-500/10">
                       <svg
-                        className="w-3 h-3 text-red-500"
+                        className="h-3 w-3 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -217,21 +204,19 @@ export default function CourseDetailPage() {
                         />
                       </svg>
                     </div>
-                    <span>
-                      Secure state manipulation on the Stellar testnet
-                    </span>
+                    <span>Secure state manipulation on the Stellar testnet</span>
                   </li>
                 </ul>
               </div>
             </div>
 
             {/* Dummy Video Player Space */}
-            <div className="bg-black border border-white/10 rounded-2xl aspect-video flex flex-col items-center justify-center relative overflow-hidden group">
-              <div className="absolute inset-0 bg-red-600/5 group-hover:bg-red-600/10 transition-colors z-0"></div>
-              <div className="w-20 h-20 bg-zinc-900 border border-red-500/30 rounded-full flex items-center justify-center mb-4 z-10 shadow-[0_0_30px_rgba(220,38,38,0.2)] group-hover:scale-110 transition-transform cursor-pointer">
-                <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-red-500 border-b-[12px] border-b-transparent ml-2"></div>
+            <div className="group relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-black">
+              <div className="absolute inset-0 z-0 bg-red-600/5 transition-colors group-hover:bg-red-600/10"></div>
+              <div className="z-10 mb-4 flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border border-red-500/30 bg-zinc-900 shadow-[0_0_30px_rgba(220,38,38,0.2)] transition-transform group-hover:scale-110">
+                <div className="ml-2 h-0 w-0 border-t-[12px] border-b-[12px] border-l-[20px] border-t-transparent border-b-transparent border-l-red-500"></div>
               </div>
-              <p className="text-gray-500 font-mono text-sm uppercase tracking-widest z-10">
+              <p className="z-10 font-mono text-sm tracking-widest text-gray-500 uppercase">
                 Stream Encrypted Feed
               </p>
             </div>
@@ -239,17 +224,17 @@ export default function CourseDetailPage() {
 
           {/* Action / Enrollment Card */}
           <div className="lg:col-span-1">
-            <div className="bg-zinc-950 border border-white/10 rounded-2xl p-8 shadow-[0_0_30px_rgba(0,0,0,0.5)] sticky top-28">
-              <h3 className="text-xl font-black text-white mb-6 uppercase tracking-widest">
+            <div className="sticky top-28 rounded-2xl border border-white/10 bg-zinc-950 p-8 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+              <h3 className="mb-6 text-xl font-black tracking-widest text-white uppercase">
                 Connection Status
               </h3>
 
               {isEnrolled ? (
                 <div className="space-y-6">
-                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 text-center">
-                    <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-6 text-center">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20">
                       <svg
-                        className="w-6 h-6 text-green-500"
+                        className="h-6 w-6 text-green-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -262,27 +247,26 @@ export default function CourseDetailPage() {
                         />
                       </svg>
                     </div>
-                    <p className="text-green-500 font-bold uppercase tracking-widest text-sm mb-1">
+                    <p className="mb-1 text-sm font-bold tracking-widest text-green-500 uppercase">
                       Uplink Active
                     </p>
-                    <p className="text-xs text-gray-400 font-mono">
+                    <p className="font-mono text-xs text-gray-400">
                       Module execution in progress...
                     </p>
                   </div>
 
-                  <div className="pt-6 border-t border-white/10">
-                    <p className="text-gray-400 text-sm font-light mb-4">
-                      Completed the curriculum? Execute the smart contract below
-                      to mint your verifiable credential on the Stellar
-                      blockchain.
+                  <div className="border-t border-white/10 pt-6">
+                    <p className="mb-4 text-sm font-light text-gray-400">
+                      Completed the curriculum? Execute the smart contract below to mint your
+                      verifiable credential on the Stellar blockchain.
                     </p>
 
                     {mintSuccess ? (
-                      <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-center animate-pulse">
-                        <p className="text-blue-500 font-bold uppercase tracking-widest text-sm">
+                      <div className="animate-pulse rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 text-center">
+                        <p className="text-sm font-bold tracking-widest text-blue-500 uppercase">
                           Token Minted
                         </p>
-                        <p className="text-xs text-blue-400/70 font-mono mt-1">
+                        <p className="mt-1 font-mono text-xs text-blue-400/70">
                           Redirecting to Vault...
                         </p>
                       </div>
@@ -290,13 +274,13 @@ export default function CourseDetailPage() {
                       <button
                         onClick={handleMintCertificate}
                         disabled={isMinting}
-                        className={`w-full py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(220,38,38,0.3)] ${
+                        className={`w-full rounded-xl py-4 font-black tracking-widest uppercase shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all ${
                           isMinting
-                            ? "bg-red-900 text-gray-500 cursor-not-allowed border border-red-900"
-                            : "bg-red-600 hover:bg-red-700 text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.6)] transform hover:-translate-y-0.5"
+                            ? 'cursor-not-allowed border border-red-900 bg-red-900 text-gray-500'
+                            : 'transform bg-red-600 text-white hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]'
                         }`}
                       >
-                        {isMinting ? "Compiling tx..." : "Extract Certificate"}
+                        {isMinting ? 'Compiling tx...' : 'Extract Certificate'}
                       </button>
                     )}
                   </div>
@@ -306,28 +290,28 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleEnroll}
                     disabled={!user}
-                    className={`w-full py-5 rounded-xl font-black uppercase tracking-widest transition-all ${
+                    className={`w-full rounded-xl py-5 font-black tracking-widest uppercase transition-all ${
                       !user
-                        ? "bg-gray-800 text-gray-500 cursor-not-allowed border border-white/10"
-                        : "bg-white text-black hover:bg-gray-200 transform hover:-translate-y-0.5 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                        ? 'cursor-not-allowed border border-white/10 bg-gray-800 text-gray-500'
+                        : 'transform bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-0.5 hover:bg-gray-200'
                     }`}
                   >
-                    {!user ? "Auth Required" : "Start Enrollment"}
+                    {!user ? 'Auth Required' : 'Start Enrollment'}
                   </button>
-                  <p className="text-xs text-gray-500 font-mono mt-4 text-center">
+                  <p className="mt-4 text-center font-mono text-xs text-gray-500">
                     5-step wizard with progress saving
                   </p>
-                  <p className="text-xs text-gray-600 font-mono mt-2 text-center">
+                  <p className="mt-2 text-center font-mono text-xs text-gray-600">
                     NO GAS FEES • PUBLIC TESTNET
                   </p>
                 </div>
               )}
 
-              <div className="mt-8 pt-8 border-t border-white/5">
+              <div className="mt-8 border-t border-white/5 pt-8">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 text-xs font-mono text-gray-400 uppercase tracking-widest">
+                  <div className="flex items-center gap-4 font-mono text-xs tracking-widest text-gray-400 uppercase">
                     <svg
-                      className="w-4 h-4 text-red-500"
+                      className="h-4 w-4 text-red-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -341,9 +325,9 @@ export default function CourseDetailPage() {
                     </svg>
                     Asynchronous Execution
                   </div>
-                  <div className="flex items-center gap-4 text-xs font-mono text-gray-400 uppercase tracking-widest">
+                  <div className="flex items-center gap-4 font-mono text-xs tracking-widest text-gray-400 uppercase">
                     <svg
-                      className="w-4 h-4 text-red-500"
+                      className="h-4 w-4 text-red-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -357,9 +341,9 @@ export default function CourseDetailPage() {
                     </svg>
                     On-chain Verification
                   </div>
-                  <div className="flex items-center gap-4 text-xs font-mono text-gray-400 uppercase tracking-widest">
+                  <div className="flex items-center gap-4 font-mono text-xs tracking-widest text-gray-400 uppercase">
                     <svg
-                      className="w-4 h-4 text-red-500"
+                      className="h-4 w-4 text-red-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

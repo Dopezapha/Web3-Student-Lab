@@ -49,9 +49,7 @@ const MOCK_STATE: WalletState = {
   locked: false,
   threshold: 2,
   signers: ['GABC...1234', 'GDEF...5678'],
-  sessionKeys: [
-    { address: 'GSESS...AAAA', expiryLedger: 5000000, spendLimit: 1000, spent: 250 },
-  ],
+  sessionKeys: [{ address: 'GSESS...AAAA', expiryLedger: 5000000, spendLimit: 1000, spent: 250 }],
   transactions: [
     {
       id: 'tx-1',
@@ -110,9 +108,9 @@ function TransactionRow({ tx }: { tx: Transaction }) {
   return (
     <div className="flex items-center justify-between border-b py-3 last:border-0">
       <div className="min-w-0 flex-1">
-        <p className="truncate font-mono text-xs text-muted-foreground">{tx.target}</p>
+        <p className="text-muted-foreground truncate font-mono text-xs">{tx.target}</p>
         <p className="text-sm font-medium">{tx.function}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           nonce #{tx.nonce} · {tx.timestamp}
         </p>
       </div>
@@ -130,19 +128,13 @@ function TransactionRow({ tx }: { tx: Transaction }) {
   );
 }
 
-function SessionKeyRow({
-  sk,
-  onRevoke,
-}: {
-  sk: SessionKey;
-  onRevoke: (address: string) => void;
-}) {
+function SessionKeyRow({ sk, onRevoke }: { sk: SessionKey; onRevoke: (address: string) => void }) {
   const usedPct = sk.spendLimit > 0 ? Math.round((sk.spent / sk.spendLimit) * 100) : 0;
   return (
     <div className="flex items-center justify-between border-b py-3 last:border-0">
       <div className="min-w-0 flex-1">
         <p className="truncate font-mono text-xs">{sk.address}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Expires ledger {sk.expiryLedger.toLocaleString()} · spend {usedPct}% used
         </p>
       </div>
@@ -178,13 +170,13 @@ function RecoveryPanel({
           Wallet is locked — a recovery is in progress. Guardians must reach threshold to complete.
         </Alert>
       )}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Guardians can propose a new owner. Once the recovery threshold is reached the wallet
         ownership transfers automatically.
       </p>
       <div className="flex gap-2">
         <input
-          className="flex-1 rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="bg-background focus:ring-ring flex-1 rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           placeholder="New owner address (G...)"
           value={newOwner}
           onChange={(e) => setNewOwner(e.target.value)}
@@ -232,7 +224,7 @@ function AddSessionKeyForm({ onAdd }: { onAdd: (sk: Omit<SessionKey, 'spent'>) =
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="grid gap-2 sm:grid-cols-3">
         <input
-          className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring sm:col-span-3"
+          className="bg-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none sm:col-span-3"
           placeholder="Session key address (G...)"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
@@ -240,7 +232,7 @@ function AddSessionKeyForm({ onAdd }: { onAdd: (sk: Omit<SessionKey, 'spent'>) =
           aria-label="Session key address"
         />
         <input
-          className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="bg-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           placeholder="Expiry ledger"
           type="number"
           min={1}
@@ -250,7 +242,7 @@ function AddSessionKeyForm({ onAdd }: { onAdd: (sk: Omit<SessionKey, 'spent'>) =
           aria-label="Expiry ledger"
         />
         <input
-          className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="bg-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           placeholder="Spend limit (0 = unlimited)"
           type="number"
           min={0}
@@ -307,7 +299,7 @@ export function WalletDashboard() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Smart Wallet</h1>
-          <p className="font-mono text-sm text-muted-foreground">{wallet.owner}</p>
+          <p className="text-muted-foreground font-mono text-sm">{wallet.owner}</p>
         </div>
         <div className="flex items-center gap-3">
           <GasIndicator sponsored={wallet.gasSponsored} balance={wallet.sponsorBalance} />
@@ -336,7 +328,7 @@ export function WalletDashboard() {
         ].map(({ label, value }) => (
           <Card key={label}>
             <CardContent className="p-4">
-              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className="text-muted-foreground text-xs">{label}</p>
               <p className="text-xl font-semibold">{value}</p>
             </CardContent>
           </Card>
@@ -386,7 +378,7 @@ export function WalletDashboard() {
                 </div>
               </div>
               <div>
-                <p className="mb-1 text-sm text-muted-foreground">Signers</p>
+                <p className="text-muted-foreground mb-1 text-sm">Signers</p>
                 <ul className="space-y-1">
                   {wallet.signers.map((s) => (
                     <li key={s} className="font-mono text-xs">
@@ -407,7 +399,7 @@ export function WalletDashboard() {
             </CardHeader>
             <CardContent>
               {wallet.transactions.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No transactions yet.</p>
+                <p className="text-muted-foreground text-sm">No transactions yet.</p>
               ) : (
                 wallet.transactions.map((tx) => <TransactionRow key={tx.id} tx={tx} />)
               )}
@@ -424,7 +416,7 @@ export function WalletDashboard() {
             <CardContent className="space-y-4">
               <AddSessionKeyForm onAdd={handleAddSessionKey} />
               {wallet.sessionKeys.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No active session keys.</p>
+                <p className="text-muted-foreground text-sm">No active session keys.</p>
               ) : (
                 wallet.sessionKeys.map((sk) => (
                   <SessionKeyRow key={sk.address} sk={sk} onRevoke={handleRevokeSessionKey} />

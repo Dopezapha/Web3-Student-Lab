@@ -14,7 +14,7 @@ export class ApiResponse {
       success: true,
       message,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -23,7 +23,7 @@ export class ApiResponse {
       success: false,
       message,
       error: error?.message || error,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

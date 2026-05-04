@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { CompletionDataPoint } from "@/hooks/useAnalytics";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { CompletionDataPoint } from '@/hooks/useAnalytics';
 
 interface CompletionPieProps {
   data: CompletionDataPoint[];
@@ -9,9 +9,9 @@ interface CompletionPieProps {
 
 export default function CompletionPie({ data }: CompletionPieProps) {
   return (
-    <div className="bg-bg-secondary border border-border-theme rounded-2xl p-6">
-      <h3 className="text-lg font-black text-foreground uppercase tracking-widest mb-6 flex items-center gap-3">
-        <span className="w-3 h-3 bg-red-600 rounded-sm"></span>
+    <div className="bg-bg-secondary border-border-theme rounded-2xl border p-6">
+      <h3 className="text-foreground mb-6 flex items-center gap-3 text-lg font-black tracking-widest uppercase">
+        <span className="h-3 w-3 rounded-sm bg-red-600"></span>
         Course Completion
       </h3>
       <ResponsiveContainer width="100%" height={300}>
@@ -32,13 +32,13 @@ export default function CompletionPie({ data }: CompletionPieProps) {
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: "#09090b",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: "8px",
-              color: "#fff",
+              backgroundColor: '#09090b',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '8px',
+              color: '#fff',
             }}
           />
-          <Legend wrapperStyle={{ fontSize: "12px", color: "#a1a1aa" }} />
+          <Legend wrapperStyle={{ fontSize: '12px', color: '#a1a1aa' }} />
         </PieChart>
       </ResponsiveContainer>
     </div>

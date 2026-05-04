@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-    BookOpen,
-    CheckCircle,
-    Copy,
-    Download,
-    Edit,
-    FileText,
-    Plus,
-    Search,
-    Shield,
-    Target,
-    Trash2,
-    Wrench,
-    X,
-    Zap
-} from "lucide-react";
-import React, { useState } from "react";
-import { ReviewManager, ReviewTemplate } from "../../lib/review/ReviewManager";
+  BookOpen,
+  CheckCircle,
+  Copy,
+  Download,
+  Edit,
+  FileText,
+  Plus,
+  Search,
+  Shield,
+  Target,
+  Trash2,
+  Wrench,
+  X,
+  Zap,
+} from 'lucide-react';
+import React, { useState } from 'react';
+import { ReviewManager, ReviewTemplate } from '../../lib/review/ReviewManager';
 
 interface ReviewTemplatesProps {
   reviewManager: ReviewManager;
@@ -45,26 +45,26 @@ interface TemplateFormData {
 
 const DEFAULT_CRITERIA = [
   {
-    name: "Security",
-    description: "Code security and vulnerability assessment",
+    name: 'Security',
+    description: 'Code security and vulnerability assessment',
     weight: 0.3,
     maxScore: 10,
   },
   {
-    name: "Performance",
-    description: "Code efficiency and optimization",
+    name: 'Performance',
+    description: 'Code efficiency and optimization',
     weight: 0.25,
     maxScore: 10,
   },
   {
-    name: "Readability",
-    description: "Code clarity and documentation",
+    name: 'Readability',
+    description: 'Code clarity and documentation',
     weight: 0.25,
     maxScore: 10,
   },
   {
-    name: "Maintainability",
-    description: "Code structure and modularity",
+    name: 'Maintainability',
+    description: 'Code structure and modularity',
     weight: 0.2,
     maxScore: 10,
   },
@@ -86,20 +86,20 @@ export default function ReviewTemplates({
   const [templates, setTemplates] = useState<ReviewTemplate[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<ReviewTemplate | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<"name" | "created" | "usage">("name");
+  const [sortBy, setSortBy] = useState<'name' | 'created' | 'usage'>('name');
 
   const [formData, setFormData] = useState<TemplateFormData>({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     criteria: DEFAULT_CRITERIA,
     defaultComments: [],
     tags: [],
   });
 
-  const [newComment, setNewComment] = useState("");
-  const [newTag, setNewTag] = useState("");
+  const [newComment, setNewComment] = useState('');
+  const [newTag, setNewTag] = useState('');
 
   // Load templates
   React.useEffect(() => {
@@ -107,11 +107,12 @@ export default function ReviewTemplates({
   }, [reviewManager]);
 
   // Filter templates
-  const filteredTemplates = templates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTags = selectedTags.length === 0 ||
-                       selectedTags.some(tag => template.tags.includes(tag));
+  const filteredTemplates = templates.filter((template) => {
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTags =
+      selectedTags.length === 0 || selectedTags.some((tag) => template.tags.includes(tag));
 
     return matchesSearch && matchesTags;
   });
@@ -119,11 +120,11 @@ export default function ReviewTemplates({
   // Sort templates
   const sortedTemplates = [...filteredTemplates].sort((a, b) => {
     switch (sortBy) {
-      case "name":
+      case 'name':
         return a.name.localeCompare(b.name);
-      case "created":
+      case 'created':
         return b.id.localeCompare(a.id); // Simple ID-based sort (newer IDs come first)
-      case "usage":
+      case 'usage':
         return 0; // Would need usage tracking
       default:
         return 0;
@@ -131,7 +132,7 @@ export default function ReviewTemplates({
   });
 
   // Get all unique tags
-  const allTags = Array.from(new Set(templates.flatMap(t => t.tags)));
+  const allTags = Array.from(new Set(templates.flatMap((t) => t.tags)));
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -144,7 +145,7 @@ export default function ReviewTemplates({
     // Validate criteria weights sum to 1
     const totalWeight = formData.criteria.reduce((sum, criterion) => sum + criterion.weight, 0);
     if (Math.abs(totalWeight - 1) > 0.01) {
-      alert("Criteria weights must sum to 1.0");
+      alert('Criteria weights must sum to 1.0');
       return;
     }
 
@@ -173,8 +174,8 @@ export default function ReviewTemplates({
 
     // Reset form
     setFormData({
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       criteria: DEFAULT_CRITERIA,
       defaultComments: [],
       tags: [],
@@ -187,69 +188,72 @@ export default function ReviewTemplates({
   // Add default comment
   const addComment = () => {
     if (newComment.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        defaultComments: [...prev.defaultComments, newComment.trim()]
+        defaultComments: [...prev.defaultComments, newComment.trim()],
       }));
-      setNewComment("");
+      setNewComment('');
     }
   };
 
   // Remove default comment
   const removeComment = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      defaultComments: prev.defaultComments.filter((_, i) => i !== index)
+      defaultComments: prev.defaultComments.filter((_, i) => i !== index),
     }));
   };
 
   // Add tag
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()]
+        tags: [...prev.tags, newTag.trim()],
       }));
-      setNewTag("");
+      setNewTag('');
     }
   };
 
   // Remove tag
   const removeTag = (tag: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(t => t !== tag)
+      tags: prev.tags.filter((t) => t !== tag),
     }));
   };
 
   // Update criterion
-  const updateCriterion = (index: number, updates: Partial<typeof DEFAULT_CRITERIA[0]>) => {
-    setFormData(prev => ({
+  const updateCriterion = (index: number, updates: Partial<(typeof DEFAULT_CRITERIA)[0]>) => {
+    setFormData((prev) => ({
       ...prev,
       criteria: prev.criteria.map((criterion, i) =>
         i === index ? { ...criterion, ...updates } : criterion
-      )
+      ),
     }));
   };
 
   // Add criterion
   const addCriterion = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      criteria: [...prev.criteria, {
-        name: "New Criterion",
-        description: "Description of the criterion",
-        weight: 0.1,
-        maxScore: 10,
-      }]
+      criteria: [
+        ...prev.criteria,
+        {
+          name: 'New Criterion',
+          description: 'Description of the criterion',
+          weight: 0.1,
+          maxScore: 10,
+        },
+      ],
     }));
   };
 
   // Remove criterion
   const removeCriterion = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      criteria: prev.criteria.filter((_, i) => i !== index)
+      criteria: prev.criteria.filter((_, i) => i !== index),
     }));
   };
 
@@ -268,7 +272,7 @@ export default function ReviewTemplates({
 
   // Delete template
   const handleDeleteTemplate = (templateId: string) => {
-    if (confirm("Are you sure you want to delete this template?")) {
+    if (confirm('Are you sure you want to delete this template?')) {
       reviewManager.deleteTemplate(templateId);
       setTemplates(reviewManager.getAllTemplates());
     }
@@ -289,11 +293,11 @@ export default function ReviewTemplates({
   // Export template
   const handleExportTemplate = (template: ReviewTemplate) => {
     const data = JSON.stringify(template, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
+    const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = `${template.name.replace(/\s+/g, "_")}_template.json`;
+    a.download = `${template.name.replace(/\s+/g, '_')}_template.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -304,28 +308,30 @@ export default function ReviewTemplates({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">Review Templates</h2>
-          <p className="text-gray-400 mt-1">Create and manage review templates for consistent evaluations</p>
+          <p className="mt-1 text-gray-400">
+            Create and manage review templates for consistent evaluations
+          </p>
         </div>
 
         <button
           onClick={() => setShowCreateForm(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+          className="flex items-center space-x-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           <span>New Template</span>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 p-4 bg-zinc-950 border border-white/10 rounded-lg">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+      <div className="flex flex-col gap-4 rounded-lg border border-white/10 bg-zinc-950 p-4 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
           <input
             type="text"
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+            className="w-full rounded-lg border border-white/20 bg-black/50 py-2 pr-4 pl-10 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
           />
         </div>
 
@@ -333,7 +339,7 @@ export default function ReviewTemplates({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500/60"
+            className="rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white focus:border-red-500/60 focus:outline-none"
           >
             <option value="name">Sort by Name</option>
             <option value="created">Sort by Created</option>
@@ -345,20 +351,18 @@ export default function ReviewTemplates({
       {/* Tag Filter */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {allTags.map(tag => (
+          {allTags.map((tag) => (
             <button
               key={tag}
               onClick={() => {
-                setSelectedTags(prev =>
-                  prev.includes(tag)
-                    ? prev.filter(t => t !== tag)
-                    : [...prev, tag]
+                setSelectedTags((prev) =>
+                  prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
                 );
               }}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`rounded-full px-3 py-1 text-sm transition-colors ${
                 selectedTags.includes(tag)
-                  ? "bg-red-500 text-white"
-                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+                  ? 'bg-red-500 text-white'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
               }`}
             >
               {tag}
@@ -368,12 +372,12 @@ export default function ReviewTemplates({
       )}
 
       {/* Templates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sortedTemplates.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-gray-400">
-            <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <div className="col-span-full py-12 text-center text-gray-400">
+            <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
             <p>No templates found</p>
-            <p className="text-sm mt-2">Create your first review template to get started</p>
+            <p className="mt-2 text-sm">Create your first review template to get started</p>
           </div>
         ) : (
           sortedTemplates.map((template) => (
@@ -381,63 +385,64 @@ export default function ReviewTemplates({
               key={template.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 bg-zinc-950 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
+              className="rounded-lg border border-white/10 bg-zinc-950 p-4 transition-colors hover:border-white/20"
             >
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1">{template.name}</h3>
-                  <p className="text-sm text-gray-400 line-clamp-2">{template.description}</p>
+                  <h3 className="mb-1 text-lg font-semibold text-white">{template.name}</h3>
+                  <p className="line-clamp-2 text-sm text-gray-400">{template.description}</p>
                 </div>
 
                 <div className="flex items-center space-x-1">
                   <button
                     onClick={() => onSelectTemplate?.(template)}
-                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                    className="p-1 text-gray-400 transition-colors hover:text-white"
                     title="Use template"
                   >
-                    <CheckCircle className="w-4 h-4" />
+                    <CheckCircle className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleEditTemplate(template)}
-                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                    className="p-1 text-gray-400 transition-colors hover:text-white"
                     title="Edit template"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDuplicateTemplate(template)}
-                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                    className="p-1 text-gray-400 transition-colors hover:text-white"
                     title="Duplicate template"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleExportTemplate(template)}
-                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                    className="p-1 text-gray-400 transition-colors hover:text-white"
                     title="Export template"
                   >
-                    <Download className="w-4 h-4" />
+                    <Download className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteTemplate(template.id)}
-                    className="p-1 text-red-400 hover:text-red-300 transition-colors"
+                    className="p-1 text-red-400 transition-colors hover:text-red-300"
                     title="Delete template"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
 
               {/* Criteria Preview */}
               <div className="mb-3">
-                <h4 className="text-sm font-medium text-white mb-2">Criteria</h4>
+                <h4 className="mb-2 text-sm font-medium text-white">Criteria</h4>
                 <div className="space-y-1">
                   {template.criteria.slice(0, 3).map((criterion, index) => {
-                    const Icon = CRITERIA_ICONS[criterion.name as keyof typeof CRITERIA_ICONS] || Target;
+                    const Icon =
+                      CRITERIA_ICONS[criterion.name as keyof typeof CRITERIA_ICONS] || Target;
                     return (
                       <div key={index} className="flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-1">
-                          <Icon className="w-3 h-3 text-gray-400" />
+                          <Icon className="h-3 w-3 text-gray-400" />
                           <span className="text-gray-300">{criterion.name}</span>
                         </div>
                         <span className="text-gray-400">{criterion.maxScore}pts</span>
@@ -459,7 +464,7 @@ export default function ReviewTemplates({
                     {template.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-white/10 text-xs text-gray-300 rounded"
+                        className="rounded bg-white/10 px-2 py-1 text-xs text-gray-300"
                       >
                         {tag}
                       </span>
@@ -471,9 +476,10 @@ export default function ReviewTemplates({
               {/* Default Comments */}
               {template.defaultComments.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-white mb-2">Default Comments</h4>
+                  <h4 className="mb-2 text-sm font-medium text-white">Default Comments</h4>
                   <div className="text-xs text-gray-400">
-                    {template.defaultComments.length} pre-defined comment{template.defaultComments.length !== 1 ? 's' : ''}
+                    {template.defaultComments.length} pre-defined comment
+                    {template.defaultComments.length !== 1 ? 's' : ''}
                   </div>
                 </div>
               )}
@@ -489,55 +495,57 @@ export default function ReviewTemplates({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-zinc-950 border border-white/20 rounded-2xl p-6"
+              className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-white/20 bg-zinc-950 p-6"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="mb-6 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-white">
-                  {editingTemplate ? "Edit Template" : "Create Review Template"}
+                  {editingTemplate ? 'Edit Template' : 'Create Review Template'}
                 </h3>
                 <button
                   onClick={() => {
                     setShowCreateForm(false);
                     setEditingTemplate(null);
                   }}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 transition-colors hover:text-white"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Basic Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <label className="mb-2 block text-sm font-medium text-white">
                       Template Name *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                      onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                      className="w-full rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                       placeholder="Enter template name"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <label className="mb-2 block text-sm font-medium text-white">
                       Description *
                     </label>
                     <input
                       type="text"
                       value={formData.description}
-                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                      className="w-full px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, description: e.target.value }))
+                      }
+                      className="w-full rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                       placeholder="Describe the template purpose"
                       required
                     />
@@ -546,14 +554,14 @@ export default function ReviewTemplates({
 
                 {/* Criteria */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="mb-3 flex items-center justify-between">
                     <label className="block text-sm font-medium text-white">
                       Evaluation Criteria
                     </label>
                     <button
                       type="button"
                       onClick={addCriterion}
-                      className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-500 transition-colors"
+                      className="rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-500"
                     >
                       Add Criterion
                     </button>
@@ -561,31 +569,35 @@ export default function ReviewTemplates({
 
                   <div className="space-y-3">
                     {formData.criteria.map((criterion, index) => (
-                      <div key={index} className="p-3 bg-white/5 border border-white/10 rounded-lg">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                      <div key={index} className="rounded-lg border border-white/10 bg-white/5 p-3">
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
                           <input
                             type="text"
                             value={criterion.name}
                             onChange={(e) => updateCriterion(index, { name: e.target.value })}
-                            className="px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                            className="rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                             placeholder="Criterion name"
                           />
                           <input
                             type="text"
                             value={criterion.description}
-                            onChange={(e) => updateCriterion(index, { description: e.target.value })}
-                            className="px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                            onChange={(e) =>
+                              updateCriterion(index, { description: e.target.value })
+                            }
+                            className="rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                             placeholder="Description"
                           />
                           <div className="flex items-center space-x-2">
                             <input
                               type="number"
                               value={criterion.weight}
-                              onChange={(e) => updateCriterion(index, { weight: parseFloat(e.target.value) })}
+                              onChange={(e) =>
+                                updateCriterion(index, { weight: parseFloat(e.target.value) })
+                              }
                               step="0.1"
                               min="0"
                               max="1"
-                              className="flex-1 px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                              className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                               placeholder="Weight"
                             />
                             <span className="text-sm text-gray-400">
@@ -596,10 +608,12 @@ export default function ReviewTemplates({
                             <input
                               type="number"
                               value={criterion.maxScore}
-                              onChange={(e) => updateCriterion(index, { maxScore: parseInt(e.target.value) })}
+                              onChange={(e) =>
+                                updateCriterion(index, { maxScore: parseInt(e.target.value) })
+                              }
                               min="1"
                               max="100"
-                              className="flex-1 px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                              className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                               placeholder="Max Score"
                             />
                             <span className="text-sm text-gray-400">pts</span>
@@ -608,7 +622,7 @@ export default function ReviewTemplates({
                               onClick={() => removeCriterion(index)}
                               className="p-1 text-red-400 hover:text-red-300"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
@@ -617,28 +631,30 @@ export default function ReviewTemplates({
                   </div>
 
                   <div className="mt-2 text-xs text-gray-400">
-                    Total weight: {Math.round(formData.criteria.reduce((sum, c) => sum + c.weight, 0) * 100)}% (should be 100%)
+                    Total weight:{' '}
+                    {Math.round(formData.criteria.reduce((sum, c) => sum + c.weight, 0) * 100)}%
+                    (should be 100%)
                   </div>
                 </div>
 
                 {/* Default Comments */}
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="mb-2 block text-sm font-medium text-white">
                     Default Comments
                   </label>
-                  <div className="flex space-x-2 mb-2">
+                  <div className="mb-2 flex space-x-2">
                     <input
                       type="text"
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && addComment()}
-                      className="flex-1 px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                      className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                       placeholder="Add a default comment..."
                     />
                     <button
                       type="button"
                       onClick={addComment}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+                      className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500"
                     >
                       Add
                     </button>
@@ -646,14 +662,17 @@ export default function ReviewTemplates({
 
                   <div className="space-y-2">
                     {formData.defaultComments.map((comment, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between rounded-lg bg-white/5 p-2"
+                      >
                         <span className="text-sm text-gray-300">{comment}</span>
                         <button
                           type="button"
                           onClick={() => removeComment(index)}
                           className="text-red-400 hover:text-red-300"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     ))}
@@ -662,22 +681,20 @@ export default function ReviewTemplates({
 
                 {/* Tags */}
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
-                    Tags
-                  </label>
-                  <div className="flex space-x-2 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-white">Tags</label>
+                  <div className="mb-2 flex space-x-2">
                     <input
                       type="text"
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                      className="flex-1 px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                      className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                       placeholder="Add tags..."
                     />
                     <button
                       type="button"
                       onClick={addTag}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+                      className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500"
                     >
                       Add
                     </button>
@@ -687,7 +704,7 @@ export default function ReviewTemplates({
                     {formData.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-3 py-1 bg-white/10 text-sm text-white rounded-full flex items-center space-x-1"
+                        className="flex items-center space-x-1 rounded-full bg-white/10 px-3 py-1 text-sm text-white"
                       >
                         <span>{tag}</span>
                         <button
@@ -695,7 +712,7 @@ export default function ReviewTemplates({
                           onClick={() => removeTag(tag)}
                           className="text-gray-400 hover:text-white"
                         >
-                          <X className="w-3 h-3" />
+                          <X className="h-3 w-3" />
                         </button>
                       </span>
                     ))}
@@ -703,22 +720,22 @@ export default function ReviewTemplates({
                 </div>
 
                 {/* Submit Buttons */}
-                <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+                <div className="flex justify-end space-x-3 border-t border-white/10 pt-4">
                   <button
                     type="button"
                     onClick={() => {
                       setShowCreateForm(false);
                       setEditingTemplate(null);
                     }}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                    className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-500"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+                    className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500"
                   >
-                    {editingTemplate ? "Update Template" : "Create Template"}
+                    {editingTemplate ? 'Update Template' : 'Create Template'}
                   </button>
                 </div>
               </form>

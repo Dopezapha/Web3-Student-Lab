@@ -37,8 +37,6 @@ export const authenticate = async (
       return;
     }
 
-
-
     // Verify the token
     const decoded = verifyToken(token);
 

@@ -1,24 +1,18 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Progress } from "@/components/ui/Progress";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/Alert";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
+import { useState, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Progress } from '@/components/ui/Progress';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/Alert';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-type JobStatus = "Open" | "InProgress" | "Completed" | "Disputed" | "Cancelled";
-type MilestoneStatus = "Pending" | "Submitted" | "Approved" | "Disputed";
-type SkillLevel = "Beginner" | "Intermediate" | "Advanced" | "Expert";
+type JobStatus = 'Open' | 'InProgress' | 'Completed' | 'Disputed' | 'Cancelled';
+type MilestoneStatus = 'Pending' | 'Submitted' | 'Approved' | 'Disputed';
+type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 
 interface Milestone {
   description: string;
@@ -57,91 +51,91 @@ interface SkillProfile {
 const MOCK_JOBS: Job[] = [
   {
     id: 0,
-    employer: "GBOSS...1234",
-    title: "Soroban Smart Contract Dev",
+    employer: 'GBOSS...1234',
+    title: 'Soroban Smart Contract Dev',
     budget: 5000,
     escrowed: 5000,
-    requiredSkills: ["Rust", "Soroban", "Blockchain"],
+    requiredSkills: ['Rust', 'Soroban', 'Blockchain'],
     milestones: [
-      { description: "Contract design", payment: 1000, status: "Approved" },
-      { description: "Implementation", payment: 3000, status: "Submitted" },
-      { description: "Testing & audit", payment: 1000, status: "Pending" },
+      { description: 'Contract design', payment: 1000, status: 'Approved' },
+      { description: 'Implementation', payment: 3000, status: 'Submitted' },
+      { description: 'Testing & audit', payment: 1000, status: 'Pending' },
     ],
-    applicant: "GWORK...5678",
-    status: "InProgress",
+    applicant: 'GWORK...5678',
+    status: 'InProgress',
     deadline: 1_200_000,
   },
   {
     id: 1,
-    employer: "GBOSS...ABCD",
-    title: "Frontend Web3 Integration",
+    employer: 'GBOSS...ABCD',
+    title: 'Frontend Web3 Integration',
     budget: 2000,
     escrowed: 2000,
-    requiredSkills: ["React", "TypeScript", "Stellar SDK"],
+    requiredSkills: ['React', 'TypeScript', 'Stellar SDK'],
     milestones: [
-      { description: "UI mockups", payment: 500, status: "Pending" },
-      { description: "Integration", payment: 1500, status: "Pending" },
+      { description: 'UI mockups', payment: 500, status: 'Pending' },
+      { description: 'Integration', payment: 1500, status: 'Pending' },
     ],
     applicant: null,
-    status: "Open",
+    status: 'Open',
     deadline: 1_300_000,
   },
   {
     id: 2,
-    employer: "GBOSS...EFGH",
-    title: "DeFi Protocol Audit",
+    employer: 'GBOSS...EFGH',
+    title: 'DeFi Protocol Audit',
     budget: 8000,
     escrowed: 0,
-    requiredSkills: ["Security", "Rust", "Soroban"],
+    requiredSkills: ['Security', 'Rust', 'Soroban'],
     milestones: [
-      { description: "Static analysis", payment: 3000, status: "Approved" },
-      { description: "Dynamic testing", payment: 3000, status: "Approved" },
-      { description: "Report", payment: 2000, status: "Approved" },
+      { description: 'Static analysis', payment: 3000, status: 'Approved' },
+      { description: 'Dynamic testing', payment: 3000, status: 'Approved' },
+      { description: 'Report', payment: 2000, status: 'Approved' },
     ],
-    applicant: "GWORK...9999",
-    status: "Completed",
+    applicant: 'GWORK...9999',
+    status: 'Completed',
     deadline: 1_100_000,
   },
 ];
 
 const MOCK_PROFILE: SkillProfile = {
-  owner: "GWORK...5678",
+  owner: 'GWORK...5678',
   attestations: [
-    { skill: "Rust", level: "Advanced", score: 88, expiresAt: 2_000_000 },
-    { skill: "Soroban", level: "Intermediate", score: 75, expiresAt: 2_000_000 },
-    { skill: "React", level: "Expert", score: 95, expiresAt: 2_000_000 },
-    { skill: "TypeScript", level: "Advanced", score: 82, expiresAt: 2_000_000 },
+    { skill: 'Rust', level: 'Advanced', score: 88, expiresAt: 2_000_000 },
+    { skill: 'Soroban', level: 'Intermediate', score: 75, expiresAt: 2_000_000 },
+    { skill: 'React', level: 'Expert', score: 95, expiresAt: 2_000_000 },
+    { skill: 'TypeScript', level: 'Advanced', score: 82, expiresAt: 2_000_000 },
   ],
-  badges: ["Rust", "React", "TypeScript"],
+  badges: ['Rust', 'React', 'TypeScript'],
 };
 
 const CURRENT_LEDGER = 1_150_000;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-const STATUS_VARIANT: Record<JobStatus, "default" | "secondary" | "destructive" | "outline"> = {
-  Open: "default",
-  InProgress: "secondary",
-  Completed: "outline",
-  Disputed: "destructive",
-  Cancelled: "destructive",
+const STATUS_VARIANT: Record<JobStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+  Open: 'default',
+  InProgress: 'secondary',
+  Completed: 'outline',
+  Disputed: 'destructive',
+  Cancelled: 'destructive',
 };
 
-const MS_VARIANT: Record<MilestoneStatus, "default" | "secondary" | "destructive" | "outline"> = {
-  Pending: "outline",
-  Submitted: "secondary",
-  Approved: "default",
-  Disputed: "destructive",
+const MS_VARIANT: Record<MilestoneStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+  Pending: 'outline',
+  Submitted: 'secondary',
+  Approved: 'default',
+  Disputed: 'destructive',
 };
 
 function milestoneProgress(milestones: Milestone[]): number {
-  const approved = milestones.filter((m) => m.status === "Approved").length;
+  const approved = milestones.filter((m) => m.status === 'Approved').length;
   return Math.round((approved / milestones.length) * 100);
 }
 
 function ledgersToLabel(ledger: number): string {
   const diff = ledger - CURRENT_LEDGER;
-  if (diff <= 0) return "Expired";
+  if (diff <= 0) return 'Expired';
   const hours = Math.round((diff * 5) / 3600);
   return hours < 24 ? `${hours}h left` : `${Math.round(hours / 24)}d left`;
 }
@@ -181,15 +175,15 @@ function JobCard({
           <span className="font-semibold">{job.budget.toLocaleString()} XLM</span>
           <span className="text-muted-foreground">{ledgersToLabel(job.deadline)}</span>
         </div>
-        {job.status === "InProgress" && (
+        {job.status === 'InProgress' && (
           <div>
-            <p className="mb-1 text-xs text-muted-foreground">
+            <p className="text-muted-foreground mb-1 text-xs">
               Progress: {milestoneProgress(job.milestones)}%
             </p>
             <Progress value={milestoneProgress(job.milestones)} />
           </div>
         )}
-        {job.status === "Open" && (
+        {job.status === 'Open' && (
           <Button
             size="sm"
             onClick={(e) => {
@@ -233,7 +227,7 @@ function JobDetail({
         </div>
         <div>
           <p className="text-muted-foreground">Worker</p>
-          <p className="font-mono text-xs">{job.applicant ?? "—"}</p>
+          <p className="font-mono text-xs">{job.applicant ?? '—'}</p>
         </div>
         <div>
           <p className="text-muted-foreground">Budget</p>
@@ -273,34 +267,21 @@ function JobDetail({
             >
               <div>
                 <p className="font-medium">{ms.description}</p>
-                <p className="text-xs text-muted-foreground">
-                  {ms.payment.toLocaleString()} XLM
-                </p>
+                <p className="text-muted-foreground text-xs">{ms.payment.toLocaleString()} XLM</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={MS_VARIANT[ms.status]}>{ms.status}</Badge>
-                {ms.status === "Pending" && job.applicant && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onSubmitMilestone(job.id, i)}
-                  >
+                {ms.status === 'Pending' && job.applicant && (
+                  <Button size="sm" variant="outline" onClick={() => onSubmitMilestone(job.id, i)}>
                     Submit
                   </Button>
                 )}
-                {ms.status === "Submitted" && (
+                {ms.status === 'Submitted' && (
                   <>
-                    <Button
-                      size="sm"
-                      onClick={() => onApproveMilestone(job.id, i)}
-                    >
+                    <Button size="sm" onClick={() => onApproveMilestone(job.id, i)}>
                       Approve
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onDispute(job.id, i)}
-                    >
+                    <Button size="sm" variant="destructive" onClick={() => onDispute(job.id, i)}>
                       Dispute
                     </Button>
                   </>
@@ -349,13 +330,13 @@ function SkillProfilePanel({ profile }: { profile: SkillProfile }) {
                   <td className="px-4 py-2 text-right">
                     <span
                       className={
-                        a.score >= 70 ? "text-green-600 font-semibold" : "text-destructive"
+                        a.score >= 70 ? 'font-semibold text-green-600' : 'text-destructive'
                       }
                     >
                       {a.score}
                     </span>
                   </td>
-                  <td className="px-4 py-2 text-right text-xs text-muted-foreground">
+                  <td className="text-muted-foreground px-4 py-2 text-right text-xs">
                     {ledgersToLabel(a.expiresAt)}
                   </td>
                 </tr>
@@ -371,7 +352,7 @@ function SkillProfilePanel({ profile }: { profile: SkillProfile }) {
 // ── Main component ─────────────────────────────────────────────────────────
 
 export default function JobBoard() {
-  const [tab, setTab] = useState("browse");
+  const [tab, setTab] = useState('browse');
   const [jobs, setJobs] = useState<Job[]>(MOCK_JOBS);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -381,103 +362,91 @@ export default function JobBoard() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleApply = useCallback(
-    (jobId: number) => {
-      notify(`Applied to job #${jobId}`);
-    },
-    []
-  );
+  const handleApply = useCallback((jobId: number) => {
+    notify(`Applied to job #${jobId}`);
+  }, []);
 
-  const handleSubmitMilestone = useCallback(
-    (jobId: number, idx: number) => {
-      setJobs((prev) =>
-        prev.map((j) => {
-          if (j.id !== jobId) return j;
-          const milestones = j.milestones.map((m, i) =>
-            i === idx ? { ...m, status: "Submitted" as MilestoneStatus } : m
-          );
-          return { ...j, milestones };
-        })
-      );
-      setSelectedJob((prev) => {
-        if (!prev || prev.id !== jobId) return prev;
-        const milestones = prev.milestones.map((m, i) =>
-          i === idx ? { ...m, status: "Submitted" as MilestoneStatus } : m
+  const handleSubmitMilestone = useCallback((jobId: number, idx: number) => {
+    setJobs((prev) =>
+      prev.map((j) => {
+        if (j.id !== jobId) return j;
+        const milestones = j.milestones.map((m, i) =>
+          i === idx ? { ...m, status: 'Submitted' as MilestoneStatus } : m
         );
-        return { ...prev, milestones };
-      });
-      notify(`Milestone ${idx + 1} submitted`);
-    },
-    []
-  );
+        return { ...j, milestones };
+      })
+    );
+    setSelectedJob((prev) => {
+      if (!prev || prev.id !== jobId) return prev;
+      const milestones = prev.milestones.map((m, i) =>
+        i === idx ? { ...m, status: 'Submitted' as MilestoneStatus } : m
+      );
+      return { ...prev, milestones };
+    });
+    notify(`Milestone ${idx + 1} submitted`);
+  }, []);
 
-  const handleApproveMilestone = useCallback(
-    (jobId: number, idx: number) => {
-      setJobs((prev) =>
-        prev.map((j) => {
-          if (j.id !== jobId) return j;
-          const milestones = j.milestones.map((m, i) =>
-            i === idx ? { ...m, status: "Approved" as MilestoneStatus } : m
-          );
-          const allDone = milestones.every((m) => m.status === "Approved");
-          const paid = milestones
-            .filter((m) => m.status === "Approved")
-            .reduce((s, m) => s + m.payment, 0);
-          return {
-            ...j,
-            milestones,
-            escrowed: j.budget - paid,
-            status: allDone ? ("Completed" as JobStatus) : j.status,
-          };
-        })
-      );
-      setSelectedJob((prev) => {
-        if (!prev || prev.id !== jobId) return prev;
-        const milestones = prev.milestones.map((m, i) =>
-          i === idx ? { ...m, status: "Approved" as MilestoneStatus } : m
+  const handleApproveMilestone = useCallback((jobId: number, idx: number) => {
+    setJobs((prev) =>
+      prev.map((j) => {
+        if (j.id !== jobId) return j;
+        const milestones = j.milestones.map((m, i) =>
+          i === idx ? { ...m, status: 'Approved' as MilestoneStatus } : m
         );
-        const allDone = milestones.every((m) => m.status === "Approved");
+        const allDone = milestones.every((m) => m.status === 'Approved');
         const paid = milestones
-          .filter((m) => m.status === "Approved")
+          .filter((m) => m.status === 'Approved')
           .reduce((s, m) => s + m.payment, 0);
         return {
-          ...prev,
+          ...j,
           milestones,
-          escrowed: prev.budget - paid,
-          status: allDone ? ("Completed" as JobStatus) : prev.status,
+          escrowed: j.budget - paid,
+          status: allDone ? ('Completed' as JobStatus) : j.status,
         };
-      });
-      notify(`Milestone ${idx + 1} approved — payment released`);
-    },
-    []
-  );
-
-  const handleDispute = useCallback(
-    (jobId: number, idx: number) => {
-      setJobs((prev) =>
-        prev.map((j) => {
-          if (j.id !== jobId) return j;
-          const milestones = j.milestones.map((m, i) =>
-            i === idx ? { ...m, status: "Disputed" as MilestoneStatus } : m
-          );
-          return { ...j, milestones, status: "Disputed" as JobStatus };
-        })
+      })
+    );
+    setSelectedJob((prev) => {
+      if (!prev || prev.id !== jobId) return prev;
+      const milestones = prev.milestones.map((m, i) =>
+        i === idx ? { ...m, status: 'Approved' as MilestoneStatus } : m
       );
-      setSelectedJob((prev) => {
-        if (!prev || prev.id !== jobId) return prev;
-        const milestones = prev.milestones.map((m, i) =>
-          i === idx ? { ...m, status: "Disputed" as MilestoneStatus } : m
-        );
-        return { ...prev, milestones, status: "Disputed" as JobStatus };
-      });
-      notify(`Dispute opened on milestone ${idx + 1}`);
-    },
-    []
-  );
+      const allDone = milestones.every((m) => m.status === 'Approved');
+      const paid = milestones
+        .filter((m) => m.status === 'Approved')
+        .reduce((s, m) => s + m.payment, 0);
+      return {
+        ...prev,
+        milestones,
+        escrowed: prev.budget - paid,
+        status: allDone ? ('Completed' as JobStatus) : prev.status,
+      };
+    });
+    notify(`Milestone ${idx + 1} approved — payment released`);
+  }, []);
 
-  const openJobs = jobs.filter((j) => j.status === "Open");
-  const activeJobs = jobs.filter((j) => j.status === "InProgress" || j.status === "Disputed");
-  const completedJobs = jobs.filter((j) => j.status === "Completed");
+  const handleDispute = useCallback((jobId: number, idx: number) => {
+    setJobs((prev) =>
+      prev.map((j) => {
+        if (j.id !== jobId) return j;
+        const milestones = j.milestones.map((m, i) =>
+          i === idx ? { ...m, status: 'Disputed' as MilestoneStatus } : m
+        );
+        return { ...j, milestones, status: 'Disputed' as JobStatus };
+      })
+    );
+    setSelectedJob((prev) => {
+      if (!prev || prev.id !== jobId) return prev;
+      const milestones = prev.milestones.map((m, i) =>
+        i === idx ? { ...m, status: 'Disputed' as MilestoneStatus } : m
+      );
+      return { ...prev, milestones, status: 'Disputed' as JobStatus };
+    });
+    notify(`Dispute opened on milestone ${idx + 1}`);
+  }, []);
+
+  const openJobs = jobs.filter((j) => j.status === 'Open');
+  const activeJobs = jobs.filter((j) => j.status === 'InProgress' || j.status === 'Disputed');
+  const completedJobs = jobs.filter((j) => j.status === 'Completed');
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
@@ -497,27 +466,27 @@ export default function JobBoard() {
 
       <Tabs>
         <TabsList>
-          {["browse", "active", "profile"].map((t) => (
+          {['browse', 'active', 'profile'].map((t) => (
             <TabsTrigger
               key={t}
               value={t}
-              data-state={tab === t ? "active" : "inactive"}
+              data-state={tab === t ? 'active' : 'inactive'}
               onClick={() => {
                 setTab(t);
                 setSelectedJob(null);
               }}
             >
-              {t === "browse"
+              {t === 'browse'
                 ? `Browse (${openJobs.length})`
-                : t === "active"
-                ? `Active (${activeJobs.length})`
-                : "My Skills"}
+                : t === 'active'
+                  ? `Active (${activeJobs.length})`
+                  : 'My Skills'}
             </TabsTrigger>
           ))}
         </TabsList>
 
         {/* Browse tab */}
-        <TabsContent value="browse" className={tab !== "browse" ? "hidden" : ""}>
+        <TabsContent value="browse" className={tab !== 'browse' ? 'hidden' : ''}>
           {selectedJob ? (
             <div className="mt-4 space-y-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedJob(null)}>
@@ -533,32 +502,20 @@ export default function JobBoard() {
           ) : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {openJobs.length === 0 && (
-                <p className="col-span-2 text-sm text-muted-foreground">
-                  No open jobs right now.
-                </p>
+                <p className="text-muted-foreground col-span-2 text-sm">No open jobs right now.</p>
               )}
               {openJobs.map((j) => (
-                <JobCard
-                  key={j.id}
-                  job={j}
-                  onApply={handleApply}
-                  onSelect={setSelectedJob}
-                />
+                <JobCard key={j.id} job={j} onApply={handleApply} onSelect={setSelectedJob} />
               ))}
               {completedJobs.map((j) => (
-                <JobCard
-                  key={j.id}
-                  job={j}
-                  onApply={handleApply}
-                  onSelect={setSelectedJob}
-                />
+                <JobCard key={j.id} job={j} onApply={handleApply} onSelect={setSelectedJob} />
               ))}
             </div>
           )}
         </TabsContent>
 
         {/* Active tab */}
-        <TabsContent value="active" className={tab !== "active" ? "hidden" : ""}>
+        <TabsContent value="active" className={tab !== 'active' ? 'hidden' : ''}>
           {selectedJob ? (
             <div className="mt-4 space-y-4">
               <Button variant="ghost" size="sm" onClick={() => setSelectedJob(null)}>
@@ -574,24 +531,17 @@ export default function JobBoard() {
           ) : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {activeJobs.length === 0 && (
-                <p className="col-span-2 text-sm text-muted-foreground">
-                  No active jobs.
-                </p>
+                <p className="text-muted-foreground col-span-2 text-sm">No active jobs.</p>
               )}
               {activeJobs.map((j) => (
-                <JobCard
-                  key={j.id}
-                  job={j}
-                  onApply={handleApply}
-                  onSelect={setSelectedJob}
-                />
+                <JobCard key={j.id} job={j} onApply={handleApply} onSelect={setSelectedJob} />
               ))}
             </div>
           )}
         </TabsContent>
 
         {/* Skills tab */}
-        <TabsContent value="profile" className={tab !== "profile" ? "hidden" : ""}>
+        <TabsContent value="profile" className={tab !== 'profile' ? 'hidden' : ''}>
           <div className="mt-4">
             <SkillProfilePanel profile={MOCK_PROFILE} />
           </div>

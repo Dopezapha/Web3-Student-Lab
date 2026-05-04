@@ -1,30 +1,30 @@
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Web3 Student Lab - Blockchain Education Platform",
+  title: 'Web3 Student Lab - Blockchain Education Platform',
   description:
-    "Learn blockchain development with hands-on experience using Soroban smart contracts and Stellar blockchain",
+    'Learn blockchain development with hands-on experience using Soroban smart contracts and Stellar blockchain',
 };
 
-import Navbar from "@/components/layout/Navbar";
-import ResiliencyBanner from "@/components/layout/ResiliencyBanner";
-import { ToastContainer } from "@/components/notifications/ToastContainer";
-import { NotificationProvider } from "@/contexts/NotificationContext";
-import { I18nProvider } from "@/i18n";
+import Navbar from '@/components/layout/Navbar';
+import ResiliencyBanner from '@/components/layout/ResiliencyBanner';
+import { ToastContainer } from '@/components/notifications/ToastContainer';
+import { NotificationProvider } from '@/contexts/NotificationContext';
+import { I18nProvider } from '@/i18n';
 
 export default function RootLayout({
   children,
@@ -53,7 +53,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen transition-colors duration-200`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground min-h-screen antialiased transition-colors duration-200`}
       >
         <ThemeProvider>
           <AuthProvider>
@@ -63,7 +63,9 @@ export default function RootLayout({
               </a>
               <Navbar />
               <ResiliencyBanner />
-              <main id="main-content" className="flex-grow">{children}</main>
+              <main id="main-content" className="flex-grow">
+                {children}
+              </main>
               <ToastContainer />
             </NotificationProvider>
             <I18nProvider>
@@ -72,7 +74,9 @@ export default function RootLayout({
                   Skip to main content
                 </a>
                 <Navbar />
-                <main id="main-content" className="flex-grow">{children}</main>
+                <main id="main-content" className="flex-grow">
+                  {children}
+                </main>
                 <ToastContainer />
               </NotificationProvider>
             </I18nProvider>

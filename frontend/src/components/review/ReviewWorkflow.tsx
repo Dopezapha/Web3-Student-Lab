@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-    BookOpen,
-    CheckCircle,
-    Clock,
-    Edit3,
-    MessageSquare,
-    Send,
-    Shield,
-    Star,
-    Wrench,
-    XCircle,
-    Zap
-} from "lucide-react";
-import React, { useState } from "react";
-import { ReviewManager, ReviewRequest, ReviewSummary } from "../../lib/review/ReviewManager";
+  BookOpen,
+  CheckCircle,
+  Clock,
+  Edit3,
+  MessageSquare,
+  Send,
+  Shield,
+  Star,
+  Wrench,
+  XCircle,
+  Zap,
+} from 'lucide-react';
+import React, { useState } from 'react';
+import { ReviewManager, ReviewRequest, ReviewSummary } from '../../lib/review/ReviewManager';
 
 interface ReviewWorkflowProps {
   review: ReviewRequest;
@@ -31,7 +31,7 @@ interface ReviewWorkflowProps {
 }
 
 interface ReviewFormData {
-  status: "approved" | "rejected" | "changes_requested";
+  status: 'approved' | 'rejected' | 'changes_requested';
   overallScore: number;
   scores: {
     security: number;
@@ -46,79 +46,79 @@ interface ReviewFormData {
 
 const CRITERIA_CONFIG = [
   {
-    key: "security",
-    label: "Security",
+    key: 'security',
+    label: 'Security',
     icon: Shield,
-    description: "Code security and vulnerability assessment",
-    color: "text-red-400",
-    bgColor: "bg-red-500/10",
+    description: 'Code security and vulnerability assessment',
+    color: 'text-red-400',
+    bgColor: 'bg-red-500/10',
   },
   {
-    key: "efficiency",
-    label: "Efficiency",
+    key: 'efficiency',
+    label: 'Efficiency',
     icon: Zap,
-    description: "Performance and optimization",
-    color: "text-yellow-400",
-    bgColor: "bg-yellow-500/10",
+    description: 'Performance and optimization',
+    color: 'text-yellow-400',
+    bgColor: 'bg-yellow-500/10',
   },
   {
-    key: "readability",
-    label: "Readability",
+    key: 'readability',
+    label: 'Readability',
     icon: BookOpen,
-    description: "Code clarity and documentation",
-    color: "text-blue-400",
-    bgColor: "bg-blue-500/10",
+    description: 'Code clarity and documentation',
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-500/10',
   },
   {
-    key: "maintainability",
-    label: "Maintainability",
+    key: 'maintainability',
+    label: 'Maintainability',
     icon: Wrench,
-    description: "Code structure and modularity",
-    color: "text-green-400",
-    bgColor: "bg-green-500/10",
+    description: 'Code structure and modularity',
+    color: 'text-green-400',
+    bgColor: 'bg-green-500/10',
   },
 ];
 
 const STATUS_CONFIG = {
   approved: {
     icon: CheckCircle,
-    label: "Approve",
-    color: "bg-green-600 hover:bg-green-500",
-    textColor: "text-green-400",
-    bgColor: "bg-green-500/10",
-    description: "Code is ready to merge",
+    label: 'Approve',
+    color: 'bg-green-600 hover:bg-green-500',
+    textColor: 'text-green-400',
+    bgColor: 'bg-green-500/10',
+    description: 'Code is ready to merge',
   },
   rejected: {
     icon: XCircle,
-    label: "Reject",
-    color: "bg-red-600 hover:bg-red-500",
-    textColor: "text-red-400",
-    bgColor: "bg-red-500/10",
-    description: "Code needs significant changes",
+    label: 'Reject',
+    color: 'bg-red-600 hover:bg-red-500',
+    textColor: 'text-red-400',
+    bgColor: 'bg-red-500/10',
+    description: 'Code needs significant changes',
   },
   changes_requested: {
     icon: Edit3,
-    label: "Request Changes",
-    color: "bg-orange-600 hover:bg-orange-500",
-    textColor: "text-orange-400",
-    bgColor: "bg-orange-500/10",
-    description: "Code needs minor changes",
+    label: 'Request Changes',
+    color: 'bg-orange-600 hover:bg-orange-500',
+    textColor: 'text-orange-400',
+    bgColor: 'bg-orange-500/10',
+    description: 'Code needs minor changes',
   },
   pending: {
     icon: Clock,
-    label: "Pending",
-    color: "bg-gray-600 hover:bg-gray-500",
-    textColor: "text-gray-400",
-    bgColor: "bg-gray-500/10",
-    description: "Review is pending",
+    label: 'Pending',
+    color: 'bg-gray-600 hover:bg-gray-500',
+    textColor: 'text-gray-400',
+    bgColor: 'bg-gray-500/10',
+    description: 'Review is pending',
   },
   completed: {
     icon: CheckCircle,
-    label: "Completed",
-    color: "bg-blue-600 hover:bg-blue-500",
-    textColor: "text-blue-400",
-    bgColor: "bg-blue-500/10",
-    description: "Review is completed",
+    label: 'Completed',
+    color: 'bg-blue-600 hover:bg-blue-500',
+    textColor: 'text-blue-400',
+    bgColor: 'bg-blue-500/10',
+    description: 'Review is completed',
   },
 };
 
@@ -134,7 +134,7 @@ export default function ReviewWorkflow({
   const [existingSummary, setExistingSummary] = useState<ReviewSummary | null>(null);
 
   const [formData, setFormData] = useState<ReviewFormData>({
-    status: "approved",
+    status: 'approved',
     overallScore: 7,
     scores: {
       security: 7,
@@ -144,16 +144,16 @@ export default function ReviewWorkflow({
     },
     comments: [],
     suggestions: [],
-    summary: "",
+    summary: '',
   });
 
-  const [newComment, setNewComment] = useState("");
-  const [newSuggestion, setNewSuggestion] = useState("");
+  const [newComment, setNewComment] = useState('');
+  const [newSuggestion, setNewSuggestion] = useState('');
 
   // Check if user has already reviewed
   React.useEffect(() => {
     const summaries = reviewManager.getSummaries(review.id);
-    const userSummary = summaries.find(s => s.reviewer.id === currentUser.id);
+    const userSummary = summaries.find((s) => s.reviewer.id === currentUser.id);
     setExistingSummary(userSummary || null);
 
     if (userSummary) {
@@ -163,16 +163,16 @@ export default function ReviewWorkflow({
         scores: userSummary.scores,
         comments: userSummary.comments,
         suggestions: userSummary.suggestions,
-        summary: "", // Summary is not stored in ReviewSummary
+        summary: '', // Summary is not stored in ReviewSummary
       });
     }
   }, [review.id, reviewManager, currentUser.id]);
 
   // Calculate overall score from individual scores
-  const calculateOverallScore = (scores: ReviewFormData["scores"]) => {
+  const calculateOverallScore = (scores: ReviewFormData['scores']) => {
     const weights = { security: 0.3, efficiency: 0.25, readability: 0.25, maintainability: 0.2 };
     const weightedScore = Object.entries(scores).reduce((sum, [key, value]) => {
-      return sum + (value * weights[key as keyof typeof weights]);
+      return sum + value * weights[key as keyof typeof weights];
     }, 0);
     return Math.round(weightedScore * 10) / 10;
   };
@@ -180,12 +180,12 @@ export default function ReviewWorkflow({
   // Update overall score when individual scores change
   React.useEffect(() => {
     const overall = calculateOverallScore(formData.scores);
-    setFormData(prev => ({ ...prev, overallScore: overall }));
+    setFormData((prev) => ({ ...prev, overallScore: overall }));
   }, [formData.scores]);
 
   // Handle score change
-  const handleScoreChange = (criterion: keyof ReviewFormData["scores"], value: number) => {
-    setFormData(prev => ({
+  const handleScoreChange = (criterion: keyof ReviewFormData['scores'], value: number) => {
+    setFormData((prev) => ({
       ...prev,
       scores: {
         ...prev.scores,
@@ -197,17 +197,17 @@ export default function ReviewWorkflow({
   // Add comment
   const addComment = () => {
     if (newComment.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         comments: [...prev.comments, newComment.trim()],
       }));
-      setNewComment("");
+      setNewComment('');
     }
   };
 
   // Remove comment
   const removeComment = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       comments: prev.comments.filter((_, i) => i !== index),
     }));
@@ -216,17 +216,17 @@ export default function ReviewWorkflow({
   // Add suggestion
   const addSuggestion = () => {
     if (newSuggestion.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         suggestions: [...prev.suggestions, newSuggestion.trim()],
       }));
-      setNewSuggestion("");
+      setNewSuggestion('');
     }
   };
 
   // Remove suggestion
   const removeSuggestion = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       suggestions: prev.suggestions.filter((_, i) => i !== index),
     }));
@@ -239,7 +239,7 @@ export default function ReviewWorkflow({
     setIsSubmitting(true);
 
     try {
-      const reviewSummary: Omit<ReviewSummary, "id" | "submittedAt"> = {
+      const reviewSummary: Omit<ReviewSummary, 'id' | 'submittedAt'> = {
         reviewId: review.id,
         reviewer: {
           id: currentUser.id,
@@ -266,13 +266,13 @@ export default function ReviewWorkflow({
 
       setIsReviewing(false);
     } catch (error) {
-      console.error("Error submitting review:", error);
+      console.error('Error submitting review:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const canReview = review.reviewers.some(r => r.id === currentUser.id);
+  const canReview = review.reviewers.some((r) => r.id === currentUser.id);
   const hasReviewed = existingSummary !== null;
 
   return (
@@ -281,14 +281,18 @@ export default function ReviewWorkflow({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold text-white">Review: {review.title}</h3>
-          <p className="text-gray-400 mt-1">{review.description}</p>
+          <p className="mt-1 text-gray-400">{review.description}</p>
         </div>
 
         <div className="flex items-center space-x-3">
           {hasReviewed && (
-            <div className={`px-3 py-1 rounded-full text-sm text-white ${STATUS_CONFIG[existingSummary!.status].bgColor} ${STATUS_CONFIG[existingSummary!.status].textColor}`}>
+            <div
+              className={`rounded-full px-3 py-1 text-sm text-white ${STATUS_CONFIG[existingSummary!.status].bgColor} ${STATUS_CONFIG[existingSummary!.status].textColor}`}
+            >
               <div className="flex items-center space-x-1">
-                {React.createElement(STATUS_CONFIG[existingSummary!.status].icon, { className: "w-4 h-4" })}
+                {React.createElement(STATUS_CONFIG[existingSummary!.status].icon, {
+                  className: 'w-4 h-4',
+                })}
                 <span>Already Reviewed</span>
               </div>
             </div>
@@ -297,9 +301,9 @@ export default function ReviewWorkflow({
           {canReview && (
             <button
               onClick={() => setIsReviewing(!isReviewing)}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+              className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500"
             >
-              {hasReviewed ? "Edit Review" : "Start Review"}
+              {hasReviewed ? 'Edit Review' : 'Start Review'}
             </button>
           )}
         </div>
@@ -310,8 +314,8 @@ export default function ReviewWorkflow({
         <h4 className="text-lg font-semibold text-white">Previous Reviews</h4>
 
         {reviewManager.getSummaries(review.id).length === 0 ? (
-          <div className="text-center py-8 text-gray-400">
-            <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <div className="py-8 text-center text-gray-400">
+            <MessageSquare className="mx-auto mb-4 h-12 w-12 opacity-50" />
             <p>No reviews yet</p>
           </div>
         ) : (
@@ -320,43 +324,55 @@ export default function ReviewWorkflow({
               key={summary.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 bg-zinc-950 border border-white/10 rounded-lg"
+              className="rounded-lg border border-white/10 bg-zinc-950 p-4"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-sm font-bold">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 text-sm font-bold text-red-400">
                     {summary.reviewer.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-white font-medium">{summary.reviewer.name}</p>
+                    <p className="font-medium text-white">{summary.reviewer.name}</p>
                     <p className="text-xs text-gray-400">
-                      {summary.approvedAt ? `Approved ${summary.approvedAt.toLocaleDateString()}` : `Submitted ${summary.submittedAt.toLocaleDateString()}`}
+                      {summary.approvedAt
+                        ? `Approved ${summary.approvedAt.toLocaleDateString()}`
+                        : `Submitted ${summary.submittedAt.toLocaleDateString()}`}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="text-white font-medium">{summary.overallScore.toFixed(1)}</span>
+                    <Star className="h-4 w-4 text-yellow-400" />
+                    <span className="font-medium text-white">
+                      {summary.overallScore.toFixed(1)}
+                    </span>
                   </div>
 
-                  <div className={`px-2 py-1 rounded-full text-xs text-white ${STATUS_CONFIG[summary.status].bgColor} ${STATUS_CONFIG[summary.status].textColor}`}>
-                    {React.createElement(STATUS_CONFIG[summary.status].icon, { className: "w-3 h-3 inline mr-1" })}
+                  <div
+                    className={`rounded-full px-2 py-1 text-xs text-white ${STATUS_CONFIG[summary.status].bgColor} ${STATUS_CONFIG[summary.status].textColor}`}
+                  >
+                    {React.createElement(STATUS_CONFIG[summary.status].icon, {
+                      className: 'w-3 h-3 inline mr-1',
+                    })}
                     {summary.status.replace('_', ' ')}
                   </div>
                 </div>
               </div>
 
               {/* Score breakdown */}
-              <div className="grid grid-cols-4 gap-3 mb-4">
+              <div className="mb-4 grid grid-cols-4 gap-3">
                 {CRITERIA_CONFIG.map((criterion) => (
                   <div key={criterion.key} className="text-center">
-                    <div className={`w-8 h-8 rounded-full ${criterion.bgColor} ${criterion.color} flex items-center justify-center mx-auto mb-1`}>
-                      {React.createElement(criterion.icon, { className: "w-4 h-4" })}
+                    <div
+                      className={`h-8 w-8 rounded-full ${criterion.bgColor} ${criterion.color} mx-auto mb-1 flex items-center justify-center`}
+                    >
+                      {React.createElement(criterion.icon, { className: 'w-4 h-4' })}
                     </div>
                     <p className="text-xs text-gray-400">{criterion.label}</p>
-                    <p className="text-sm font-medium text-white">{summary.scores[criterion.key as keyof typeof summary.scores]}</p>
+                    <p className="text-sm font-medium text-white">
+                      {summary.scores[criterion.key as keyof typeof summary.scores]}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -364,11 +380,11 @@ export default function ReviewWorkflow({
               {/* Comments and suggestions */}
               {summary.comments.length > 0 && (
                 <div className="mb-3">
-                  <h5 className="text-sm font-medium text-white mb-2">Comments</h5>
+                  <h5 className="mb-2 text-sm font-medium text-white">Comments</h5>
                   <ul className="space-y-1">
                     {summary.comments.map((comment, index) => (
-                      <li key={index} className="text-sm text-gray-300 flex items-start space-x-2">
-                        <span className="text-red-400 mt-1">•</span>
+                      <li key={index} className="flex items-start space-x-2 text-sm text-gray-300">
+                        <span className="mt-1 text-red-400">•</span>
                         <span>{comment}</span>
                       </li>
                     ))}
@@ -378,11 +394,11 @@ export default function ReviewWorkflow({
 
               {summary.suggestions.length > 0 && (
                 <div>
-                  <h5 className="text-sm font-medium text-white mb-2">Suggestions</h5>
+                  <h5 className="mb-2 text-sm font-medium text-white">Suggestions</h5>
                   <ul className="space-y-1">
                     {summary.suggestions.map((suggestion, index) => (
-                      <li key={index} className="text-sm text-gray-300 flex items-start space-x-2">
-                        <span className="text-blue-400 mt-1">→</span>
+                      <li key={index} className="flex items-start space-x-2 text-sm text-gray-300">
+                        <span className="mt-1 text-blue-400">→</span>
                         <span>{suggestion}</span>
                       </li>
                     ))}
@@ -399,33 +415,35 @@ export default function ReviewWorkflow({
         {isReviewing && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="p-6 bg-zinc-950 border border-white/10 rounded-lg"
+            className="rounded-lg border border-white/10 bg-zinc-950 p-6"
           >
-            <h4 className="text-lg font-semibold text-white mb-6">
-              {hasReviewed ? "Edit Your Review" : "Submit Your Review"}
+            <h4 className="mb-6 text-lg font-semibold text-white">
+              {hasReviewed ? 'Edit Your Review' : 'Submit Your Review'}
             </h4>
 
             {/* Status Selection */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-white mb-3">Review Decision</label>
+              <label className="mb-3 block text-sm font-medium text-white">Review Decision</label>
               <div className="grid grid-cols-3 gap-3">
                 {Object.entries(STATUS_CONFIG).map(([status, config]) => (
                   <button
                     key={status}
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, status: status as any }))}
-                    className={`p-3 rounded-lg border-2 transition-all ${
+                    onClick={() => setFormData((prev) => ({ ...prev, status: status as any }))}
+                    className={`rounded-lg border-2 p-3 transition-all ${
                       formData.status === status
                         ? `border-white/40 ${config.bgColor} ${config.textColor}`
-                        : "border-white/10 hover:border-white/20 bg-white/5"
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
                     }`}
                   >
                     <div className="flex flex-col items-center space-y-2">
-                      {React.createElement(config.icon, { className: "w-6 h-6" })}
+                      {React.createElement(config.icon, { className: 'w-6 h-6' })}
                       <span className="text-sm font-medium">{config.label}</span>
-                      <span className="text-xs text-gray-400 text-center">{config.description}</span>
+                      <span className="text-center text-xs text-gray-400">
+                        {config.description}
+                      </span>
                     </div>
                   </button>
                 ))}
@@ -434,22 +452,32 @@ export default function ReviewWorkflow({
 
             {/* Scoring */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-white mb-3">Scoring (1-10)</label>
+              <label className="mb-3 block text-sm font-medium text-white">Scoring (1-10)</label>
               <div className="grid grid-cols-2 gap-4">
                 {CRITERIA_CONFIG.map((criterion) => (
-                  <div key={criterion.key} className={`p-3 rounded-lg border ${criterion.bgColor} border-white/10`}>
-                    <div className="flex items-center space-x-2 mb-2">
-                      {React.createElement(criterion.icon, { className: `w-4 h-4 ${criterion.color}` })}
+                  <div
+                    key={criterion.key}
+                    className={`rounded-lg border p-3 ${criterion.bgColor} border-white/10`}
+                  >
+                    <div className="mb-2 flex items-center space-x-2">
+                      {React.createElement(criterion.icon, {
+                        className: `w-4 h-4 ${criterion.color}`,
+                      })}
                       <span className="text-sm font-medium text-white">{criterion.label}</span>
                     </div>
-                    <p className="text-xs text-gray-400 mb-2">{criterion.description}</p>
+                    <p className="mb-2 text-xs text-gray-400">{criterion.description}</p>
                     <div className="flex items-center space-x-2">
                       <input
                         type="range"
                         min="1"
                         max="10"
                         value={formData.scores[criterion.key as keyof typeof formData.scores]}
-                        onChange={(e) => handleScoreChange(criterion.key as keyof typeof formData.scores, parseInt(e.target.value))}
+                        onChange={(e) =>
+                          handleScoreChange(
+                            criterion.key as keyof typeof formData.scores,
+                            parseInt(e.target.value)
+                          )
+                        }
                         className="flex-1"
                       />
                       <span className={`text-sm font-bold ${criterion.color} w-8 text-center`}>
@@ -460,12 +488,14 @@ export default function ReviewWorkflow({
                 ))}
               </div>
 
-              <div className="mt-4 p-3 bg-white/5 rounded-lg border border-white/10">
+              <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-white">Overall Score</span>
                   <div className="flex items-center space-x-2">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="text-lg font-bold text-white">{formData.overallScore.toFixed(1)}</span>
+                    <Star className="h-4 w-4 text-yellow-400" />
+                    <span className="text-lg font-bold text-white">
+                      {formData.overallScore.toFixed(1)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -473,20 +503,20 @@ export default function ReviewWorkflow({
 
             {/* Comments */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-white mb-3">Comments</label>
-              <div className="flex space-x-2 mb-3">
+              <label className="mb-3 block text-sm font-medium text-white">Comments</label>
+              <div className="mb-3 flex space-x-2">
                 <input
                   type="text"
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addComment()}
                   placeholder="Add a comment..."
-                  className="flex-1 px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                  className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={addComment}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+                  className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500"
                 >
                   Add
                 </button>
@@ -495,14 +525,17 @@ export default function ReviewWorkflow({
               {formData.comments.length > 0 && (
                 <div className="space-y-2">
                   {formData.comments.map((comment, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between rounded-lg bg-white/5 p-2"
+                    >
                       <span className="text-sm text-gray-300">{comment}</span>
                       <button
                         type="button"
                         onClick={() => removeComment(index)}
                         className="text-red-400 hover:text-red-300"
                       >
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="h-4 w-4" />
                       </button>
                     </div>
                   ))}
@@ -512,20 +545,20 @@ export default function ReviewWorkflow({
 
             {/* Suggestions */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-white mb-3">Suggestions</label>
-              <div className="flex space-x-2 mb-3">
+              <label className="mb-3 block text-sm font-medium text-white">Suggestions</label>
+              <div className="mb-3 flex space-x-2">
                 <input
                   type="text"
                   value={newSuggestion}
                   onChange={(e) => setNewSuggestion(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addSuggestion()}
                   placeholder="Add a suggestion..."
-                  className="flex-1 px-3 py-2 bg-black/50 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60"
+                  className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-white placeholder-gray-400 focus:border-red-500/60 focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={addSuggestion}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-500"
                 >
                   Add
                 </button>
@@ -534,14 +567,17 @@ export default function ReviewWorkflow({
               {formData.suggestions.length > 0 && (
                 <div className="space-y-2">
                   {formData.suggestions.map((suggestion, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between rounded-lg bg-white/5 p-2"
+                    >
                       <span className="text-sm text-gray-300">{suggestion}</span>
                       <button
                         type="button"
                         onClick={() => removeSuggestion(index)}
                         className="text-red-400 hover:text-red-300"
                       >
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="h-4 w-4" />
                       </button>
                     </div>
                   ))}
@@ -550,11 +586,11 @@ export default function ReviewWorkflow({
             </div>
 
             {/* Submit buttons */}
-            <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+            <div className="flex justify-end space-x-3 border-t border-white/10 pt-4">
               <button
                 type="button"
                 onClick={() => setIsReviewing(false)}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-500"
               >
                 Cancel
               </button>
@@ -562,17 +598,17 @@ export default function ReviewWorkflow({
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors flex items-center space-x-2 disabled:opacity-50"
+                className="flex items-center space-x-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-500 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
-                    <Clock className="w-4 h-4 animate-spin" />
+                    <Clock className="h-4 w-4 animate-spin" />
                     <span>Submitting...</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
-                    <span>{hasReviewed ? "Update Review" : "Submit Review"}</span>
+                    <Send className="h-4 w-4" />
+                    <span>{hasReviewed ? 'Update Review' : 'Submit Review'}</span>
                   </>
                 )}
               </button>
