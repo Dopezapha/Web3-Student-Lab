@@ -307,6 +307,8 @@ export class CertificateService {
       include: {
         student: {
           select: {
+            id: true,
+            email: true,
             walletAddress: true,
             did: true,
             firstName: true,
@@ -333,6 +335,8 @@ export class CertificateService {
       include: {
         student: {
           select: {
+            id: true,
+            email: true,
             walletAddress: true,
             did: true,
             firstName: true,
@@ -355,6 +359,8 @@ export class CertificateService {
       include: {
         student: {
           select: {
+            id: true,
+            email: true,
             walletAddress: true,
             did: true,
             firstName: true,
@@ -381,8 +387,12 @@ export class CertificateService {
       include: {
         student: {
           select: {
+            id: true,
+            email: true,
             walletAddress: true,
             did: true,
+            firstName: true,
+            lastName: true,
           },
         },
         course: true,
@@ -406,8 +416,12 @@ export class CertificateService {
         include: {
           student: {
             select: {
+              id: true,
+              email: true,
               walletAddress: true,
               did: true,
+              firstName: true,
+              lastName: true,
             },
           },
           course: true,

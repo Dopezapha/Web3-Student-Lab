@@ -4,8 +4,7 @@
 //! optimized for gas efficiency and easy parsing by indexers.
 
 use soroban_sdk::{
-    contracttype, Address, BytesN, Env, Symbol, Vec,
-    Address, BytesN, Env, String, Symbol, Vec,
+    contracttype, Address, Bytes, BytesN, Env, String, Symbol, Vec,
 };
 
 /// Certificate event types for on-chain activity logging.
@@ -123,6 +122,8 @@ impl<'a> EventPublisher<'a> {
         metadata_hash: BytesN<32>,
         minted_by: &Address,
     ) {
+        let course_id_copy = course_id.clone();
+        let metadata_hash_copy = metadata_hash.clone();
         let event = CertificateMintedEvent {
             token_id,
             recipient: recipient.clone(),
@@ -137,7 +138,7 @@ impl<'a> EventPublisher<'a> {
                 Symbol::new(self.env, "cert_minted"),
                 Symbol::new(self.env, "v2"),
             ),
-            (token_id, recipient.clone(), course_id, metadata_hash, event.minted_at, minted_by.clone()),
+            (token_id, recipient.clone(), course_id_copy, metadata_hash_copy, event.minted_at, minted_by.clone()),
         );
     }
 
@@ -172,6 +173,7 @@ impl<'a> EventPublisher<'a> {
         count: u32,
         minted_by: &Address,
     ) {
+        let course_id_copy = course_id.clone();
         let event = CertificateBatchMintedEvent {
             minted_at: self.env.ledger().timestamp(),
             minted_by: minted_by.clone(),
@@ -185,7 +187,7 @@ impl<'a> EventPublisher<'a> {
                 Symbol::new(self.env, "batch_minted"),
                 Symbol::new(self.env, "v2"),
             ),
-            (token_ids, course_id, count, event.minted_at, minted_by.clone()),
+            (token_ids, course_id_copy, count, event.minted_at, minted_by.clone()),
         );
     }
 
@@ -449,7 +451,7 @@ impl<'a> EventPublisher<'a> {
 pub struct EventRecorder<'a> {
     env: &'a Env,
     contract_address: Address,
-    publisher: EventPublisher<'a>,
+    pub publisher: EventPublisher<'a>,
 }
 
 impl<'a> EventRecorder<'a> {
@@ -483,21 +485,20 @@ impl<'a> EventRecorder<'a> {
 }
 
 /// Helper function to generate a unique token ID from course symbol and student address.
-/// This is a simple hash combining the course symbol string and student address.
+/// This is a hash combining the course symbol and student address.
 pub fn generate_token_id(env: &Env, course_symbol: &Symbol, student: &Address) -> u128 {
-    let course_str = course_symbol.to_string();
-    let course_bytes = course_str.as_bytes();
-    let student_bytes = student.to_xdr(env);
-
-    let mut hash: u128 = 0;
-    for &b in course_bytes.iter() {
-        hash = hash.wrapping_mul(31).wrapping_add(b as u128);
+    use soroban_sdk::xdr::ToXdr;
+    let mut buffer = Bytes::new(env);
+    buffer.append(&course_symbol.clone().to_xdr(env));
+    buffer.append(&student.clone().to_xdr(env));
+    let hash_bytes = env.crypto().sha256(&buffer);
+    
+    // Extract first 16 bytes for u128
+    let mut hash_arr = [0u8; 16];
+    for i in 0..16 {
+        hash_arr[i] = BytesN::from(hash_bytes.clone()).get(i as u32).unwrap_or(0);
     }
-    for &b in student_bytes.iter() {
-        hash = hash.wrapping_mul(31).wrapping_add(b as u128);
-    }
-
-    hash
+    u128::from_be_bytes(hash_arr)
 }
 
 /// Helper function to compute metadata hash for certificate.
@@ -507,16 +508,14 @@ pub fn compute_metadata_hash(
     grade: &Option<String>,
     did: &Option<String>,
 ) -> BytesN<32> {
+    use soroban_sdk::xdr::ToXdr;
     let mut buffer = Bytes::new(env);
-    let mut hasher = env.crypto().hasher();
-
-    buffer.append(&course_name.to_xdr(env));
-    if let Some(grade) = grade {
-        buffer.append(&grade.to_xdr(env));
+    buffer.append(&course_name.clone().to_xdr(env));
+    if let Some(g) = grade {
+        buffer.append(&g.clone().to_xdr(env));
     }
-    if let Some(did) = did {
-        buffer.append(&did.to_xdr(env));
+    if let Some(d) = did {
+        buffer.append(&d.clone().to_xdr(env));
     }
-
-    env.crypto().sha256(&buffer)
+    env.crypto().sha256(&buffer).into()
 }

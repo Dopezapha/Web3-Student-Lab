@@ -164,14 +164,16 @@ impl<'a> StatisticsManager<'a> {
         let key = StatsKey::CourseStats(course_id.clone());
         let stats: Option<CourseStatistics> = self.env.storage().instance().get(&key);
 
-        let current_issued = stats.map(|s| s.certificates_issued).unwrap_or(0);
+        let current_issued = stats.as_ref().map(|s| s.certificates_issued).unwrap_or(0);
+        let current_revoked = stats.as_ref().map(|s| s.certificates_revoked).unwrap_or(0);
+        let current_unique = stats.as_ref().map(|s| s.unique_graduates).unwrap_or(0);
         let last_time = self.env.ledger().timestamp();
 
         let course_stats = CourseStatistics {
             course_id: course_id.clone(),
             certificates_issued: current_issued + 1,
-            certificates_revoked: stats.map(|s| s.certificates_revoked).unwrap_or(0),
-            unique_graduates: stats.map(|s| s.unique_graduates).unwrap_or(0),
+            certificates_revoked: current_revoked,
+            unique_graduates: current_unique,
             last_certificate_at: last_time,
         };
 
@@ -183,7 +185,7 @@ impl<'a> StatisticsManager<'a> {
         let key = StatsKey::CourseStats(course_id.clone());
         let stats: Option<CourseStatistics> = self.env.storage().instance().get(&key);
 
-        let current_revoked = stats.map(|s| s.certificates_revoked).unwrap_or(0);
+        let current_revoked = stats.as_ref().map(|s| s.certificates_revoked).unwrap_or(0);
 
         if let Some(mut stats) = stats {
             stats.certificates_revoked = current_revoked + 1;

@@ -12,7 +12,7 @@ pub fn verify(env: &Env, proof: Vec<BytesN<32>>, root: &BytesN<32>, leaf: &Bytes
             buffer.append(&Bytes::from_array(env, &proof_element.to_array()));
             buffer.append(&Bytes::from_array(env, &computed_hash.to_array()));
         }
-        computed_hash = env.crypto().sha256(&buffer);
+        computed_hash = env.crypto().sha256(&buffer).into();
     }
 
     computed_hash == *root
@@ -22,5 +22,5 @@ pub fn compute_leaf(env: &Env, address: &soroban_sdk::Address, amount: i128) -> 
     let mut buffer = Bytes::new(env);
     buffer.append(&address.to_xdr(env));
     buffer.append(&amount.to_xdr(env));
-    env.crypto().sha256(&buffer)
+    env.crypto().sha256(&buffer).into()
 }

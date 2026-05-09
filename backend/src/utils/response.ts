@@ -14,3 +14,21 @@ export const sendError = (res: Response, error: any, statusCode: number = 500) =
     ...(process.env.NODE_ENV === 'development' && { error: error.stack }),
   });
 };
+
+export class ApiResponse {
+  static success(message: string, data?: any) {
+    return {
+      status: 'success',
+      message,
+      ...(data && { data }),
+    };
+  }
+
+  static error(message: string, errors?: any) {
+    return {
+      status: 'error',
+      message,
+      ...(errors && { errors }),
+    };
+  }
+}

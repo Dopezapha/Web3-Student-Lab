@@ -33,7 +33,7 @@ export const getAggregatedDashboardData = async (studentId: string) => {
     prisma.auditLog
       .findMany({
         where: { userId: studentId },
-        orderBy: { timestamp: 'desc' },
+        orderBy: { createdAt: 'desc' },
         take: 5,
       })
       .catch((err) => {

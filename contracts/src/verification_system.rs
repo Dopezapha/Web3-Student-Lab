@@ -303,7 +303,7 @@ impl VerificationSystem {
         env.storage().instance().set(&VerificationDataKey::Config, &config);
         env.storage().instance().set(&VerificationDataKey::NextRequestId, &1u128);
         env.storage().instance().set(&VerificationDataKey::NextReportId, &1u128);
-        env.storage().instance().set(&VerificationDataKey::PendingRequests, &Vec::new(&env));
+        env.storage().instance().set(&VerificationDataKey::PendingRequests, &Vec::<u128>::new(&env));
     }
 
     /// Register as a verifier
@@ -318,9 +318,9 @@ impl VerificationSystem {
     ) {
         caller.require_auth();
 
-        Self::validate_string_length(&env, &organization)?;
-        Self::validate_string_length(&env, &accreditation_number)?;
-        Self::validate_string_length(&env, &metadata_uri)?;
+        Self::validate_string_length(&env, &organization);
+        Self::validate_string_length(&env, &accreditation_number);
+        Self::validate_string_length(&env, &metadata_uri);
 
         let config = Self::get_config(&env);
 
@@ -384,7 +384,7 @@ impl VerificationSystem {
     ) -> u128 {
         caller.require_auth();
 
-        Self::validate_string_length(&env, &notes)?;
+        Self::validate_string_length(&env, &notes);
 
         let config = Self::get_config(&env);
         let fee = match verification_type {
@@ -502,7 +502,7 @@ impl VerificationSystem {
     ) {
         caller.require_auth();
 
-        Self::validate_string_length(&env, &report_uri)?;
+        Self::validate_string_length(&env, &report_uri);
 
         let request: VerificationRequest = env.storage().instance()
             .get(&VerificationDataKey::VerificationRequest(request_id))
@@ -536,7 +536,7 @@ impl VerificationSystem {
             findings,
             recommendations,
             signature,
-            report_uri: String::from_str_slice(&env, &format!("https://api.carbon-credits.io/reports/{}", report_id)),
+            report_uri: String::from_str(&env, "https://api.carbon-credits.io/reports/id"),
         };
 
         env.storage().instance().set(&VerificationDataKey::VerificationReport(report_id), &report);
@@ -720,11 +720,10 @@ impl VerificationSystem {
         env.storage().instance().set(&VerificationDataKey::VerifierProfile(verifier.clone()), &profile);
     }
 
-    fn validate_string_length(env: &Env, string: &String) -> Result<(), VerificationError> {
-        if string.len() > MAX_STRING_LENGTH as usize {
+    fn validate_string_length(env: &Env, string: &String) {
+        if string.len() as u32 > MAX_STRING_LENGTH {
             panic_with_error!(env, VerificationError::StringTooLong);
         }
-        Ok(())
     }
 
     fn get_default_initial_docs(env: &Env) -> Vec<Symbol> {

@@ -314,11 +314,7 @@ impl ExecutionEngineContract {
     /// true if condition passes, false otherwise
     fn check_single_condition(env: &Env, condition: &Condition) -> bool {
         match condition {
-            Condition::BalanceVerification {
-                account,
-                _token_address,
-                _min_balance,
-            } => {
+            Condition::BalanceVerification(account, _token_address, _min_balance) => {
                 // In production, this would call the token contract to check balance
                 // For now, we simulate a successful check
                 // Real implementation would be:
@@ -327,17 +323,11 @@ impl ExecutionEngineContract {
                 // balance >= *min_balance
                 true
             }
-            Condition::TimeWindow {
-                start_time,
-                end_time,
-            } => {
+            Condition::TimeWindow(start_time, end_time) => {
                 let now = env.ledger().timestamp();
                 now >= *start_time && now <= *end_time
             }
-            Condition::CustomCondition {
-                _contract_address,
-                _function_name,
-            } => {
+            Condition::CustomCondition(_contract_address, _function_name) => {
                 // In production, this would call the external contract
                 // For now, we simulate a successful check
                 // Real implementation would use env.invoke_contract()

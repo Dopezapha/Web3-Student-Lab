@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import { asyncHandler } from '../middleware/errorHandler';
 import { sendSuccess } from '../utils/response';
 
@@ -9,7 +9,7 @@ router.get(
   '/reputation/:address',
   asyncHandler(async (req, res) => {
     const { address } = req.params;
-    return sendSuccess(res, {
+    sendSuccess(res, {
       data: {
         address,
         score: 4.8,

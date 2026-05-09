@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
     // Tree-shaking for Stellar SDK
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@stellar/stellar-sdk': '@stellar/stellar-sdk/esm',
     };
 
     // Split chunks for better caching

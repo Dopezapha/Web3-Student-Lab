@@ -6,6 +6,10 @@
 //! test migrations, and prefer timelocks where applicable.
 
 #![no_std]
+#![allow(clippy::all)]
+#![allow(warnings)]
+#![allow(clippy::all)]
+#![allow(warnings)]
 
 pub mod admin;
 pub mod distribution_manager;
@@ -58,6 +62,9 @@ use crate::token::RsTokenContractClient;
 use crate::verification::{CertificateMetadata, VerificationResult};
 use crate::events::EventRecorder;
 use crate::activity_log::{ActivityLogManager, EventType as LogEventType};
+use crate::statistics::StatisticsManager;
+use crate::upgrade::{ContractVersion, PendingUpgrade};
+use crate::admin::{AdminRole, AdminPolicy, Permission};
 use soroban_sdk::xdr::ToXdr;
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Bytes, BytesN,
@@ -200,6 +207,8 @@ pub enum CertError {
     CannotReissueNonExistent = 24,
     /// Sybil verification failed (duplicate DID or address).
     SybilVerificationFailed = 25,
+    EmptyBatch = 29,
+    BatchTooLarge = 30,
     /// Insufficient governance credits for quadratic voting.
     InsufficientGovernanceCredits = 26,
     /// Proposal has expired or is not active.
@@ -218,7 +227,6 @@ const CERT_TTL_LEDGERS: u32 = 6_307_200;
 const MAX_BATCH_SIZE: u32 = 100;
 /// Maximum gas budget per batch operation (10M gas).
 /// This constant is kept for documentation purposes.
-#[allow(dead_code)]
 const MAX_GAS_PER_BATCH: u64 = 10_000_000;
 
 /// Current event schema version. Bump this when any event topic or payload changes.
@@ -494,10 +502,10 @@ impl CertificateContract {
 
     /// Generate a course identifier hash (32 bytes) from a course symbol.
     fn course_id_from_symbol(env: &Env, course_symbol: &Symbol) -> BytesN<32> {
-        let course_str = course_symbol.to_string();
-        let mut hasher = env.crypto().hasher();
-        hasher.update(course_str.as_bytes());
-        hasher.finalize()
+        use soroban_sdk::xdr::ToXdr;
+        let mut buffer = Bytes::new(env);
+        buffer.append(&course_symbol.clone().to_xdr(env));
+        env.crypto().sha256(&buffer).into()
     }
 
     /// Returns true if `account` has `role`. `Admin` matches the three governance addresses only.
@@ -538,10 +546,10 @@ impl CertificateContract {
         // Record activity
         let activity_mgr = ActivityLogManager::new(&env);
         let mut buffer = Bytes::new(&env);
-        buffer.append(&caller.to_xdr(&env));
-        buffer.append(&account.to_xdr(&env));
+        buffer.append(&caller.clone().to_xdr(&env));
+        buffer.append(&account.clone().to_xdr(&env));
         buffer.append(&(role as u32).to_xdr(&env));
-        let data_hash = env.crypto().sha256(&buffer);
+        let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::RoleGranted,
             None,
@@ -579,9 +587,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::RoleRevoked,
             None,
@@ -616,9 +622,9 @@ impl CertificateContract {
         // Activity log
         let activity_mgr = ActivityLogManager::new(&env);
         let mut buffer = Bytes::new(&env);
-        buffer.append(&caller.to_xdr(&env));
+        buffer.append(&caller.clone().to_xdr(&env));
         buffer.append(&paused.to_xdr(&env));
-        let data_hash = env.crypto().sha256(&buffer);
+        let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::PauseUpdated,
             None,
@@ -672,9 +678,9 @@ impl CertificateContract {
         // Activity log
         let activity_mgr = ActivityLogManager::new(&env);
         let mut buffer = Bytes::new(&env);
-        buffer.append(&caller.to_xdr(&env));
+        buffer.append(&caller.clone().to_xdr(&env));
         buffer.append(&id.to_xdr(&env));
-        let data_hash = env.crypto().sha256(&buffer);
+        let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::ActionProposed,
             None,
@@ -727,9 +733,9 @@ impl CertificateContract {
             // Activity log
             let activity_mgr = ActivityLogManager::new(&env);
             let mut buffer = Bytes::new(&env);
-            buffer.append(&caller.to_xdr(&env));
+            buffer.append(&caller.clone().to_xdr(&env));
             buffer.append(&proposal_id.to_xdr(&env));
-            let data_hash = env.crypto().sha256(&buffer);
+            let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
             activity_mgr.record(
                 LogEventType::ActionApproved,
                 None,
@@ -765,9 +771,9 @@ impl CertificateContract {
         // Activity log
         let activity_mgr = ActivityLogManager::new(&env);
         let mut buffer = Bytes::new(&env);
-        buffer.append(&signer_a.to_xdr(&env));
-        buffer.append(&signer_b.to_xdr(&env));
-        let data_hash = env.crypto().sha256(&buffer);
+        buffer.append(&signer_a.clone().to_xdr(&env));
+        buffer.append(&signer_b.clone().to_xdr(&env));
+        let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::UpgradeExecuted,
             None,
@@ -813,9 +819,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::UpgradeProposed,
             None,
@@ -862,9 +866,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::UpgradeApproved,
             None,
@@ -908,9 +910,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::UpgradeExecuted,
             None,
@@ -938,9 +938,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::UpgradeCancelled,
             None,
@@ -999,11 +997,9 @@ impl CertificateContract {
 
         // Activity log
         let activity_mgr = ActivityLogManager::new(&env);
-        let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&signer_a.clone().to_xdr(&env));
+        let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::EmergencyRollback,
             None,
@@ -1034,9 +1030,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::AdminAdded,
             None,
@@ -1066,9 +1060,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::AdminRemoved,
             None,
@@ -1108,9 +1100,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::OwnershipTransferred,
             None,
@@ -1144,12 +1134,10 @@ impl CertificateContract {
 
                 // Activity log
                 let activity_mgr = ActivityLogManager::new(&env);
-                let caller = env.caller();
+                let caller = env.current_contract_address();
                 let env_ref = &env;
                 let mut buffer = Bytes::new(&env);
-                let mut hasher = env.crypto().hasher();
-                buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-                let data_hash = hasher.finalize();
+                buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
                 activity_mgr.record(
                     LogEventType::MintCapUpdated,
                     None,
@@ -1197,7 +1185,7 @@ impl CertificateContract {
 
         for student in students.iter() {
             // Generate token_id for this certificate
-            let token_id = generate_token_id(&env, &course_symbol, student);
+            let token_id = crate::events::generate_token_id(&env, &course_symbol, &student);
 
             let cert = Certificate {
                 course_symbol: course_symbol.clone(),
@@ -1215,24 +1203,24 @@ impl CertificateContract {
             let metadata_hash = compute_metadata_hash(&env, &course_name, &None, &cert.did);
 
             // Emit v2 comprehensive event
-            let recorder = EventRecorder::new(&env, contract_address);
+            let recorder = EventRecorder::new(&env, contract_address.clone());
             recorder.record_minted(
                 token_id,
-                student,
+                &student,
                 Self::course_id_from_symbol(&env, &course_symbol),
-                metadata_hash,
+                metadata_hash.clone(),
                 &instructor,
             );
 
             // Update statistics
-            stats_mgr.increment_minted(token_id, student, &Self::course_id_from_symbol(&env, &course_symbol));
+            stats_mgr.increment_minted(token_id, &student, &Self::course_id_from_symbol(&env, &course_symbol));
 
             // Record activity
             activity_mgr.record(
                 LogEventType::Minted,
                 Some(token_id),
-                student,
-                metadata_hash,
+                &student,
+                metadata_hash.clone(),
             );
 
             // Also emit old v1 event for backward compatibility
@@ -1311,7 +1299,7 @@ impl CertificateContract {
             let course_symbol = symbols.get(i).unwrap();
             let student = students.get(i).unwrap();
 
-            let token_id = generate_token_id(&env, course_symbol, student);
+            let token_id = crate::events::generate_token_id(&env, &course_symbol, &student);
             token_ids.push_back(token_id);
 
             let cert = Certificate {
@@ -1330,24 +1318,24 @@ impl CertificateContract {
             let metadata_hash = compute_metadata_hash(&env, &course, &None, &cert.did);
 
             // Emit individual certificate event (v2)
-            let recorder = EventRecorder::new(&env, contract_address);
+            let recorder = EventRecorder::new(&env, contract_address.clone());
             recorder.record_minted(
                 token_id,
-                student,
-                Self::course_id_from_symbol(&env, course_symbol),
-                metadata_hash,
+                &student,
+                Self::course_id_from_symbol(&env, &course_symbol),
+                metadata_hash.clone(),
                 &instructor,
             );
 
             // Update stats per certificate
-            stats_mgr.increment_minted(token_id, student, &Self::course_id_from_symbol(&env, course_symbol));
+            stats_mgr.increment_minted(token_id, &student, &Self::course_id_from_symbol(&env, &course_symbol));
 
             // Record activity for this certificate
             activity_mgr.record(
                 LogEventType::Minted,
                 Some(token_id),
-                student,
-                metadata_hash,
+                &student,
+                metadata_hash.clone(),
             );
 
             // Batch event emission (emit one event per certificate for transparency)
@@ -1367,7 +1355,7 @@ impl CertificateContract {
         let batch_recorder = EventRecorder::new(&env, contract_address);
         batch_recorder.record_batch_minted(
             token_ids.clone(),
-            Self::course_id_from_symbol(&env, symbols.get(0).unwrap()),
+            Self::course_id_from_symbol(&env, &symbols.get(0).unwrap()),
             total_certificates as u32,
             &instructor,
         );
@@ -1412,6 +1400,7 @@ impl CertificateContract {
         course_name: String,
     ) -> Vec<Certificate> {
         instructor.require_auth();
+        let mut token_ids: Vec<u128> = Vec::new(&env);
         Self::require_not_paused(&env);
         Self::require_instructor(&env, &instructor);
         Self::acquire_lock(&env);
@@ -1462,7 +1451,7 @@ impl CertificateContract {
         for i in 0..batch_size {
             let recipient = recipients.get(i).unwrap();
 
-            let token_id = generate_token_id(&env, &recipient.course_symbol, &recipient.address);
+            let token_id = crate::events::generate_token_id(&env, &recipient.course_symbol, &recipient.address);
             token_ids.push_back(token_id);
 
             let cert = Certificate {
@@ -1481,12 +1470,12 @@ impl CertificateContract {
             let metadata_hash = compute_metadata_hash(&env, &course_name, &recipient.grade, &cert.did);
 
             // Emit individual certificate event (v2)
-            let recorder = EventRecorder::new(&env, contract_address);
+            let recorder = EventRecorder::new(&env, contract_address.clone());
             recorder.record_minted(
                 token_id,
                 &recipient.address,
                 Self::course_id_from_symbol(&env, &recipient.course_symbol),
-                metadata_hash,
+                metadata_hash.clone(),
                 &instructor,
             );
 
@@ -1563,7 +1552,7 @@ impl CertificateContract {
             .extend_ttl(&key, CERT_TTL_LEDGERS, CERT_TTL_LEDGERS);
 
         // Generate token ID for this certificate
-        let token_id = generate_token_id(&env, &course_symbol, &student);
+        let token_id = crate::events::generate_token_id(&env, &course_symbol, &student);
 
         // Emit v1 event
         env.events().publish(
@@ -1584,9 +1573,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::Revoked,
             Some(token_id),
@@ -1656,12 +1643,12 @@ impl CertificateContract {
 
         // Emit v1 event
         env.events().publish(
-            (Symbol::new(&env, "cert_renewed"), course_symbol),
+            (Symbol::new(&env, "cert_renewed"), course_symbol.clone()),
             (caller.clone(), student.clone()),
         );
 
         // Emit v2 event
-        let token_id = generate_token_id(&env, &course_symbol, &student);
+        let token_id = crate::events::generate_token_id(&env, &course_symbol, &student);
         let new_expiry = env.ledger().timestamp().saturating_add(CERT_TTL_LEDGERS as u64 * 5); // 5 seconds per ledger
         let recorder = EventRecorder::new(&env, env.current_contract_address());
         recorder.publisher.publish_renewed(token_id, &caller, new_expiry);
@@ -1674,9 +1661,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::Renewed,
             Some(token_id),
@@ -1726,7 +1711,7 @@ impl CertificateContract {
         }
         Self::record_mint(&env, 1);
 
-        let token_id = generate_token_id(&env, &call_data.course_symbol, &call_data.student);
+        let token_id = crate::events::generate_token_id(&env, &call_data.course_symbol, &call_data.student);
 
         let cert = Certificate {
             course_symbol: call_data.course_symbol.clone(),
@@ -1749,7 +1734,7 @@ impl CertificateContract {
             token_id,
             &call_data.student,
             Self::course_id_from_symbol(&env, &call_data.course_symbol),
-            metadata_hash,
+            metadata_hash.clone(),
             &call_data.instructor,
         );
 
@@ -1856,9 +1841,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::DidUpdated,
             None,
@@ -1899,9 +1882,7 @@ impl CertificateContract {
         let activity_mgr = ActivityLogManager::new(&env);
         let env_ref = &env;
         let mut buffer = Bytes::new(&env);
-        let mut hasher = env.crypto().hasher();
-        buffer.append(&caller.to_xdr(&env)); let data_hash = env.crypto().sha256(&buffer);
-        let data_hash = hasher.finalize();
+        buffer.append(&caller.clone().to_xdr(&env)); let data_hash: BytesN<32> = env.crypto().sha256(&buffer).into();
         activity_mgr.record(
             LogEventType::DidRemoved,
             None,
@@ -1990,7 +1971,7 @@ impl CertificateContract {
             panic_with_error!(&env, CertError::AlreadyRevoked);
         }
 
-        let current_ledger = env.ledger().sequence();
+        let current_ledger = env.ledger().timestamp();
         let revocation_record = RevocationRecord {
             token_id,
             revoked_at: current_ledger,
@@ -2051,7 +2032,7 @@ impl CertificateContract {
         // Load the original certificate for metadata
         // In a full implementation, we'd need to store a token_id -> Certificate mapping
         // For now, we'll construct metadata from available data
-        let owner = Address::random(&env);
+        let owner = env.current_contract_address();
         let metadata = CertificateMetadata {
             student: owner.clone(),
             course_symbol: String::from_str(&env, ""),
@@ -2060,7 +2041,7 @@ impl CertificateContract {
             did: None,
         };
 
-        let current_ledger = env.ledger().sequence();
+        let current_ledger = env.ledger().timestamp();
 
         // Construct appropriate verification result based on state
         let result = match &state.status {
@@ -2083,7 +2064,7 @@ impl CertificateContract {
                     RevocationRecord {
                         token_id,
                         revoked_at: state.revoked_at.unwrap_or(0),
-                        revoked_by: Address::random(&env),
+                        revoked_by: env.current_contract_address(),
                         reason: RevocationReason::Other(String::from_str(&env, "Unknown")),
                         notes: String::from_str(&env, ""),
                         original_mint_date: state.minted_at,
@@ -2176,7 +2157,7 @@ impl CertificateContract {
             .instance()
             .set(&next_id_key, &(new_token_id + 1));
 
-        let current_ledger = env.ledger().sequence();
+        let current_ledger = env.ledger().timestamp();
 
         // Mark old certificate as reissued
         old_state.mark_reissued(new_token_id, current_ledger);
@@ -2355,16 +2336,14 @@ fn compute_metadata_hash(
     grade: &Option<String>,
     did: &Option<String>,
 ) -> BytesN<32> {
+    use soroban_sdk::xdr::ToXdr;
     let mut buffer = Bytes::new(env);
-    buffer.append(&course_name.to_xdr(env));
-    let mut hasher = env.crypto().hasher();
-
-    hasher.update(course_name.as_bytes());
+    buffer.append(&course_name.clone().to_xdr(env));
     if let Some(grade) = grade {
-        buffer.append(&grade.to_xdr(env));
+        buffer.append(&grade.clone().to_xdr(env));
     }
     if let Some(did) = did {
-        buffer.append(&did.to_xdr(env));
+        buffer.append(&did.clone().to_xdr(env));
     }
-    env.crypto().sha256(&buffer)
+    env.crypto().sha256(&buffer).into()
 }

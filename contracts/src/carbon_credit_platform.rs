@@ -10,7 +10,7 @@
 
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error,
-    Address, Bytes, BytesN, Env, String, Symbol, Vec, Map, i128, u64
+    Address, Bytes, BytesN, Env, String, Symbol, Vec, Map
 };
 
 /// Carbon credit token representing 1 ton CO2e reduction
@@ -278,8 +278,8 @@ impl CarbonCreditPlatform {
     ) -> Symbol {
         caller.require_auth();
 
-        Self::validate_string_length(&env, &name)?;
-        Self::validate_string_length(&env, &metadata_uri)?;
+        Self::validate_string_length(&env, &name);
+        Self::validate_string_length(&env, &metadata_uri);
 
         if total_capacity == 0 {
             panic_with_error!(&env, CarbonError::InvalidAmount);
@@ -295,7 +295,7 @@ impl CarbonCreditPlatform {
         let project = CarbonProject {
             project_id: project_id.clone(),
             name,
-            developer: caller,
+            developer: caller.clone(),
             project_type,
             location,
             total_capacity,
@@ -328,7 +328,7 @@ impl CarbonCreditPlatform {
     ) -> Vec<u128> {
         caller.require_auth();
 
-        Self::validate_string_length(&env, &metadata_uri)?;
+        Self::validate_string_length(&env, &metadata_uri);
 
         if amount == 0 {
             panic_with_error!(&env, CarbonError::InvalidAmount);
@@ -363,7 +363,7 @@ impl CarbonCreditPlatform {
                 token_id,
                 project_id: project_id.clone(),
                 vintage,
-                standard,
+                standard: standard.clone(),
                 amount: 1, // Each token represents 1 tonne
                 owner: caller.clone(),
                 verification_status: VerificationStatus::Verified,
@@ -398,7 +398,7 @@ impl CarbonCreditPlatform {
         env: Env,
         caller: Address,
         token_id: u128,
-        price: I128,
+        price: i128,
         duration: u64,
     ) -> u128 {
         caller.require_auth();
@@ -493,7 +493,7 @@ impl CarbonCreditPlatform {
             .get(&DataKey::TradingFeeBps)
             .unwrap_or(DEFAULT_TRADING_FEE_BPS);
 
-        let trading_fee = order.price * trading_fee_bps / 10000;
+        let trading_fee = order.price * (trading_fee_bps as i128) / 10000;
         let net_price = order.price - trading_fee;
 
         // For simplicity, we'll assume payment is handled externally
@@ -531,7 +531,7 @@ impl CarbonCreditPlatform {
     ) -> u128 {
         caller.require_auth();
 
-        Self::validate_string_length(&env, &reason)?;
+        Self::validate_string_length(&env, &reason);
 
         if token_ids.is_empty() {
             panic_with_error!(&env, CarbonError::InvalidAmount);
@@ -544,7 +544,7 @@ impl CarbonCreditPlatform {
         // Verify and retire each token
         for token_id in token_ids.iter() {
             let mut credit: CarbonCredit = env.storage().persistent()
-                .get(&DataKey::Token(*token_id))
+                .get(&DataKey::Token(token_id))
                 .unwrap_or_else(|| panic_with_error!(&env, CarbonError::TokenNotFound));
 
             if credit.owner != caller {
@@ -560,13 +560,13 @@ impl CarbonCreditPlatform {
             credit.retirement_timestamp = Some(current_time);
             credit.retirement_reason = Some(reason.clone());
 
-            env.storage().persistent().set(&DataKey::Token(*token_id), &credit);
+            env.storage().persistent().set(&DataKey::Token(token_id), &credit);
 
             total_tonnes = total_tonnes.saturating_add(credit.amount);
-            retired_tokens.push_back(*token_id);
+            retired_tokens.push_back(token_id);
 
             // Remove from user's active credits
-            Self::remove_user_credit(&env, &caller, *token_id);
+            Self::remove_user_credit(&env, &caller, token_id);
         }
 
         // Generate retirement certificate
@@ -578,7 +578,7 @@ impl CarbonCreditPlatform {
             reason: reason.clone(),
             total_tonnes,
             timestamp: current_time,
-            certificate_uri: String::from_str_slice(&env, &format!("https://api.carbon-credits.io/certificates/{}", certificate_id)),
+            certificate_uri: String::from_str(&env, "https://api.carbon-credits.io/certificates/id"),
         };
 
         env.storage().instance().set(&DataKey::Certificate(certificate_id), &certificate);
@@ -664,8 +664,7 @@ impl CarbonCreditPlatform {
             .get(&DataKey::NextProjectId)
             .unwrap_or(1);
         env.storage().instance().set(&DataKey::NextProjectId, &(id + 1));
-        let id_str = format!("PROJ_{}", id);
-        Symbol::new(env, &id_str)
+        Symbol::new(env, "PROJ_ID")
     }
 
     /// Helper function to generate next order ID
@@ -737,10 +736,9 @@ impl CarbonCreditPlatform {
     }
 
     /// Helper function to validate string length
-    fn validate_string_length(env: &Env, string: &String) -> Result<(), CarbonError> {
-        if string.len() > MAX_STRING_LENGTH as usize {
+    fn validate_string_length(env: &Env, string: &String) {
+        if string.len() as u32 > MAX_STRING_LENGTH {
             panic_with_error!(env, CarbonError::StringTooLong);
         }
-        Ok(())
     }
 }

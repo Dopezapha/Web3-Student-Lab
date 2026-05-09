@@ -44,18 +44,11 @@ pub enum ScheduleStatus {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Condition {
     /// Balance verification: account must hold >= min_balance of token
-    BalanceVerification {
-        account: Address,
-        token_address: Address,
-        min_balance: i128,
-    },
+    BalanceVerification(Address, Address, i128),
     /// Time-based: execution only within [start_time, end_time]
-    TimeWindow { start_time: u64, end_time: u64 },
+    TimeWindow(u64, u64),
     /// Custom condition: call external contract at address with function name
-    CustomCondition {
-        contract_address: Address,
-        function_name: String,
-    },
+    CustomCondition(Address, String),
 }
 
 /// Payment schedule record

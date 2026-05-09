@@ -30,13 +30,13 @@ router.get(
   '/:id',
   cacheMiddleware({
     ttl: cacheTTL.user.profile,
-    keyGenerator: (req) => CACHE_KEYS.user.profile(req.params.id),
+    keyGenerator: (req) => CACHE_KEYS.user.profile(req.params.id as string),
   }),
   async (req, res) => {
     try {
       const { id } = req.params;
       const student = await prisma.student.findUnique({
-        where: { id },
+        where: { id: id as string },
         include: {
           enrollments: {
             include: {

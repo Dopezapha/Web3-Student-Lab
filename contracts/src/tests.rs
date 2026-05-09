@@ -189,7 +189,7 @@ fn update_did_links_existing_and_new_certificates() {
 
     let student = Address::generate(&env);
     let course_name = String::from_str(&env, "Soroban Identity");
-    let did = String::from_str(&env, "did:soroban:testnet:student-123#profile");
+    let did = String::from_str(&env, "did:soroban:testnet:student-123rofile");
 
     client.issue(
         &instructor,

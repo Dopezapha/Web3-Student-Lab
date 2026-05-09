@@ -39,7 +39,7 @@ export const slidingWindowRateLimiter = (options: RateLimitOptions) => {
       }
 
       // results[2] contains the ZCARD result
-      const requestCount = results[2][1] as number;
+      const requestCount = (results[2] ? results[2][1] : 0) as number;
       const remaining = Math.max(0, options.limit - requestCount);
 
       // Set RateLimit headers
