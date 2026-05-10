@@ -4,7 +4,7 @@ import { useNotifications } from '@/contexts/NotificationContext';
 import { useState } from 'react';
 import { NotificationSidebar } from './NotificationSidebar';
 
-export function NotificationBell() {
+export default function NotificationBell() {
   const { unreadCount } = useNotifications();
   const [open, setOpen] = useState(false);
 

@@ -3,12 +3,11 @@
 import { LanguageSelector } from '@/components/common/LanguageSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/i18n';
-import { NotificationBell } from '@/components/notifications/NotificationBell';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { usePrefetch } from '@/hooks/usePrefetch';
-import { NotificationBell } from '../notifications/NotificationBell';
 
 export default function Navbar() {
   const pathname = usePathname();
