@@ -152,7 +152,7 @@ export function CollaborativeCanvas({ roomId, userId, onCanvasReady }: Collabora
         borderRadius: shape === 'circle' ? '50%' : 12,
         padding: 18,
         width: 180,
-        height: shape === 'circle' ? 180 : undefined,
+        height: 180,
       },
     });
   };
@@ -287,8 +287,8 @@ export function CollaborativeCanvas({ roomId, userId, onCanvasReady }: Collabora
             className="h-full"
           >
             <MiniMap
-              nodeStrokeColor={(n) => n.style?.background || '#888'}
-              nodeColor={(n) => n.style?.background || '#888'}
+              nodeStrokeColor="#888"
+              nodeColor="#888"
             />
             <Controls />
             <Background color="#888" gap={16} size={1} />
