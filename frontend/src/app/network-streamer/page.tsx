@@ -99,7 +99,7 @@ interface AccountData {
 export default function NetworkLedgerStreamer() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [timeWindow, setTimeWindow] = useState([5]); // minutes
+  const [timeWindow, setTimeWindow] = useState(5); // minutes
   const [showAccounts, setShowAccounts] = useState(true);
   const [showTransactions, setShowTransactions] = useState(true);
   const [showLedgers, setShowLedgers] = useState(true);
@@ -149,7 +149,7 @@ export default function NetworkLedgerStreamer() {
       .force('center', forceCenter(width / 2, height / 2))
       .force(
         'collision',
-        forceCollide().radius((d) => d.radius + 5)
+        forceCollide().radius((d: Node) => d.radius + 5)
       );
 
     simulationRef.current = simulation;
@@ -390,14 +390,14 @@ export default function NetworkLedgerStreamer() {
     setNodes((prev) => {
       const filtered = prev.filter(
         (n) =>
-          n.data?.timestamp && Date.now() - n.data.timestamp.getTime() < timeWindow[0] * 60 * 1000
+          n.data?.timestamp && Date.now() - n.data.timestamp.getTime() < timeWindow * 60 * 1000
       );
       return [...filtered.slice(-100), ...newNodes];
     });
 
     setLinks((prev) => {
       const filtered = prev.filter(
-        (l) => Date.now() - new Date().getTime() < timeWindow[0] * 60 * 1000
+        (l) => Date.now() - new Date().getTime() < timeWindow * 60 * 1000
       );
       return [...filtered.slice(-200), ...newLinks];
     });
@@ -472,10 +472,10 @@ export default function NetworkLedgerStreamer() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label>Time Window: {timeWindow[0]} minutes</Label>
+              <Label>Time Window: {timeWindow} minutes</Label>
               <Slider
                 value={timeWindow}
-                onValueChange={setTimeWindow}
+                onValueChange={(value) => setTimeWindow(value)}
                 max={60}
                 min={1}
                 step={1}
