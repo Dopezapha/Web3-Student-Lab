@@ -75,8 +75,8 @@ export default function EventsPage() {
           filters.push({ topics: [[topicFilter]] });
         }
         const result = await server.getEvents({
-          startLedger: lastCursor ? undefined : 0,
-          filters: filters.length > 0 ? filters : undefined,
+          filters: filters,
+          ...(lastCursor ? { cursor: lastCursor } : { startLedger: 0 }),
           limit: 20,
         });
         const decoded = result.events.map(decodeRpcEvent);
