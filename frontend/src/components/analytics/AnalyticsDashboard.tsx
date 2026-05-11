@@ -1,14 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Download, RefreshCw } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -311,33 +304,31 @@ export function AnalyticsDashboard() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium">Time Range</label>
-              <Select value={timeRange} onValueChange={(value: any) => setTimeRange(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="24h">Last 24 Hours</SelectItem>
-                  <SelectItem value="7d">Last 7 Days</SelectItem>
-                  <SelectItem value="30d">Last 30 Days</SelectItem>
-                  <SelectItem value="all">All Time</SelectItem>
-                </SelectContent>
-              </Select>
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value as any)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="24h">Last 24 Hours</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="all">All Time</option>
+            </select>
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium">Event Type</label>
-              <Select value={eventType} onValueChange={setEventType}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Events</SelectItem>
-                  <SelectItem value="cert_minted">Certificates Minted</SelectItem>
-                  <SelectItem value="cert_revoked">Certificates Revoked</SelectItem>
-                  <SelectItem value="student_enrolled">Student Enrolled</SelectItem>
-                  <SelectItem value="certs_staked">Certificates Staked</SelectItem>
-                </SelectContent>
-              </Select>
+            <select
+              value={eventType}
+              onChange={(e) => setEventType(e.target.value)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="all">All Events</option>
+              <option value="cert_minted">Certificates Minted</option>
+              <option value="cert_revoked">Certificates Revoked</option>
+              <option value="student_enrolled">Student Enrolled</option>
+              <option value="certs_staked">Certificates Staked</option>
+            </select>
             </div>
           </div>
         </CardContent>
