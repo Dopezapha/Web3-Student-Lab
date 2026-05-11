@@ -190,7 +190,7 @@ export default function NetworkLedgerStreamer() {
       .attr('stroke', '#fff')
       .attr('stroke-width', 2)
       .style('cursor', 'pointer')
-      .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended) as any)
+      .call(d3.drag().on('start', dragstarted as any).on('drag', dragged as any).on('end', dragended as any) as any)
       .on('click', (event, d) => {
         setSelectedNode(d);
       });
@@ -220,18 +220,18 @@ export default function NetworkLedgerStreamer() {
       label.attr('x', (d: any) => d.x).attr('y', (d: any) => d.y);
     });
 
-    function dragstarted(event: any, d: Node) {
+    function dragstarted(event: any, d: any) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
     }
 
-    function dragged(event: any, d: Node) {
+    function dragged(event: any, d: any) {
       d.fx = event.x;
       d.fy = event.y;
     }
 
-    function dragended(event: any, d: Node) {
+    function dragended(event: any, d: any) {
       if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
