@@ -15,6 +15,9 @@ RUN pnpm install
 # Copy all files including prisma directory
 COPY . .
 
+# Debug: list files to verify prisma directory exists
+RUN ls -la && ls -la prisma/
+
 # Generate Prisma client with relative schema path
 RUN npx prisma generate --schema=prisma/schema.prisma
 
