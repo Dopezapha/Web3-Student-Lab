@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install dependencies first (for faster caching)
 COPY package*.json ./
-COPY prisma ./prisma/
+COPY ./prisma ./prisma/
 
 RUN npm install
 
@@ -37,4 +37,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
