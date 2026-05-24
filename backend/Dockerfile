@@ -12,14 +12,11 @@ COPY package*.json ./
 # Install dependencies with pnpm
 RUN pnpm install
 
-# Copy prisma directory explicitly
-COPY ./prisma ./prisma/
-
-# Generate Prisma client with relative schema path
-RUN npx prisma generate --schema=./prisma/schema.prisma
-
-# Copy source code
+# Copy prisma directory using relative path
 COPY . .
+
+# Generate Prisma client with schema path
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Build TypeScript to JavaScript
 RUN npm run build
