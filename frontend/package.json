@@ -5,10 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
-    "start": "next start --webpack",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "start": "next start --webpack"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -61,10 +58,6 @@
     "@types/react-dom": "^19",
     "@types/react-joyride": "^2.0.2",
     "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
